@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "399392467279",
-    "firebase_url": "https://mobileapp-54d45.firebaseio.com",
-    "project_id": "mobileapp-54d45",
-    "storage_bucket": "mobileapp-54d45.appspot.com"
+    "project_number": "256034605550",
+    "firebase_url": "https://mobileapp-e437c.firebaseio.com",
+    "project_id": "mobileapp-e437c",
+    "storage_bucket": "mobileapp-e437c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:399392467279:android:c2c2ed489877e1fa",
+        "mobilesdk_app_id": "1:256034605550:android:c2c2ed489877e1fa",
         "android_client_info": {
           "package_name": "com.example.walter.mobileapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "399392467279-k3gouj1paldkl13r8sbc4u6itjlj43k6.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.walter.mobileapp",
-            "certificate_hash": "80a49003343641b7acec978f9d5b34367ec1f536"
-          }
-        },
-        {
-          "client_id": "399392467279-467sdk8nhuam1a9175m9v5sg8ddmtmpm.apps.googleusercontent.com",
+          "client_id": "256034605550-b1jfdelg6rjfjumkk07p84fc0gh7qnv0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBzz7_zTw1ecHdt2Pvvf_Fb_Zq5hXnhkh4"
+          "current_key": "AIzaSyDbF6kxEQKWgt7220EqEbs6qtLgz2k1bJA"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "399392467279-467sdk8nhuam1a9175m9v5sg8ddmtmpm.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

@@ -16,11 +16,21 @@ import android.view.MenuItem;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/");
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("x","y");
+        myRef.setValue(map);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
