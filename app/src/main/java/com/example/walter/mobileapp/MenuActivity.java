@@ -1,7 +1,9 @@
 package com.example.walter.mobileapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -22,7 +24,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -37,9 +42,10 @@ public class MenuActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // per scrivere sul db
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*
         Map<String, Object> user = new HashMap<>();
         user.put("first", "Ada");
         user.put("last", "Lovelace");
@@ -50,7 +56,6 @@ public class MenuActivity extends AppCompatActivity
         valori.add(3);
         user.put("numeri",valori);
 
-        // Add a new document with a generated ID
         db.collection("users")
                 .add(user)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -65,8 +70,16 @@ public class MenuActivity extends AppCompatActivity
                         Log.w("", "Error adding document", e);
                     }
                 });
+        */
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_menu);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
         //per leggere i dati
+        final ArrayList<QueryDocumentSnapshot> documentList = new ArrayList<>();
         db.collection("users")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -74,18 +87,37 @@ public class MenuActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("", document.getId() + " => " + document.getData());
+                                documentList.add(document);
                             }
                         } else {
                             Log.w("", "Error getting documents.", task.getException());
                         }
                     }
                 });
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // arrivati qui abbiamo la lista dei documenti che possono essere valutati con get("nomecampo");
 
+        //per prendere eventuali dati che vengono modificati
+
+        // ttacchiamo un listener
+        final DocumentReference docRef = db.collection("users").document();
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("", "Listen failed.", e);
+                    return;
+                }
+                //se entriamo qui significa che il dato è cambiato
+                if (snapshot != null && snapshot.exists()) {
+                    Log.e("Il documento che è cambiato è ",snapshot.getId());
+                   Log.e("Il nuovo valore del campo born è ",snapshot.get("born").toString());
+                } else {
+                    Log.d("", "Current data: null");
+                }
+            }
+        });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
