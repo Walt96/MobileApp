@@ -21,8 +21,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -40,6 +43,7 @@ public class MenuActivity extends AppCompatActivity
 
         // per scrivere sul db
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         Map<String, Object> user = new HashMap<>();
         user.put("first", "Ada");
         user.put("last", "Lovelace");
@@ -66,6 +70,8 @@ public class MenuActivity extends AppCompatActivity
                     }
                 });
 
+
+
         //per leggere i dati
         db.collection("users")
                 .get()
@@ -74,13 +80,29 @@ public class MenuActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("", document.getId() + " => " + document.getData());
+                                Log.d("stampa", document.getId() + " => " + document.getData());
                             }
                         } else {
                             Log.w("", "Error getting documents.", task.getException());
                         }
                     }
                 });
+
+        //query
+        Query users = db.collection("users").whereGreaterThan("eta",30);
+        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<QuerySnapshot> task) {
+               if (task.isSuccessful()) {
+                   for (QueryDocumentSnapshot document : task.getResult()) {
+                       Log.d("risultato", document.getId() + " => " + document.getData());
+                   }
+               } else {
+                   Log.w("", "Error getting documents.", task.getException());
+               }
+           }
+       });
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
