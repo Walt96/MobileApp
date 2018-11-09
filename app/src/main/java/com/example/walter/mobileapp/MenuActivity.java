@@ -43,9 +43,9 @@ public class MenuActivity extends AppCompatActivity
 
         // per scrivere sul db
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    /*
         Map<String, Object> user = new HashMap<>();
-        user.put("first", "Ada");
+        user.put("first", "Marco");
         user.put("last", "Lovelace");
         user.put("born", 1815);
         ArrayList<Integer> valori = new ArrayList<>();
@@ -69,9 +69,10 @@ public class MenuActivity extends AppCompatActivity
                         Log.w("", "Error adding document", e);
                     }
                 });
+        */
 
 
-
+        /*
         //per leggere i dati
         db.collection("users")
                 .get()
@@ -87,9 +88,9 @@ public class MenuActivity extends AppCompatActivity
                         }
                     }
                 });
-
+*/
         //query
-        Query users = db.collection("users").whereGreaterThan("eta",30);
+        Query users = db.collection("users").whereEqualTo("first", "Marco").whereGreaterThan("born",1500).whereEqualTo("last","Lovelace");
         users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
