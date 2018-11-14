@@ -1,9 +1,14 @@
 package com.example.walter.mobileapp;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -38,18 +43,18 @@ public class MenuActivity extends AppCompatActivity
 
 
 
+
+
         // per scrivere sul db
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
         user.put("first", "Ada");
         user.put("last", "Lovelace");
         user.put("born", 1815);
-        ArrayList<Integer> valori = new ArrayList<>();
-        valori.add(1);
-        valori.add(2);
-        valori.add(3);
-        user.put("numeri",valori);
-
+        Map<String,Object> orari = new HashMap<>();
+        orari.put("Campo A","Orario B");
+        orari.put("Campo B","Orario C");
+        user.put("Prenotazioni",orari);
         // Add a new document with a generated ID
         db.collection("users")
                 .add(user)
@@ -74,7 +79,7 @@ public class MenuActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("", document.getId() + " => " + document.getData());
+                                Log.d("risultato", document.getId() + " => " + document.getData());
                             }
                         } else {
                             Log.w("", "Error getting documents.", task.getException());
@@ -120,6 +125,24 @@ public class MenuActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
+    }
+
+    public void notifica(View view){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "YOUR_CHANNEL_NAME",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setContentTitle("i") // title for notification
+                .setContentText("n")// message for notification
+                .setAutoCancel(true); // clear notification after click
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     @Override
