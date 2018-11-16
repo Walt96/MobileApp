@@ -17,8 +17,11 @@ import android.widget.PopupWindow;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -30,7 +33,7 @@ import java.util.Map;
 public class SigninActivity extends AppCompatActivity {
 
     // per scrivere sul db
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseFirestore db = StaticDbInstance.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class SigninActivity extends AppCompatActivity {
 
 
         if (firstControl) {
+
             final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
                     .whereEqualTo("username", usernameEdit.getText().toString())
                     .get()
@@ -84,14 +88,33 @@ public class SigninActivity extends AppCompatActivity {
                                                     user.put("password",passwordConfirm.getText().toString());
                                                     user.put("role",role);
                                                     db.collection("users")
-                                                            .add(user);
+                                                            .add(user)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
+                                                                    builder_.setMessage("Your account was created successfully");
+                                                                    builder_.create().show();
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
+                                                                    builder_.setMessage("An error occurred, please try again!");
+                                                                    builder_.create().show();
+                                                                }
+                                                            });
                                                 }
                                             })
-                                            .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    // User cancelled the dialog
+                                            .setNegativeButton("Decline",new DialogInterface.OnClickListener(){
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
                                                 }
                                             });
+
+
                                     // Create the AlertDialog object and return it
                                     builder.create().show();
                                 }

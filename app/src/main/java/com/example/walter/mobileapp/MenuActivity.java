@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,12 +44,8 @@ public class MenuActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
-
-
         // per scrivere sul db
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
         user.put("first", "Ada");
         user.put("last", "Lovelace");
@@ -86,6 +85,7 @@ public class MenuActivity extends AppCompatActivity
                         }
                     }
                 });
+                */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -108,6 +108,12 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //prendo il valore passato dall'intent e lo setto alla text view
+        TextView textView = findViewById(R.id.textMenu);
+        Intent generatingIntent = getIntent();
+        textView.setText(generatingIntent.getStringExtra("username"));
+        textView.setText(textView.getText()+generatingIntent.getStringExtra("role"));
     }
 
     @Override
@@ -182,5 +188,14 @@ public class MenuActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void logout(View v){
+       SharedPreferences sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
+       SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("user");
+        editor.remove("role");
+        editor.commit();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 }

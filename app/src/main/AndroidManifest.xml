@@ -17,7 +17,7 @@
         <activity
             android:name=".MenuActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SigninActivity"></activity>
+        <activity android:name=".SigninActivity" />
+        <activity android:name=".CreatePitch"></activity>
     </application>
 
 </manifest>
