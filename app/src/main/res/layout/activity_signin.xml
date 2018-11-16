@@ -9,7 +9,7 @@
     tools:context=".SigninActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/usernameSignin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -19,42 +19,45 @@
         android:layout_marginTop="44dp"
         android:layout_marginEnd="0dp"
         android:ems="10"
+        android:hint="Username"
         android:inputType="textPersonName"
-        android:text="Username"
         android:textColor="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/passwordSignin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/usernameSignin"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="18dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Password"
+        android:hint="Password"
+        android:inputType="textPassword"
         android:textColor="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/confirmSignin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/passwordSignin"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="18dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Confirm Password"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
         android:textColor="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/chooserole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText4"
+        android:layout_below="@+id/confirmSignin"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="18dp"
         android:text="Choose your role"
@@ -62,10 +65,10 @@
         android:textSize="20sp" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/selectrole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/chooserole"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="10dp"></Spinner>
 
@@ -75,7 +78,7 @@
         android:layout_height="20dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="58dp"
         app:srcCompat="@drawable/user" />
 
@@ -85,8 +88,8 @@
         android:layout_height="30dp"
         android:layout_below="@+id/imageView5"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="40dp"
         app:srcCompat="@drawable/password" />
 
     <Button
@@ -99,6 +102,7 @@
         android:layout_marginRight="80dp"
         android:layout_marginBottom="55dp"
         android:background="@color/colorPrimary"
+        android:onClick="validateFields"
         android:shadowColor="@android:color/background_light"
         android:text="Confirm"
         android:textColor="@android:color/background_light"
