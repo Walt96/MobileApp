@@ -61,10 +61,12 @@ public class SigninActivity extends AppCompatActivity {
             passwordEdit.setError("Please choose an username with at least 5 characters");
             firstControl = false;
         }
+
         if (!passwordEdit.getText().toString().equals(passwordConfirm.getText().toString())) {
             passwordConfirm.setError("Passwords aren't equals");
             firstControl = false;
         }
+
 
 
         if (firstControl) {

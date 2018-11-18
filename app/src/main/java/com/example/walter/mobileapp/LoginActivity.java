@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     Button login;
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-    
+
 
     public void goToSignin(View v){
         Intent intent = new Intent(this,CreatePitch.class);
