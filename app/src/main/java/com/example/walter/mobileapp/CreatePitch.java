@@ -48,7 +48,7 @@ public class CreatePitch extends AppCompatActivity {
         boolean isCovered = coveredPitch.isChecked();
         boolean validField = true;
 
-        if (!address.matches("((via)|(piazza)|(Contrada)|(corso)).*n(\\d)+")) {
+        if (!address.matches("((via)|(piazza)|(contrada)|(corso)).*n(\\d)+")) {
             addressEditText.setError("Please check your address: it's not valid");
             validField = false;
         }

@@ -1,5 +1,6 @@
 package com.example.walter.mobileapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,9 @@ public class LoginActivity extends AppCompatActivity {
     Button login;
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+    ProgressDialog progressDialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
-
+        progressDialog = new ProgressDialog(this);
 
     }
 
@@ -51,12 +55,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void checkLogin(View v){
+        progressDialog.setMessage("Checking your credentials...");
+        progressDialog.show();
          Task<QuerySnapshot> querySnapshotTask = db.collection("users").whereEqualTo("username", username.getText().toString()).whereEqualTo("password", password.getText().toString())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            progressDialog.dismiss();
                             if (task.getResult().isEmpty())
                                 password.setError("Please check your credentials");
                             else {
