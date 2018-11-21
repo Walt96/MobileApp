@@ -44,7 +44,7 @@ public class CreatePitch extends AppCompatActivity {
         String username = "ciao";
         String address = addressEditText.getText().toString();
         String city = cityEditText.getText().toString();
-        float price = 0;
+        double price = 0;
         boolean isCovered = coveredPitch.isChecked();
         boolean validField = true;
 
@@ -60,9 +60,10 @@ public class CreatePitch extends AppCompatActivity {
             priceEditText.setError("Do you really want to make your pitch free? :)");
             validField = false;
         }
-        else
-            price = Float.valueOf(priceEditText.getText().toString());
-
+        else {
+            String value_price = priceEditText.getText().toString();
+            price = Double.valueOf(value_price);
+        }
         if (validField) {
             progressDialog.setMessage("Adding your pitch...");
             progressDialog.show();
