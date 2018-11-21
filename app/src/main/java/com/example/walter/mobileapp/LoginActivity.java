@@ -81,7 +81,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     public void doLogin(String user, String role){
-        Intent intent = new Intent(this, MenuActivity.class);
+        //Intent intent = new Intent(this, MenuActivity.class);
+        Intent intent = new Intent(this, UserHome.class);
         intent.putExtra("username",user);
         intent.putExtra("role",role);
         startActivity(intent);
