@@ -9,7 +9,7 @@
     tools:context=".CreatePitch">
 
     <EditText
-        android:id="@+id/address"
+        android:id="@+id/pitchAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -28,7 +28,7 @@
         android:id="@+id/city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/address"
+        android:layout_below="@+id/pitchAddress"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="18dp"
         android:ems="10"
@@ -72,7 +72,7 @@
         android:id="@+id/covered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/address"
+        android:layout_alignStart="@+id/pitchAddress"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="209dp">
 
@@ -99,7 +99,7 @@
         android:id="@+id/imageView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/address"
+        android:layout_alignTop="@+id/pitchAddress"
         android:layout_alignParentStart="true"
         android:layout_marginStart="57dp"
         android:layout_marginTop="13dp"

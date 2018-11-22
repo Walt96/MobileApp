@@ -1,6 +1,8 @@
 package com.example.walter.mobileapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -29,10 +31,6 @@ import java.util.ArrayList;
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    Spinner dropdown;
-    FirebaseFirestore db = StaticDbInstance.getInstance();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,37 +55,7 @@ public class UserHome extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        dropdown = findViewById(R.id.pickCity);
-        db.collection("pitch")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            int size = task.getResult().size();
-                            ArrayList<String> items = new ArrayList<>();
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String city = document.get("city").toString();
-                                if(!items.contains(city)) {
-                                    items.add(city);
-                                }
-                            }
-                            ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
-                            dropdown.setAdapter(adapter);
-                        } else {
-                            Log.w("", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
     }
-
-    private Context getActivity() {
-        return this;
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -128,8 +96,15 @@ public class UserHome extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            Intent intent = new Intent(this, CreateMatch.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
+            SharedPreferences sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.remove("user");
+            editor.remove("role");
+            editor.commit();
+            startActivity(new Intent(this,LoginActivity.class));
 
         } else if (id == R.id.nav_slideshow) {
 
