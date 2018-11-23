@@ -157,7 +157,8 @@ public class CreateMatch extends AppCompatActivity {
             TextView pitchPrice = convertView.findViewById(R.id.pricePitch);
             TextView pitchCover = convertView.findViewById(R.id.pitchCover);
 
-            pitchPrice.setText(prices.get(position).toString());
+            pitchImage.setImageResource(R.drawable.ic_launcher_background);
+            pitchPrice.setText(prices.get(position).toString() + "€");
             pitchAddress.setText(addresses.get(position));
 
             pitchCover.setText("Covered");
