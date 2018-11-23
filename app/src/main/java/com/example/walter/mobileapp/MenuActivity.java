@@ -198,4 +198,8 @@ public class MenuActivity extends AppCompatActivity
         editor.commit();
         startActivity(new Intent(this,LoginActivity.class));
     }
+    sdfs
+
+
+    
 }
