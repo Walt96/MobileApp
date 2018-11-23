@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ public class CreatePitch extends AppCompatActivity {
     RadioButton coveredPitch;
     FirebaseFirestore db = StaticDbInstance.getInstance();
     ProgressDialog progressDialog;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +39,11 @@ public class CreatePitch extends AppCompatActivity {
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
+
+        username = getIntent().getStringExtra("username");
     }
     public void validateFields(View v) {
-        //questo dato arriverà nell'intent che verra passato dal menu del creatore del campo
-        String username = "ciao";
+
         String address = addressEditText.getText().toString();
         String city = cityEditText.getText().toString();
         double price = 0;
@@ -64,34 +67,17 @@ public class CreatePitch extends AppCompatActivity {
             price = Double.valueOf(value_price);
         }
         if (validField) {
-            progressDialog.setMessage("Adding your pitch...");
-            progressDialog.show();
+
             Map<String, Object> pitch = new HashMap<>();
             pitch.put("owner", username);
             pitch.put("address", address);
             pitch.put("city", city);
             pitch.put("price", price);
             pitch.put("covered",isCovered);
-            db.collection("pitch")
-                    .add(pitch)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Your pitch was created successfully");
-                            builder.create().show();
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("An error occured, please try again!");
-                            builder.create().show();
-                            progressDialog.dismiss();
-                        }
-                    });
+            pitch.put("owner",username);
+            AddPitchTask myTask = new AddPitchTask();
+            myTask.execute(pitch);
+
         }
 
     }
@@ -99,4 +85,51 @@ public class CreatePitch extends AppCompatActivity {
     private Context getActivity() {
         return this;
     }
+
+    // Class to add pitch with async task
+    private class AddPitchTask extends AsyncTask<Map<String,Object>,Integer,Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(Map<String, Object>... maps) {
+            final boolean[] success = {true};
+            db.collection("pitch")
+                    .add(maps[0])
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            success[0] = false;
+                        }
+                    });
+            return success[0];
+        }
+
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+           if(result){
+               //se intanto ha cambiato activity da errore
+               AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+               builder.setMessage("Your pitch was created successfully");
+               builder.create().show();
+           }
+           else{
+               AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+               builder.setMessage("An error occured, please try again!");
+               builder.create().show();
+           }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+    }
+
+
 }

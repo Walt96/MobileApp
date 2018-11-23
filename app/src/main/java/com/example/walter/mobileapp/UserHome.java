@@ -60,11 +60,7 @@ public class UserHome extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //prendo il valore passato dall'intent e lo setto alla text view
-        TextView textView = findViewById(R.id.textMenu);
-        Intent generatingIntent = getIntent();
-        //textView.setText(generatingIntent.getStringExtra("username"));
-        //textView.setText(textView.getText()+generatingIntent.getStringExtra("role"));
+
     }
 
     @Override
@@ -109,7 +105,6 @@ public class UserHome extends AppCompatActivity
             Intent intent = new Intent(this, CreateMatch.class);
             startActivity(intent);
         } else if (id == R.id.nav_joinMatch) {
-            logout();
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -118,7 +113,7 @@ public class UserHome extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
