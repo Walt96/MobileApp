@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -36,11 +37,22 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //controlla se qualche utente è gia loggato
         sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
         editor = sharedPref.edit();
-        Log.e("oncreate","oncreate");
-        if(!sharedPref.getString("user","").equals(""))
-            doLogin(sharedPref.getString("user",""),sharedPref.getString("role",""));
+        String user = sharedPref.getString("user","");
+        if(!user.equals("")) {
+            String role = sharedPref.getString("role", "");
+            if (role.equals(""))
+                doLogin(user, "", false);
+            else {
+                doLogin(user, role, true);
+            }
+
+        }
+
+        //prendo gli oggetti della ui
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login);
@@ -67,12 +79,19 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.getResult().isEmpty())
                                 password.setError("Please check your credentials");
                             else {
-                                String user = task.getResult().getDocuments().get(0).get("username").toString();
-                                String role = task.getResult().getDocuments().get(0).get("role").toString();
+
+                                //salvo l'utente loggato nelle pref
+                                DocumentSnapshot user_doc = task.getResult().getDocuments().get(0);
+                                String user = user_doc.get("username").toString();
                                 editor.putString("user", user);
-                                editor.putString("role", role);
+                                boolean isAPlayer = (boolean)user_doc.get("player");
+                                String role="";
+                                if(isAPlayer){
+                                   role = user_doc.get("role").toString();
+                                   editor.putString("role", role);
+                                }
                                 editor.commit();
-                                doLogin(user,role);
+                                doLogin(user,role,isAPlayer);
                             }
                         }
 
@@ -80,11 +99,16 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
     }
-    public void doLogin(String user, String role){
-        //Intent intent = new Intent(this, MenuActivity.class);
-        Intent intent = new Intent(this, UserHome.class);
+    public void doLogin(String user, String role, boolean isAPlayer){
+        Intent intent;
+        if(isAPlayer) {
+            intent = new Intent(this, UserHome.class);
+            intent.putExtra("role", role);
+        }
+        else{
+            intent = new Intent(this,OwnerHome.class);
+        }
         intent.putExtra("username",user);
-        intent.putExtra("role",role);
         startActivity(intent);
     }
 

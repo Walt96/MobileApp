@@ -20,4 +20,5 @@
         completions."
     </string>
     <string name="title_activity_user_home">UserHome</string>
+    <string name="title_activity_owner_home">OwnerHome</string>
 </resources>

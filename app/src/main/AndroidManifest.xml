@@ -14,10 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MenuActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +27,11 @@
             android:name=".UserHome"
             android:label="@string/title_activity_user_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CreateMatch"></activity>
+        <activity android:name=".CreateMatch" />
+        <activity
+            android:name=".OwnerHome"
+            android:label="@string/title_activity_owner_home"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
