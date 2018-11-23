@@ -182,20 +182,15 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+        dsfsd
     }
 
-    public void logout(View v){
-       SharedPreferences sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
-       SharedPreferences.Editor editor = sharedPref.edit();
-        editor.remove("user");
-        editor.remove("role");
-        editor.commit();
-        startActivity(new Intent(this,LoginActivity.class));
-    }
+
+
+
 }

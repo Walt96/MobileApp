@@ -95,17 +95,10 @@ public class UserHome extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_createMatch) {
             Intent intent = new Intent(this, CreateMatch.class);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-            SharedPreferences sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.remove("user");
-            editor.remove("role");
-            editor.commit();
-            startActivity(new Intent(this,LoginActivity.class));
-
+        } else if (id == R.id.nav_joinMatch) {
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -113,11 +106,21 @@ public class UserHome extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
+            logout();
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void logout(){
+        SharedPreferences sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("user");
+        editor.remove("role");
+        editor.commit();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 }
