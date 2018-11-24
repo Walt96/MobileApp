@@ -64,6 +64,12 @@ public class UserHome extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        StaticInstance.currentActivity = this;
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {

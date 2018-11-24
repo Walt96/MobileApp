@@ -34,7 +34,7 @@ public class CreateMatch extends AppCompatActivity {
     TextView dateView;
     Spinner dropdown;
     DatePickerDialog.OnDateSetListener mDateSetListener;
-    FirebaseFirestore db = StaticDbInstance.getInstance();
+    FirebaseFirestore db = StaticInstance.getInstance();
 
     ArrayList<String> addresses;
     ArrayList<Boolean> covered;
@@ -121,6 +121,12 @@ public class CreateMatch extends AppCompatActivity {
                 });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StaticInstance.currentActivity = this;
     }
 
     class CustomAdapter extends BaseAdapter{

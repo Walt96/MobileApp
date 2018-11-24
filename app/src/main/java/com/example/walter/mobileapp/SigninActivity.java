@@ -33,7 +33,7 @@ import java.util.Map;
 public class SigninActivity extends AppCompatActivity {
 
     // per scrivere sul db
-    FirebaseFirestore db = StaticDbInstance.getInstance();
+    FirebaseFirestore db = StaticInstance.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,12 @@ public class SigninActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinneritem, items);
         dropdown.setAdapter(adapter);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StaticInstance.currentActivity = this;
     }
 
     public void validateFields(View v) {

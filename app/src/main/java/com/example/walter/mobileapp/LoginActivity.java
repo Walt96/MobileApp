@@ -23,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
 
-    FirebaseFirestore db = StaticDbInstance.getInstance();
+    FirebaseFirestore db = StaticInstance.getInstance();
     EditText username;
     EditText password;
     Button login;
@@ -60,6 +60,12 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StaticInstance.currentActivity = this;
+    }
 
     public void goToSignin(View v){
         Intent intent = new Intent(this,CreatePitch.class);
