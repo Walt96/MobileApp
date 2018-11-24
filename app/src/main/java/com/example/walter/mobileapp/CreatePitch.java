@@ -109,9 +109,12 @@ public class CreatePitch extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(StaticInstance.currentActivity);
-                            builder.setMessage("An error occured, please try again!");
-                            builder.create().show();
+                            String current_user = getSharedPreferences("logged user", Context.MODE_PRIVATE).getString("user","");
+                            if(pitch.get("owner").equals(current_user)) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(StaticInstance.currentActivity);
+                                builder.setMessage("An error occured, please try again!");
+                                builder.create().show();
+                            }
                         }
                     });
 
