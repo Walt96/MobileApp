@@ -1,102 +1,56 @@
 package com.example.walter.mobileapp;
 
-import android.content.Context;
+
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SigninActivity extends AppCompatActivity {
 
-    // per scrivere sul db
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ManagerSignIn extends Fragment {
+
     FirebaseFirestore db = StaticDbInstance.getInstance();
-    Button nextBtn;
+    View fragmentView;
+
+    public ManagerSignIn() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_signin);
-        setContentView(R.layout.choose_account_type);
-        nextBtn = findViewById(R.id.nextbtn);
-
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.chooseGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                nextBtn.setVisibility(View.VISIBLE);
-            }
-        });
-
-
-
-        /*Spinner dropdown = findViewById(R.id.selectrole);
-        String[] items = new String[]{"Attaccante","Centrocampista","Difensore","Portiere"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinneritem, items);
-        dropdown.setAdapter(adapter);*/
-
-    }
-
-    public void displaySignIn(View v) {
-        RadioButton footballerButton = findViewById(R.id.footballerRadio);
-        if(footballerButton.isChecked()) {
-            nextBtn.setVisibility(View.INVISIBLE);
-            Fragment footBallerSignInFrag = new FootballerSignIn();
-            replaceFragment(footBallerSignInFrag);
-        } else {
-            nextBtn.setVisibility(View.INVISIBLE);
-            Fragment managerSignInFrag = new ManagerSignIn();
-            replaceFragment(managerSignInFrag);
-        }
-    }
-
-    public void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.relativeContainer, fragment);
-        fragmentTransaction.addToBackStack(fragment.toString());
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.commit();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        fragmentView =  inflater.inflate(R.layout.fragment_manager_sign_in, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_manager_sign_in, container, false);
     }
 
     public void validateFields(View v) {
 
-        final EditText usernameEdit = (EditText) findViewById(R.id.usernameSignin);
-        EditText passwordEdit = (EditText) findViewById(R.id.passwordSignin);
-        final EditText passwordConfirm = (EditText) findViewById(R.id.confirmSignin);
-        final String role = ((Spinner) findViewById(R.id.selectrole)).getSelectedItem().toString();
+        final EditText usernameEdit = (EditText) fragmentView.findViewById(R.id.usernameSignin);
+        EditText passwordEdit = (EditText) fragmentView.findViewById(R.id.passwordSignin);
+        final EditText passwordConfirm = (EditText) fragmentView.findViewById(R.id.confirmSignin);
+        final String role = ((Spinner) fragmentView.findViewById(R.id.selectrole)).getSelectedItem().toString();
         boolean firstControl = true;
         if (usernameEdit.getText().length() < 5) {
             usernameEdit.setError("Please choose an username with at least 5 characters");
@@ -172,10 +126,4 @@ public class SigninActivity extends AppCompatActivity {
         }
     }
 
-    private Context getActivity() {
-        return this;
-    }
-
-
 }
-
