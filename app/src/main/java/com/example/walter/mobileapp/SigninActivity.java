@@ -3,17 +3,25 @@ package com.example.walter.mobileapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,22 +42,53 @@ public class SigninActivity extends AppCompatActivity {
 
     // per scrivere sul db
     FirebaseFirestore db = StaticInstance.getInstance();
+    Button nextBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
-        Spinner dropdown = findViewById(R.id.selectrole);
+        //setContentView(R.layout.activity_signin);
+        setContentView(R.layout.choose_account_type);
+        nextBtn = findViewById(R.id.nextbtn);
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.chooseGroup);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                nextBtn.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+
+        /*Spinner dropdown = findViewById(R.id.selectrole);
         String[] items = new String[]{"Attaccante","Centrocampista","Difensore","Portiere"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinneritem, items);
-        dropdown.setAdapter(adapter);
+        dropdown.setAdapter(adapter);*/
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        StaticInstance.currentActivity = this;
+    public void displaySignIn(View v) {
+        RadioButton footballerButton = findViewById(R.id.footballerRadio);
+        if(footballerButton.isChecked()) {
+            nextBtn.setVisibility(View.INVISIBLE);
+            Fragment footBallerSignInFrag = new FootballerSignIn();
+            replaceFragment(footBallerSignInFrag);
+        } else {
+            nextBtn.setVisibility(View.INVISIBLE);
+            Fragment managerSignInFrag = new ManagerSignIn();
+            replaceFragment(managerSignInFrag);
+        }
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.relativeContainer, fragment);
+        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
     }
 
     public void validateFields(View v) {

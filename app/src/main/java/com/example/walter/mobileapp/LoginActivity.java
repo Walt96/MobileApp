@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void goToSignin(View v){
-        Intent intent = new Intent(this,CreatePitch.class);
+        Intent intent = new Intent(this,SigninActivity.class);
         startActivity(intent);
     }
 
