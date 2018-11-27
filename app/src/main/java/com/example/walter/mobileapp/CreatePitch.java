@@ -1,31 +1,40 @@
 package com.example.walter.mobileapp;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CreatePitch extends AppCompatActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 2;
     EditText addressEditText;
     EditText cityEditText;
     EditText priceEditText;
@@ -33,27 +42,22 @@ public class CreatePitch extends AppCompatActivity {
     FirebaseFirestore db = StaticInstance.getInstance();
     ProgressDialog progressDialog;
     String username;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    String path;
+    StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pitch);
-
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        username = getIntent().getStringExtra("username");
         addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
-
-        username = getIntent().getStringExtra("username");
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        StaticInstance.currentActivity = this;
-    }
-
     public void validateFields(View v) {
 
         String address = addressEditText.getText().toString();
@@ -79,56 +83,88 @@ public class CreatePitch extends AppCompatActivity {
             price = Double.valueOf(value_price);
         }
         if (validField) {
-
-            Toast toast = Toast.makeText(getApplicationContext(), "Adding your pitch", Toast.LENGTH_SHORT);
-            toast.show();
-
-            final Map<String, Object> pitch = new HashMap<>();
+            final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
+            progressDialog.setMessage("Adding your pitch...");
+            progressDialog.show();
+            Map<String, Object> pitch = new HashMap<>();
             pitch.put("owner", username);
             pitch.put("address", address);
             pitch.put("city", city);
             pitch.put("price", price);
             pitch.put("covered",isCovered);
-            pitch.put("owner",username);
-
+            pitch.put("code",code);
             db.collection("pitch")
                     .add(pitch)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-                            String current_user = getSharedPreferences("logged user", Context.MODE_PRIVATE).getString("user","");
-                            //mostro l'esito dell'aggiunta solo se il proprietario è il
-                            if(pitch.get("owner").equals(current_user)){
-                                //se intanto ha cambiato activity da errore
-                                AlertDialog.Builder builder = new AlertDialog.Builder(StaticInstance.currentActivity);
-                                builder.setMessage(current_user+", your pitch was created successfully");
-                                builder.create().show();
-                            }
+                            StorageReference ref = mStorageRef.child("pitch/"+username+code);
+                            ref.putFile(Uri.parse(path))
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            // Get a URL to the uploaded content
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+
+                                        }
+                                    });
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage("Your pitch was created successfully");
+                            builder.create().show();
+                            progressDialog.dismiss();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            String current_user = getSharedPreferences("logged user", Context.MODE_PRIVATE).getString("user","");
-                            if(pitch.get("owner").equals(current_user)) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(StaticInstance.currentActivity);
-                                builder.setMessage("An error occured, please try again!");
-                                builder.create().show();
-                            }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage("An error occured, please try again!");
+                            builder.create().show();
+                            progressDialog.dismiss();
                         }
                     });
-
         }
 
     }
 
-    private Context getActivity() {
-        return this;
+    public void takePhoto(View v){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    99);
+        }
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap inImage = (Bitmap) extras.get("data");
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            if (ContextCompat.checkSelfPermission(StaticInstance.currentActivity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        99);
+            }
+            path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), inImage, "Title", null);
+
+        }
     }
 
 
 
-
-
-
+    private Context getActivity() {
+        return this;
+    }
 }
