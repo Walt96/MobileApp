@@ -20,7 +20,7 @@ public class Pitch {
         uri = null;
         time = new String[15];
         for(int i = 8;i<23;i++)
-            time[i-8]=String.valueOf(i);
+            time[i-8]=String.valueOf(i)+":00";
         availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
     }
 
@@ -34,7 +34,7 @@ public class Pitch {
     }
 
     public void addTime(int add_time){
-        time[add_time] = String.valueOf(add_time+8);
+        time[add_time] = String.valueOf(add_time+8)+":00";
         availableTime.notifyDataSetChanged();
     }
 
@@ -43,7 +43,7 @@ public class Pitch {
             if(notAvailable.contains(String.valueOf(i)))
                 time[i-8] = "OCCUPATO";
             else{
-                time[i-8] = String.valueOf(i);
+                time[i-8] = String.valueOf(i)+":00";
             }
         availableTime.notifyDataSetChanged();
     }

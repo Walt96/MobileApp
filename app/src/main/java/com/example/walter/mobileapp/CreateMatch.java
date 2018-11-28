@@ -29,6 +29,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,9 +42,6 @@ import com.google.firebase.storage.StorageReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-
-import static com.example.walter.mobileapp.R.drawable.ic_menu_gallery;
 
 public class CreateMatch extends AppCompatActivity {
 
@@ -49,6 +50,7 @@ public class CreateMatch extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener mDateSetListener;
     FirebaseFirestore db = StaticInstance.getInstance();
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
 
     StorageReference reference;
 
@@ -136,6 +138,19 @@ public class CreateMatch extends AppCompatActivity {
                                                 // Handle any errors
                                             }
                                         });
+
+                                myRef.child(document.get("code").toString()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        dataSnapshot.getValue();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        // Failed to read value
+                                        Log.e("Hey", "Failed to read app title value.", error.toException());
+                                    }
+                                });
                                 currentPitch.initWithoutThese(new ArrayList<String>());
                                 pitches.add(currentPitch);
 
@@ -194,18 +209,14 @@ public class CreateMatch extends AppCompatActivity {
             try {
                 Field popup = Spinner.class.getDeclaredField("mPopup");
                 popup.setAccessible(true);
-
                 // Get private mPopup member variable and try cast to ListPopupWindow
                 android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
-
                 // Set popupWindow height to 500px
                 popupWindow.setHeight(350);
             }
             catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-                // silently fail...
             }
             availableTime.setAdapter(pitches.get(position).getAvailableTime());
-
             pitchPrice.setText("Price: "+ String.valueOf(pitches.get(position).getPrice()) + "€");
             pitchAddress.setText(pitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
