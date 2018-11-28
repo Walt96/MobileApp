@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -34,7 +35,7 @@ import java.util.Map;
 
 public class CreatePitch extends AppCompatActivity {
 
-    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL = 2;
+    private static final int WRITE_EXTERNAL_CODE = 2 ;
     EditText addressEditText;
     EditText cityEditText;
     EditText priceEditText;
@@ -45,6 +46,7 @@ public class CreatePitch extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String path;
     StorageReference mStorageRef;
+    Bitmap photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ public class CreatePitch extends AppCompatActivity {
             Map<String, Object> pitch = new HashMap<>();
             pitch.put("owner", username);
             pitch.put("address", address);
-            pitch.put("city", city);
+            pitch.put("city", city.toLowerCase());
             pitch.put("price", price);
             pitch.put("covered",isCovered);
             pitch.put("code",code);
@@ -103,13 +105,11 @@ public class CreatePitch extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            // Get a URL to the uploaded content
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception exception) {
-
                                         }
                                     });
 
@@ -133,36 +133,43 @@ public class CreatePitch extends AppCompatActivity {
     }
 
     public void takePhoto(View v){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    99);
-        }
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-
+        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap inImage = (Bitmap) extras.get("data");
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            if (ContextCompat.checkSelfPermission(StaticInstance.currentActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        99);
+            photo = (Bitmap) extras.get("data");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    setPathPhoto();
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_CODE);
+                }
+            }else{
+                setPathPhoto();
             }
-            path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), inImage, "Title", null);
-
         }
     }
 
+    public void setPathPhoto(){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        path = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, "Title", null);
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == WRITE_EXTERNAL_CODE)
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setPathPhoto();
+            }
+    }
 
     private Context getActivity() {
         return this;

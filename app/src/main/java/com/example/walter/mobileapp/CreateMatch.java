@@ -13,10 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +49,7 @@ public class CreateMatch extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener mDateSetListener;
     FirebaseFirestore db = StaticInstance.getInstance();
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
     StorageReference reference;
 
     ArrayList<Pitch> pitches;
@@ -115,13 +119,13 @@ public class CreateMatch extends AppCompatActivity {
                                 boolean covered=(boolean)document.get("covered");
                                 double price = (double) (document.get("price"));
                                 final Pitch currentPitch = new Pitch(address,price,covered);
+                                Log.e("cerco in ","pitch/"+document.get("code"));
 
-                                StorageReference storageRef =
-                                        FirebaseStorage.getInstance().getReference();
-                                storageRef.child("pitch/" + document.get("code")).getDownloadUrl()
+                                mStorageRef.child("pitch/" + document.get("owner")+document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
                                             public void onSuccess(Uri uri) {
+                                                Log.e("il mio uri è",uri.toString());
                                                currentPitch.setUri(uri);
                                                customAdapter.notifyDataSetChanged();
                                             }
@@ -132,7 +136,7 @@ public class CreateMatch extends AppCompatActivity {
                                                 // Handle any errors
                                             }
                                         });
-
+                                currentPitch.initWithoutThese(new ArrayList<String>());
                                 pitches.add(currentPitch);
 
                             }
@@ -186,7 +190,23 @@ public class CreateMatch extends AppCompatActivity {
             TextView pitchAddress = convertView.findViewById(R.id.pitchAddress);
             TextView pitchPrice = convertView.findViewById(R.id.pricePitch);
             TextView pitchCover = convertView.findViewById(R.id.pitchCover);
-            pitchPrice.setText(String.valueOf(pitches.get(position).getPrice()) + "€");
+            Spinner availableTime = convertView.findViewById(R.id.pitchTime);
+            try {
+                Field popup = Spinner.class.getDeclaredField("mPopup");
+                popup.setAccessible(true);
+
+                // Get private mPopup member variable and try cast to ListPopupWindow
+                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
+
+                // Set popupWindow height to 500px
+                popupWindow.setHeight(350);
+            }
+            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+                // silently fail...
+            }
+            availableTime.setAdapter(pitches.get(position).getAvailableTime());
+
+            pitchPrice.setText("Price: "+ String.valueOf(pitches.get(position).getPrice()) + "€");
             pitchAddress.setText(pitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
             Uri imageUri = pitches.get(position).getUri();
@@ -203,6 +223,8 @@ public class CreateMatch extends AppCompatActivity {
             pitchCover.setText("Covered");
             if(!pitches.get(position).isCovered())
                 pitchCover.setText("Not Covered");
+
+
 
             return convertView;
 
