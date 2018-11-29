@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class CreatePitch extends AppCompatActivity {
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
+        path=null;
     }
     public void validateFields(View v) {
 
@@ -101,18 +103,21 @@ public class CreatePitch extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             StorageReference ref = mStorageRef.child("pitch/"+username+code);
-                            ref.putFile(Uri.parse(path))
-                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                        }
-                                    });
-
+                            if(path!=null) {
+                                ref.putFile(Uri.parse(path))
+                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                path=null;
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception exception) {
+                                                path=null;
+                                            }
+                                        });
+                            }
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                             builder.setMessage("Your pitch was created successfully");
                             builder.create().show();
@@ -128,6 +133,9 @@ public class CreatePitch extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     });
+            HashMap<String,ArrayList> newValue = new HashMap<>();
+            newValue.put("prenotazioni",new ArrayList());
+            db.collection("booking").document(code).set(newValue);
         }
 
     }

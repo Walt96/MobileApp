@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,19 +30,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 public class CreateMatch extends AppCompatActivity {
 
@@ -50,8 +55,8 @@ public class CreateMatch extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener mDateSetListener;
     FirebaseFirestore db = StaticInstance.getInstance();
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
-
+    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking");
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     StorageReference reference;
 
     ArrayList<Pitch> pitches;
@@ -117,19 +122,19 @@ public class CreateMatch extends AppCompatActivity {
                                 if (!items.contains(city)) {
                                     items.add(city);
                                 }
-                                String address= document.get("address").toString() + " , " + city;
-                                boolean covered=(boolean)document.get("covered");
+                                String address = document.get("address").toString() + " , " + city;
+                                boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
-                                final Pitch currentPitch = new Pitch(address,price,covered);
-                                Log.e("cerco in ","pitch/"+document.get("code"));
+                                final Pitch currentPitch = new Pitch(address, price, covered);
+                                Log.e("cerco in ", "pitch/" + document.get("code"));
 
-                                mStorageRef.child("pitch/" + document.get("owner")+document.get("code")).getDownloadUrl()
+                                mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
                                             public void onSuccess(Uri uri) {
-                                                Log.e("il mio uri è",uri.toString());
-                                               currentPitch.setUri(uri);
-                                               customAdapter.notifyDataSetChanged();
+                                                Log.e("il mio uri è", uri.toString());
+                                                currentPitch.setUri(uri);
+                                                customAdapter.notifyDataSetChanged();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -138,17 +143,22 @@ public class CreateMatch extends AppCompatActivity {
                                                 // Handle any errors
                                             }
                                         });
-
-                                myRef.child(document.get("code").toString()).addValueEventListener(new ValueEventListener() {
+                                final Date date = new Date();
+                                Log.e("data",dateFormat.format(date));
+                                StaticInstance.getInstance().collection("booking").document(document.get("code").toString()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        dataSnapshot.getValue();
-                                    }
+                                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                                        @Nullable FirebaseFirestoreException e) {
+                                        if(snapshot.get("prenotazioni") != null){
+                                            ArrayList<String> nonDisponibili = new ArrayList<>();
+                                            ArrayList<HashMap<String,Object>> prenotazioni = (ArrayList<HashMap<String,Object>>)snapshot.get("prenotazioni");
+                                            for(HashMap<String,Object> prenotazione:prenotazioni){
+                                                if(dateFormat.format(date).equals(prenotazione.get("data")))
+                                                nonDisponibili.add(prenotazione.get("ora").toString());
 
-                                    @Override
-                                    public void onCancelled(DatabaseError error) {
-                                        // Failed to read value
-                                        Log.e("Hey", "Failed to read app title value.", error.toException());
+                                            }
+                                            currentPitch.initWithoutThese(nonDisponibili);
+                                        }
                                     }
                                 });
                                 currentPitch.initWithoutThese(new ArrayList<String>());
