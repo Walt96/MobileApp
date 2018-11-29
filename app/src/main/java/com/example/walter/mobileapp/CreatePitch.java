@@ -97,11 +97,11 @@ public class CreatePitch extends AppCompatActivity {
             pitch.put("price", price);
             pitch.put("covered",isCovered);
             pitch.put("code",code);
-            db.collection("pitch")
-                    .add(pitch)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            db.collection("pitch").document(code)
+                    .set(pitch)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(DocumentReference documentReference) {
+                        public void onSuccess(Void avoid) {
                             StorageReference ref = mStorageRef.child("pitch/"+username+code);
                             if(path!=null) {
                                 ref.putFile(Uri.parse(path))

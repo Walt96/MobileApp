@@ -174,7 +174,6 @@ public class CreateMatch extends AppCompatActivity {
                     }
                 });
 
-
     }
 
     @Override
