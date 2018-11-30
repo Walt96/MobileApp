@@ -7,11 +7,11 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
-
 
     <application
         android:allowBackup="true"
@@ -37,6 +37,14 @@
         <activity
             android:name=".OwnerHome"
             android:label="@string/title_activity_owner_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".OwnerPitches"
+            android:label="@string/title_activity_owner_pitchs"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ModifyPitch"
+            android:label="@string/title_activity_modify_pitch"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

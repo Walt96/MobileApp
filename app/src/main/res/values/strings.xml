@@ -21,4 +21,6 @@
     </string>
     <string name="title_activity_user_home">UserHome</string>
     <string name="title_activity_owner_home">OwnerHome</string>
+    <string name="title_activity_owner_pitchs">OwnerPitchs</string>
+    <string name="title_activity_modify_pitch">ModifyPitch</string>
 </resources>

@@ -103,8 +103,9 @@ public class OwnerHome extends AppCompatActivity
             intent.putExtra("username",username);
             startActivity(intent);
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.show_pitches) {
+            Intent intent = new Intent(this, OwnerPitches.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

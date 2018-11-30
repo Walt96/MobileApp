@@ -7,13 +7,29 @@ import java.util.ArrayList;
 
 public class Pitch {
 
+    String id;
     String address;
     double price;
     Uri uri;
     boolean covered;
     ArrayAdapter availableTime;
     String[] time;
+    String city;
+
     public Pitch(String address,double price,boolean covered){
+        this.address=address;
+        this.price=price;
+        this.covered=covered;
+        uri = null;
+        time = new String[15];
+        for(int i = 8;i<23;i++)
+            time[i-8]=String.valueOf(i)+":00";
+        availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+    }
+
+    public Pitch(String id, String address,double price,boolean covered, String city){
+        this.city = city;
+        this.id = id;
         this.address=address;
         this.price=price;
         this.covered=covered;
@@ -47,6 +63,10 @@ public class Pitch {
             }
         availableTime.notifyDataSetChanged();
     }
+
+    public String getCity() {return city;}
+
+    public String getId() {return id;}
 
     public Uri getUri() {
         return uri;
