@@ -1,9 +1,17 @@
 package com.example.walter.mobileapp;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Pitch {
 
@@ -15,8 +23,9 @@ public class Pitch {
     ArrayAdapter availableTime;
     String[] time;
     String city;
+    ListenerRegistration listener;
 
-    public Pitch(String address,double price,boolean covered){
+    public Pitch(String address,double price,boolean covered, String city){
         this.address=address;
         this.price=price;
         this.covered=covered;
@@ -25,6 +34,8 @@ public class Pitch {
         for(int i = 8;i<23;i++)
             time[i-8]=String.valueOf(i)+":00";
         availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+        this.city = city;
+
     }
 
     public Pitch(String id, String address,double price,boolean covered, String city){
@@ -38,6 +49,32 @@ public class Pitch {
         for(int i = 8;i<23;i++)
             time[i-8]=String.valueOf(i)+":00";
         availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+    }
+
+    public void setListener(final String selectedDate ) {
+        Log.e("listener","aggiungo");
+         listener = StaticInstance.db.collection("booking").document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if(snapshot.get("prenotazioni") != null){
+                    ArrayList<String> nonDisponibili = new ArrayList<>();
+                    ArrayList<HashMap<String,Object>> prenotazioni = (ArrayList<HashMap<String,Object>>)snapshot.get("prenotazioni");
+                    for(HashMap<String,Object> prenotazione:prenotazioni){
+                        if(selectedDate.equals(prenotazione.get("data")))
+                            nonDisponibili.add(prenotazione.get("ora").toString());
+
+                    }
+                    initWithoutThese(nonDisponibili);
+                }
+            }
+        });
+    }
+
+    public void removeListener(){
+        Log.e("listener","rimuovo");
+
+        listener.remove();
     }
 
     public ArrayAdapter getAvailableTime() {
@@ -99,4 +136,11 @@ public class Pitch {
     public boolean isCovered() {
         return covered;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id.equals(((Pitch)(obj)).id);
+    }
+
+
 }

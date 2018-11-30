@@ -7,9 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class StaticInstance {
 
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
     static Context currentActivity;
-    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    static FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 
 

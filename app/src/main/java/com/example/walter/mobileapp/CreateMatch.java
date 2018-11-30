@@ -15,14 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +38,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -51,17 +55,22 @@ import java.util.HashMap;
 public class CreateMatch extends AppCompatActivity {
 
     TextView dateView;
-    Spinner dropdown;
+    Spinner chooseCity;
+    Switch covered;
     DatePickerDialog.OnDateSetListener mDateSetListener;
     FirebaseFirestore db = StaticInstance.getInstance();
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking");
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     StorageReference reference;
-
+    CustomAdapter customAdapter;
     ArrayList<Pitch> pitches;
+    ArrayList<Pitch> currentPitches;
+    boolean selectedCovered;
+    String selectedCity="";
 
     int index = 0;
+    String selectedDate;
 
 
     private Context getActivity() {
@@ -75,7 +84,31 @@ public class CreateMatch extends AppCompatActivity {
 
         setContentView(R.layout.activity_create_match);
         dateView = findViewById(R.id.datePicker);
-        dropdown = findViewById(R.id.pickCity);
+        covered = findViewById(R.id.covered);
+        selectedCovered = false;
+        covered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                selectedCovered=isChecked;
+                updateWithConstraints();
+            }
+        });
+        chooseCity = findViewById(R.id.pickCity);
+        chooseCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                selectedCity = chooseCity.getItemAtPosition(position).toString();
+                updateWithConstraints();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                selectedCity = "";
+                updateWithConstraints();
+            }
+
+        });
+        selectedDate = dateFormat.format(new Date());
+        dateView.setText(selectedDate);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,8 +131,12 @@ public class CreateMatch extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                String date = month + "/" + day + "/" + year;
-                dateView.setText(date);
+                selectedDate  = day + "/" + month + "/" + year;
+                dateView.setText(selectedDate);
+                for(Pitch p : currentPitches){
+                    p.removeListener();
+                    p.setListener(selectedDate);
+                }
             }
 
         };
@@ -107,6 +144,8 @@ public class CreateMatch extends AppCompatActivity {
         final ListView listView = findViewById(R.id.pitchList);
 
         pitches = new ArrayList<>();
+        currentPitches = new ArrayList<>();
+
         db.collection("pitch")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -114,7 +153,7 @@ public class CreateMatch extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             ArrayList<String> items = new ArrayList<>();
-                            final CustomAdapter customAdapter = new CustomAdapter(getApplicationContext());
+                            customAdapter = new CustomAdapter(getApplicationContext());
                             listView.setAdapter(customAdapter);
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -125,8 +164,7 @@ public class CreateMatch extends AppCompatActivity {
                                 String address = document.get("address").toString() + " , " + city;
                                 boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
-                                final Pitch currentPitch = new Pitch(address, price, covered);
-                                Log.e("cerco in ", "pitch/" + document.get("code"));
+                                final Pitch currentPitch = new Pitch(document.get("code").toString(),address, price, covered, city);
 
                                 mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -142,30 +180,14 @@ public class CreateMatch extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception exception) {
                                             }
                                         });
-                                final Date date = new Date();
-                                Log.e("data",dateFormat.format(date));
-                                StaticInstance.getInstance().collection("booking").document(document.get("code").toString()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                                        @Nullable FirebaseFirestoreException e) {
-                                        if(snapshot.get("prenotazioni") != null){
-                                            ArrayList<String> nonDisponibili = new ArrayList<>();
-                                            ArrayList<HashMap<String,Object>> prenotazioni = (ArrayList<HashMap<String,Object>>)snapshot.get("prenotazioni");
-                                            for(HashMap<String,Object> prenotazione:prenotazioni){
-                                                if(dateFormat.format(date).equals(prenotazione.get("data")))
-                                                nonDisponibili.add(prenotazione.get("ora").toString());
-
-                                            }
-                                            currentPitch.initWithoutThese(nonDisponibili);
-                                        }
-                                    }
-                                });
-                                currentPitch.initWithoutThese(new ArrayList<String>());
+                                currentPitch.setListener(dateFormat.format(new Date()));
                                 pitches.add(currentPitch);
+                                currentPitches.add(currentPitch);
 
                             }
+                            updateWithConstraints();
                             ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
-                            dropdown.setAdapter(adapter);
+                            chooseCity.setAdapter(adapter);
 
                         } else {
                             Log.w("", "Error getting documents.", task.getException());
@@ -174,6 +196,26 @@ public class CreateMatch extends AppCompatActivity {
                 });
 
     }
+
+    public void updateWithConstraints() {
+
+        ArrayList<Pitch> newPitches = new ArrayList<>();
+        for (Pitch _pitch : pitches)
+            if ((_pitch.getCity().equals(selectedCity) || selectedCity.equals("")) && (_pitch.isCovered() == selectedCovered)) {
+                newPitches.add(_pitch);
+                if(!currentPitches.contains(_pitch))
+                    _pitch.setListener(selectedDate);
+            }
+            else if(currentPitches.contains(_pitch)) {
+                //implementare == altrimenti inutile
+                _pitch.removeListener();
+            }
+        currentPitches = newPitches;
+        customAdapter.notifyDataSetChanged();
+
+    }
+
+
 
     @Override
     protected void onResume() {
@@ -191,7 +233,7 @@ public class CreateMatch extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return pitches.size();
+            return currentPitches.size();
         }
 
         @Override
@@ -224,14 +266,14 @@ public class CreateMatch extends AppCompatActivity {
             }
             catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             }
-            availableTime.setAdapter(pitches.get(position).getAvailableTime());
-            pitchPrice.setText("Price: "+ String.valueOf(pitches.get(position).getPrice()) + "€");
-            pitchAddress.setText(pitches.get(position).getAddress());
+            availableTime.setAdapter(currentPitches.get(position).getAvailableTime());
+            pitchPrice.setText("Price: "+ String.valueOf(currentPitches.get(position).getPrice()) + "€");
+            pitchAddress.setText(currentPitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
-            Uri imageUri = pitches.get(position).getUri();
+            Uri imageUri = currentPitches.get(position).getUri();
             if(imageUri!=null) {
                 Glide.with(convertView)
-                        .load(pitches.get(position).getUri())
+                        .load(currentPitches.get(position).getUri())
                         .into(pitchImage);
             }
             else {
@@ -240,7 +282,7 @@ public class CreateMatch extends AppCompatActivity {
                         .into(pitchImage);
             }
             pitchCover.setText("Covered");
-            if(!pitches.get(position).isCovered())
+            if(!currentPitches.get(position).isCovered())
                 pitchCover.setText("Not Covered");
 
 

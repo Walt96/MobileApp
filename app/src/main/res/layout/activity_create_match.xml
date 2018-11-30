@@ -26,21 +26,23 @@
             android:layout_weight="1"
             android:paddingTop="8dp"
             android:text="Date"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary" />
 
         <Switch
             android:id="@+id/covered"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Covered" />
+            android:text="Covered"
+            android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/pitchList"
         android:layout_width="match_parent"
-        android:layout_height="459dp"
+        android:layout_height="480dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
