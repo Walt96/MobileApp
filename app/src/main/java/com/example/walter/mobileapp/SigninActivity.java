@@ -44,6 +44,7 @@ public class SigninActivity extends AppCompatActivity {
     FirebaseFirestore db = StaticInstance.getInstance();
     Button nextBtn;
     Fragment actualFragment;
+    Boolean isUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class SigninActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_signin);
         setContentView(R.layout.choose_account_type);
         nextBtn = findViewById(R.id.nextbtn);
-
+        isUser = false;
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.chooseGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -76,10 +77,12 @@ public class SigninActivity extends AppCompatActivity {
             nextBtn.setVisibility(View.INVISIBLE);
             Fragment footBallerSignInFrag = new FootballerSignIn();
             replaceFragment(footBallerSignInFrag);
+            isUser = true;
         } else {
             nextBtn.setVisibility(View.INVISIBLE);
             Fragment managerSignInFrag = new ManagerSignIn();
             replaceFragment(managerSignInFrag);
+            isUser = false;
         }
     }
 
@@ -98,7 +101,11 @@ public class SigninActivity extends AppCompatActivity {
         final EditText usernameEdit = (EditText) actualFragment.getView().findViewById(R.id.usernameSignin);
         EditText passwordEdit = (EditText) actualFragment.getView().findViewById(R.id.passwordSignin);
         final EditText passwordConfirm = (EditText) actualFragment.getView().findViewById(R.id.confirmSignin);
-        final String role = ((Spinner) actualFragment.getView().findViewById(R.id.selectrole)).getSelectedItem().toString();
+        String userRole = "no role";
+        if(isUser) {
+            userRole = ((Spinner) actualFragment.getView().findViewById(R.id.selectrole)).getSelectedItem().toString();
+        }
+        final String role = userRole;
         boolean firstControl = true;
         if (usernameEdit.getText().length() < 5) {
             usernameEdit.setError("Please choose an username with at least 5 characters");
@@ -129,14 +136,20 @@ public class SigninActivity extends AppCompatActivity {
                                     usernameEdit.setError("This username is already used");
                                 else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "Role " + role)
+                                    String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n";
+                                    if(isUser) {
+                                        message += "Role " + role;
+                                    }
+                                    builder.setMessage(message)
                                             .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     Map<String,Object> user = new HashMap<>();
                                                     user.put("username",usernameEdit.getText().toString());
                                                     user.put("password",passwordConfirm.getText().toString());
-                                                    user.put("role",role);
-                                                    user.put("player", true);
+                                                    if(isUser) {
+                                                        user.put("role", role);
+                                                    }
+                                                    user.put("player", isUser);
                                                     Log.e("", "Called");
                                                     db.collection("users")
                                                             .add(user)
