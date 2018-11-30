@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,9 +36,12 @@ import java.util.ArrayList;
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_user_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,6 +64,12 @@ public class UserHome extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View view_login = navigationView.getHeaderView(0);
+        TextView userName = view_login.findViewById(R.id.userName);
+        userName.setText("Name :"+ getIntent().getStringExtra("username"));
+
+        TextView userRole = view_login.findViewById(R.id.userRole);
+        userRole.setText("Role :"+getIntent().getStringExtra("role"));
 
     }
 
