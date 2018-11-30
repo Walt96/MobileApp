@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,7 @@ public class FootballerSignIn extends Fragment {
     FirebaseFirestore db = StaticInstance.getInstance();
     View fragmentView;
 
-    public FootballerSignIn() {
-    }
+    public FootballerSignIn() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,87 +45,28 @@ public class FootballerSignIn extends Fragment {
         String[] items = new String[]{"Attaccante","Centrocampista","Difensore","Portiere"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this.getActivity(), R.layout.spinneritem, items);
         dropdown.setAdapter(adapter);
-        return inflater.inflate(R.layout.activity_signin, container, false);
+        return fragmentView;
     }
 
-    public void validateFields(View v) {
+    /*
+    String getUsername(){
+        EditText usernameEdit = (EditText) fragmentView.findViewById(R.id.usernameSignin);
+        return usernameEdit.getText().toString();
+    }
 
-        final EditText usernameEdit = (EditText) fragmentView.findViewById(R.id.usernameSignin);
+    String getPassword() {
         EditText passwordEdit = (EditText) fragmentView.findViewById(R.id.passwordSignin);
-        final EditText passwordConfirm = (EditText) fragmentView.findViewById(R.id.confirmSignin);
-        final String role = ((Spinner) fragmentView.findViewById(R.id.selectrole)).getSelectedItem().toString();
-        boolean firstControl = true;
-        if (usernameEdit.getText().length() < 5) {
-            usernameEdit.setError("Please choose an username with at least 5 characters");
-            firstControl = false;
-        }
-        if (passwordEdit.getText().length() < 5) {
-            passwordEdit.setError("Please choose an username with at least 5 characters");
-            firstControl = false;
-        }
-
-        if (!passwordEdit.getText().toString().equals(passwordConfirm.getText().toString())) {
-            passwordConfirm.setError("Passwords aren't equals");
-            firstControl = false;
-        }
-
-
-
-        if (firstControl) {
-
-            final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
-                    .whereEqualTo("username", usernameEdit.getText().toString())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                if (task.getResult().size() != 0)
-                                    usernameEdit.setError("This username is already used");
-                                else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "Role " + role)
-                                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    Map<String,Object> user = new HashMap<>();
-                                                    user.put("username",usernameEdit.getText().toString());
-                                                    user.put("password",passwordConfirm.getText().toString());
-                                                    user.put("role",role);
-                                                    db.collection("users")
-                                                            .add(user)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                    AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
-                                                                    builder_.setMessage("Your account was created successfully");
-                                                                    builder_.create().show();
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
-                                                                    builder_.setMessage("An error occurred, please try again!");
-                                                                    builder_.create().show();
-                                                                }
-                                                            });
-                                                }
-                                            })
-                                            .setNegativeButton("Decline",new DialogInterface.OnClickListener(){
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-
-                                                }
-                                            });
-
-
-                                    // Create the AlertDialog object and return it
-                                    builder.create().show();
-                                }
-                            }
-                        }
-                    });
-
-        }
+        return passwordEdit.getText().toString();
     }
+
+    String getPasswordConfirm() {
+        EditText passwordConfirm = (EditText) fragmentView.findViewById(R.id.confirmSignin);
+        return passwordConfirm.getText().toString();
+    }
+
+    String getRole() {
+        String role = ((Spinner) fragmentView.findViewById(R.id.selectrole)).getSelectedItem().toString();
+        return role;
+    }
+    */
 }
