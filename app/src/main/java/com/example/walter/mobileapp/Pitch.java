@@ -61,8 +61,8 @@ public class Pitch {
                     ArrayList<String> nonDisponibili = new ArrayList<>();
                     ArrayList<HashMap<String,Object>> prenotazioni = (ArrayList<HashMap<String,Object>>)snapshot.get("prenotazioni");
                     for(HashMap<String,Object> prenotazione:prenotazioni){
-                        if(selectedDate.equals(prenotazione.get("data")))
-                            nonDisponibili.add(prenotazione.get("ora").toString());
+                        if(selectedDate.equals(prenotazione.get("date")))
+                            nonDisponibili.add(prenotazione.get("time").toString());
 
                     }
                     initWithoutThese(nonDisponibili);

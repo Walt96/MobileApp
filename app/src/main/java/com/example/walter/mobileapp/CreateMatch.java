@@ -18,6 +18,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -34,8 +35,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -60,7 +63,6 @@ public class CreateMatch extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener mDateSetListener;
     FirebaseFirestore db = StaticInstance.getInstance();
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking");
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     StorageReference reference;
     CustomAdapter customAdapter;
@@ -68,6 +70,7 @@ public class CreateMatch extends AppCompatActivity {
     ArrayList<Pitch> currentPitches;
     boolean selectedCovered;
     String selectedCity="";
+    String manager;
 
     int index = 0;
     String selectedDate;
@@ -81,7 +84,7 @@ public class CreateMatch extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reference = FirebaseStorage.getInstance().getReference();
-
+        manager = getIntent().getStringExtra("manager");
         setContentView(R.layout.activity_create_match);
         dateView = findViewById(R.id.datePicker);
         covered = findViewById(R.id.covered);
@@ -247,7 +250,7 @@ public class CreateMatch extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.custom_item_list, parent, false);
@@ -285,10 +288,27 @@ public class CreateMatch extends AppCompatActivity {
             if(!currentPitches.get(position).isCovered())
                 pitchCover.setText("Not Covered");
 
+            final Spinner time = convertView.findViewById(R.id.pitchTime);
 
-
+            Button book = convertView.findViewById(R.id.bookPitch);
+            book.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0]);
+                }
+            });
             return convertView;
 
         }
+    }
+
+    public void bookPitch(String pitchId, String time){
+        DocumentReference ref = db.collection("booking").document(pitchId);
+        HashMap<String,String> newBook = new HashMap<>();
+        newBook.put("date",selectedDate);
+        newBook.put("time",time);
+        newBook.put("manager",manager);
+        ref.update("prenotazioni",FieldValue.arrayUnion(newBook));
+
     }
 }

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String username;
 
 
     @Override
@@ -66,10 +67,11 @@ public class UserHome extends AppCompatActivity
 
         View view_login = navigationView.getHeaderView(0);
         TextView userName = view_login.findViewById(R.id.userName);
-        userName.setText("Name :"+ getIntent().getStringExtra("username"));
+        userName.setText("Name: "+ getIntent().getStringExtra("username"));
+        username = getIntent().getStringExtra("username");
 
         TextView userRole = view_login.findViewById(R.id.userRole);
-        userRole.setText("Role :"+getIntent().getStringExtra("role"));
+        userRole.setText("Role: "+getIntent().getStringExtra("role"));
 
     }
 
@@ -119,6 +121,7 @@ public class UserHome extends AppCompatActivity
 
         if (id == R.id.nav_createMatch) {
             Intent intent = new Intent(this, CreateMatch.class);
+            intent.putExtra("manager",username);
             startActivity(intent);
         } else if (id == R.id.nav_joinMatch) {
 
