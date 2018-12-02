@@ -1,13 +1,18 @@
 package com.example.walter.mobileapp;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,6 +97,11 @@ public class CreateMatch extends AppCompatActivity {
         covered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 selectedCovered=isChecked;
+                if(isChecked)
+                    covered.setText("Covered");
+                else
+                    covered.setText("Not Covered");
+
                 updateWithConstraints();
             }
         });
@@ -185,12 +195,13 @@ public class CreateMatch extends AppCompatActivity {
                                         });
                                 currentPitch.setListener(dateFormat.format(new Date()));
                                 pitches.add(currentPitch);
-                                currentPitches.add(currentPitch);
 
                             }
-                            updateWithConstraints();
                             ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
                             chooseCity.setAdapter(adapter);
+                            chooseCity.setSelection(0);
+                            updateWithConstraints();
+
 
                         } else {
                             Log.w("", "Error getting documents.", task.getException());
@@ -294,7 +305,7 @@ public class CreateMatch extends AppCompatActivity {
             book.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0]);
+                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0],currentPitches.get(position).getAddress());
                 }
             });
             return convertView;
@@ -302,13 +313,57 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(String pitchId, String time){
-        DocumentReference ref = db.collection("booking").document(pitchId);
-        HashMap<String,String> newBook = new HashMap<>();
-        newBook.put("date",selectedDate);
-        newBook.put("time",time);
-        newBook.put("manager",manager);
-        ref.update("prenotazioni",FieldValue.arrayUnion(newBook));
+    public void bookPitch(final String pitchId, final String time, String address){
+        if(time.equals("OCCUPATO")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("The pitch you selected is already booked at this time, sorry!")
+                    .setTitle("An error occurred");
+            builder.create().show();
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Address: "+address+"\n"+
+                                "Date: "+selectedDate+"\n"+
+                                "Time: "+time+" :00")
+                    .setTitle("This will be your match:");
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage("Booking your pitch...");
+                    progressDialog.show();
+                    DocumentReference ref = db.collection("booking").document(pitchId);
+                    HashMap<String,String> newBook = new HashMap<>();
+                    newBook.put("date",selectedDate);
+                    newBook.put("time",time);
+                    newBook.put("manager",manager);
+                    ref.update("prenotazioni",FieldValue.arrayUnion(newBook))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    progressDialog.dismiss();
+                                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.pitchList), "Pitch booked successfully!", Snackbar.LENGTH_LONG);
+                                    mySnackbar.setAction("View all matches", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(getActivity(),UserHome.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            mySnackbar.show();
+                                }
+                            });
+                }
+            }).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.create().show();
+
+
+        }
 
     }
 }

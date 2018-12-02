@@ -14,7 +14,7 @@
 
         <Spinner
             android:id="@+id/pickCity"
-            android:layout_width="160dp"
+            android:layout_width="129dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scrollbarSize="50dp" />
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Covered"
+            android:text="Not Covered"
             android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
