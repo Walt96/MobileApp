@@ -3,42 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="360dp">
+    android:layout_height="360dp"
+    android:background="@color/common_google_signin_btn_text_light_focused">
 
     <Spinner
         android:id="@+id/pitchTime"
         android:layout_width="155dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/pitchAddress"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="28dp"
+        android:layout_below="@+id/pricePitch"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="5dp"
         android:scrollbarSize="50dp" />
 
     <TextView
         android:id="@+id/pitchCover"
-        android:layout_width="153dp"
-        android:layout_height="35dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/pitchAddress"
         android:layout_alignParentStart="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="0dp"
-        android:layout_toStartOf="@+id/pitchTime"
         android:gravity="center_vertical"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/pitchAddress"
-        android:layout_width="305dp"
-        android:layout_height="33dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/pitchImage"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="40dp" />
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="40dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <ImageView
         android:id="@+id/pitchImage"
@@ -56,29 +60,28 @@
 
     <TextView
         android:id="@+id/pricePitch"
-        android:layout_width="104dp"
-        android:layout_height="23dp"
-        android:layout_below="@+id/pitchTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pitchCover"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginTop="5dp"
         android:textAlignment="textStart"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/bookPitch"
         android:layout_width="105dp"
         android:layout_height="29dp"
-        android:layout_below="@+id/pitchTime"
+        android:layout_below="@+id/pitchAddress"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="107dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="9dp"
-        android:layout_toEndOf="@+id/pricePitch"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="99dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/pitchTime"
         android:background="@color/colorPrimaryDark"
         android:onClick="bookPitch"
         android:text="Prenota"

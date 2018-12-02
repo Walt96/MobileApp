@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -87,9 +89,24 @@ public class CreateMatch extends AppCompatActivity {
         return this;
     }
 
+    // aggiunta tasto back nella barra
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.comeback,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //torniamo al menu se ha premuto su back
+        startActivity(new Intent(this,UserHome.class));
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         reference = FirebaseStorage.getInstance().getReference();
         manager = getIntent().getStringExtra("manager");
         setContentView(R.layout.activity_create_match);
@@ -284,7 +301,7 @@ public class CreateMatch extends AppCompatActivity {
             }
             availableTime.setAdapter(currentPitches.get(position).getAvailableTime());
             pitchPrice.setText("Price: "+ String.valueOf(currentPitches.get(position).getPrice()) + "€");
-            pitchAddress.setText(currentPitches.get(position).getAddress());
+            pitchAddress.setText("Address: "+currentPitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
             Uri imageUri = currentPitches.get(position).getUri();
             if(imageUri!=null) {
@@ -297,9 +314,9 @@ public class CreateMatch extends AppCompatActivity {
                         .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.email))
                         .into(pitchImage);
             }
-            pitchCover.setText("Covered");
+            pitchCover.setText("Covered: Yes");
             if(!currentPitches.get(position).isCovered())
-                pitchCover.setText("Not Covered");
+                pitchCover.setText("Covered: No");
 
             final Spinner time = convertView.findViewById(R.id.pitchTime);
 
@@ -327,10 +344,15 @@ public class CreateMatch extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You don't have internet connection, please check it!")
                     .setTitle("An error occurred");
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
                 }
             });
             builder.create().show();
@@ -346,7 +368,7 @@ public class CreateMatch extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Address: " + address + "\n" +
                         "Date: " + selectedDate + "\n" +
-                        "Time: " + time + " :00")
+                        "Time: " + time + ":00")
                         .setTitle("This will be your match:");
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
