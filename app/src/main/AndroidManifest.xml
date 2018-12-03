@@ -47,7 +47,10 @@
         <activity
             android:name=".ModifyPitch"
             android:label="@string/title_activity_modify_pitch"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".HandleMatches"
+            android:label="@string/title_activity_handle_matches"></activity>
     </application>
 
 </manifest>

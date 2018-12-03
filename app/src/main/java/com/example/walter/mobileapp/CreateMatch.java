@@ -377,10 +377,11 @@ public class CreateMatch extends AppCompatActivity {
                         progressDialog.setMessage("Booking your pitch...");
                         progressDialog.show();
                         DocumentReference ref = db.collection("booking").document(pitchId);
-                        HashMap<String, String> newBook = new HashMap<>();
+                        HashMap<String, Object> newBook = new HashMap<>();
                         newBook.put("date", selectedDate);
                         newBook.put("time", time);
                         newBook.put("manager", manager);
+                        newBook.put("registered",new ArrayList<>());
                         ref.update("prenotazioni", FieldValue.arrayUnion(newBook))
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

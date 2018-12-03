@@ -13,9 +13,9 @@
             android:icon="@drawable/ic_group_black_24dp"
             android:title="Join Match" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/my_matches"
+            android:icon="@drawable/list"
+            android:title="My matches" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
