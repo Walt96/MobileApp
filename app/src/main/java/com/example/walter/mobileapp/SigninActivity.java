@@ -35,6 +35,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -148,6 +149,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     user.put("password",passwordConfirm.getText().toString());
                                                     if(isUser) {
                                                         user.put("role", role);
+                                                        user.put("matches",new ArrayList<>());
                                                     }
                                                     user.put("player", isUser);
                                                     Log.e("", "Called");

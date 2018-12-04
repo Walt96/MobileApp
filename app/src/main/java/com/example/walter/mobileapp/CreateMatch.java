@@ -80,6 +80,7 @@ public class CreateMatch extends AppCompatActivity {
     boolean selectedCovered;
     String selectedCity="";
     String manager;
+    String role;
 
     int index = 0;
     String selectedDate;
@@ -109,6 +110,7 @@ public class CreateMatch extends AppCompatActivity {
 
         reference = FirebaseStorage.getInstance().getReference();
         manager = getIntent().getStringExtra("manager");
+        role = getIntent().getStringExtra("role");
         setContentView(R.layout.activity_create_match);
         dateView = findViewById(R.id.datePicker);
         covered = findViewById(R.id.covered);
@@ -381,7 +383,19 @@ public class CreateMatch extends AppCompatActivity {
                         newBook.put("date", selectedDate);
                         newBook.put("time", time);
                         newBook.put("manager", manager);
-                        newBook.put("registered",new ArrayList<>());
+                        ArrayList registered = new ArrayList();
+                        HashMap<String, Object> imregistered = new HashMap<>();
+                        imregistered.put("user",manager);
+                        imregistered.put("role",role);
+                        registered.add(imregistered);
+                        newBook.put("registered",registered);
+
+
+                        final HashMap<String,Object> saveMyMatch = new HashMap<>();
+                        saveMyMatch.put("date",selectedDate);
+                        saveMyMatch.put("time",time);
+                        saveMyMatch.put("manager",true);
+                        saveMyMatch.put("pitchcode",pitchId);
                         ref.update("prenotazioni", FieldValue.arrayUnion(newBook))
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -396,6 +410,13 @@ public class CreateMatch extends AppCompatActivity {
                                             }
                                         });
                                         mySnackbar.show();
+                                        db.collection("users").whereEqualTo("username",manager).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                String user_id = task.getResult().getDocuments().get(0).getId();
+                                                db.collection("users").document(user_id).update("matches",FieldValue.arrayUnion(saveMyMatch));
+                                            }
+                                        });
                                     }
                                 });
                     }
