@@ -1,6 +1,7 @@
 package com.example.walter.mobileapp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Match implements Serializable {
 
@@ -10,16 +11,65 @@ public class Match implements Serializable {
     private String time;
     private String manager;
     private boolean bookedByMe;
+    private ArrayList partecipants;
+    private ArrayList registered;
+    private String address;
+    private boolean isCovered;
 
     public Match(){}
 
-    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe){
+    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address){
         this.id = id;
         this.date = date;
         this.time = time;
         this.manager = manager;
         this.pitchCode = pitchCode;
         this.bookedByMe = bookedByMe;
+        this.partecipants = partecipants;
+        this.registered = registered;
+        this.isCovered = isCovered;
+        this.address = address;
+    }
+
+    public boolean isCovered() {
+        return isCovered;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public ArrayList getPartecipants() {
+        return partecipants;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCovered(boolean covered) {
+        isCovered = covered;
+    }
+
+    public void setPartecipants(ArrayList partecipants) {
+        this.partecipants = partecipants;
+    }
+
+
+    public void setPartecipant(ArrayList partecipant) {
+        this.partecipants = partecipant;
+    }
+
+    public ArrayList getPartecipant() {
+        return partecipants;
+    }
+
+    public void setRegistered(ArrayList registered) {
+        this.registered = registered;
+    }
+
+    public ArrayList getRegistered() {
+        return registered;
     }
 
     public void setBookedByMe(boolean bookedByMe) {
@@ -72,6 +122,6 @@ public class Match implements Serializable {
 
     @Override
     public boolean equals( Object obj) {
-        return ((Match)obj).getId()==id;
+        return ((Match)obj).getId().equals(id);
     }
 }

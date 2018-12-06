@@ -108,6 +108,7 @@ public class CreateMatch extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        customAdapter = new CustomAdapter(getApplicationContext());
 
         reference = FirebaseStorage.getInstance().getReference();
         manager = getIntent().getStringExtra("manager");
@@ -166,7 +167,12 @@ public class CreateMatch extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                selectedDate  = day + "/" + month + "/" + year;
+                String day_ = "0";
+                if(day > 10)
+                    day_=day+"/";
+                else
+                    day_+=day+"/";
+                selectedDate  = day_ + month + "/" + year;
                 initPitchAvailableTime();
                 dateView.setText(selectedDate);
             }
@@ -185,7 +191,6 @@ public class CreateMatch extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             ArrayList<String> items = new ArrayList<>();
-                            customAdapter = new CustomAdapter(getApplicationContext());
                             listView.setAdapter(customAdapter);
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -212,17 +217,16 @@ public class CreateMatch extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception exception) {
                                             }
                                         });
-                                addListenerForNewMatches();
 
                                 pitches.add(currentPitch);
-                                initPitchAvailableTime();
-
-
                             }
+                            addListenerForNewMatches();
+                            initPitchAvailableTime();
+
                             ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
                             chooseCity.setAdapter(adapter);
                             chooseCity.setSelection(0);
-                            updateWithConstraints();
+                            //updateWithConstraints();
 
 
                         } else {
@@ -240,14 +244,15 @@ public class CreateMatch extends AppCompatActivity {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     ArrayList notAvailable = new ArrayList();
                     for (DocumentSnapshot document : task.getResult()) {
+                        Log.e("trovati",document.toString());
                         if(document.get("date").toString().equals(selectedDate))
                             notAvailable.add(document.get("time").toString());
                     }
                     p.initWithoutThese(notAvailable);
                 }
             });
-
         }
+        updateWithConstraints();
     }
 
 
@@ -259,13 +264,16 @@ public class CreateMatch extends AppCompatActivity {
                 public void onEvent(@Nullable QuerySnapshot snapshot,
                                     @Nullable FirebaseFirestoreException e) {
                         for(DocumentSnapshot document : snapshot) {
+                            Log.e("datacercata",selectedDate);
                             String bookedDate = document.get("date").toString();
                             String bookedTime = document.get("time").toString();
                             String idBookedPitch = document.get("pitchcode").toString();
                             if(selectedDate.equals(bookedDate))
                                 for (Pitch p : currentPitches)
-                                    if (p.getId().equals(idBookedPitch))
+                                    if (p.getId().equals(idBookedPitch)) {
+                                        Log.e("rimuovo","tolgo il "+bookedTime);
                                         p.removeTime(Integer.valueOf(bookedTime));
+                                    }
                         }
 
                 }
@@ -368,7 +376,7 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(final String pitchId, final String time, String address){
+    public void bookPitch(final String pitchId, final String time, final String address){
         ConnectivityManager cm =
                 (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -421,6 +429,8 @@ public class CreateMatch extends AppCompatActivity {
                         saveMyMatch.put("time",time);
                         saveMyMatch.put("manager",manager);
                         saveMyMatch.put("pitchcode",pitchId);
+                        saveMyMatch.put("address",address);
+                        saveMyMatch.put("covered",selectedCovered);
 
                         HashMap myProfile = new HashMap();
                         myProfile.put("user",manager);
@@ -432,7 +442,7 @@ public class CreateMatch extends AppCompatActivity {
 
                         ArrayList myName = new ArrayList();
                         myName.add(manager);
-                        saveMyMatch.put("participants",myName);
+                        saveMyMatch.put("partecipants",myName);
 
                         db.collection("matches").document(matchCode)
                                .set(saveMyMatch)

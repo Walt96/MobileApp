@@ -60,7 +60,6 @@ public class HandleMatches extends AppCompatActivity {
         Intent intent = getIntent();
 
         handledMatch = (Match)intent.getSerializableExtra("match");
-        Log.e("address",handledMatch.getAddress());
     }
 
 }

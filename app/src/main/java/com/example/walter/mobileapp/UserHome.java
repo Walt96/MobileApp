@@ -129,9 +129,8 @@ public class UserHome extends AppCompatActivity
         } else if (id == R.id.nav_joinMatch) {
 
         } else if (id == R.id.my_matches) {
-            Intent intent = new Intent(this, HandleMatches.class);
-            Match match = new Match("a","b","c",true,"e","6");
-            intent.putExtra("match",match);
+            Intent intent = new Intent(this, MyMatchesList.class);
+            intent.putExtra("username",username);
             startActivity(intent);
 
         } else if (id == R.id.nav_manage) {

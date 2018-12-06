@@ -12,11 +12,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -34,11 +36,15 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MyMatchesList extends AppCompatActivity {
 
     ArrayList<Match> matches;
     String username;
+    CustomAdapter adapter;
+    Lock lockMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +54,42 @@ public class MyMatchesList extends AppCompatActivity {
         username = getIntent().getStringExtra("username");
         final ListView listView = findViewById(R.id.matchlist);
         loadMatch();
-        listView.setAdapter(new CustomAdapter(getApplicationContext()));
+        listView.setAdapter(adapter=new CustomAdapter(getApplicationContext()));
+        lockMatch = new ReentrantLock();
     }
 
     private void loadMatch() {
         StaticInstance.getInstance().collection("matches").whereEqualTo("manager",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult())
-                    matches.add(new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),true));
-            }
-        });
-
-        StaticInstance.getInstance().collection("matches").whereArrayContains("participants",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()){
-                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),false);
-                    if(!matches.contains(toAdd))
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    lockMatch.lock();
+                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(), true, (ArrayList) document.get("partecipants"), (ArrayList) document.get("registered"), (boolean) document.get("covered"), document.get("address").toString());
+                    if(!matches.contains(toAdd)) {
                         matches.add(toAdd);
+                        adapter.notifyDataSetChanged();
+                    }
+                    lockMatch.unlock();
+
                 }
             }
         });
+
+        StaticInstance.getInstance().collection("matches").whereArrayContains("partecipants",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()){
+                    lockMatch.lock();
+                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),false,(ArrayList)document.get("partecipants"),(ArrayList)document.get("registered"),(boolean)document.get("covered"),document.get("address").toString());
+                    if(!matches.contains(toAdd)) {
+                        matches.add(toAdd);
+                        adapter.notifyDataSetChanged();
+                    }
+                    lockMatch.unlock();
+                }
+            }
+        });
+        Log.e("numero",String.valueOf(matches.size()));
 
     }
 
@@ -107,34 +127,41 @@ public class MyMatchesList extends AppCompatActivity {
             TextView matchTime = convertView.findViewById(R.id.time);
             TextView matchManager = convertView.findViewById(R.id.bookedby);
 
-            Match currentMatch = matches.get(position);
-            matchDate.setText("Date: "+ String.valueOf(currentMatch.getDate()));
-            matchTime.setText("Time: "+ currentMatch.getTime());
-            matchManager.setText("Booked by:"+ currentMatch.getManager());
+            final Match currentMatch = matches.get(position);
+            matchDate.setText("Date:   " + String.valueOf(currentMatch.getDate()));
 
-            Button search = convertView.findViewById(R.id.search);
+            matchTime.setText("Time:   " + currentMatch.getTime());
+            matchManager.setText("Booked by:   " + currentMatch.getManager());
+
+            ImageButton search = convertView.findViewById(R.id.search);
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //search
+                    Intent intent = new Intent(getApplicationContext(),HandleMatches.class);
+                    intent.putExtra("match",currentMatch);
+                    startActivity(intent);
                 }
             });
 
-            Button delete = convertView.findViewById(R.id.delete);
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //delete
-                }
-            });
-
-            Button confirm = convertView.findViewById(R.id.confirm);
+            ImageButton confirm = convertView.findViewById(R.id.confirm);
             confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //confirm match
                 }
             });
+
+            ImageButton delete = convertView.findViewById(R.id.delete);
+            if (currentMatch.isBookedByMe()){
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //delete
+                    }
+                });
+            }else {
+                delete.setClickable(false);
+            }
             return convertView;
 
         }

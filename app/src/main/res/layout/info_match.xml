@@ -141,7 +141,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/registered"
+                android:id="@+id/registered_"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"

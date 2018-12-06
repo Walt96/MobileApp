@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +23,13 @@ public class InfoMatch extends Fragment {
                              Bundle savedInstanceState) {
         fragmentView =  inflater.inflate(R.layout.info_match, container, false);
         Match handledMatch = (Match) getArguments().get("match");
-        ((TextView)(fragmentView.findViewById(R.id.address))).setText(handledMatch.getAddress());
         ((TextView)(fragmentView.findViewById(R.id.date))).setText(handledMatch.getDate());
         ((TextView)(fragmentView.findViewById(R.id.time))).setText(handledMatch.getTime());
-        ((TextView)(fragmentView.findViewById(R.id.covered))).setText(String.valueOf(handledMatch.isCovered()));
         ((TextView)(fragmentView.findViewById(R.id.bookingby))).setText(handledMatch.getManager());
-        ((TextView)(fragmentView.findViewById(R.id.registered))).setText(handledMatch.getHowManyRegistered()+ "/10");
+        ((TextView)(fragmentView.findViewById(R.id.registered_))).setText(String.valueOf(handledMatch.getRegistered().size()));
+        ((TextView)(fragmentView.findViewById(R.id.address))).setText(String.valueOf(handledMatch.getAddress()));
+        ((TextView)(fragmentView.findViewById(R.id.covered))).setText(String.valueOf(handledMatch.isCovered()));
+
         return fragmentView;
     }
 
