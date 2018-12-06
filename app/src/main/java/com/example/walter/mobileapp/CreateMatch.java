@@ -84,6 +84,7 @@ public class CreateMatch extends AppCompatActivity {
 
     int index = 0;
     String selectedDate;
+    ListenerRegistration listener;
 
 
     private Context getActivity() {
@@ -166,11 +167,8 @@ public class CreateMatch extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
                 selectedDate  = day + "/" + month + "/" + year;
+                initPitchAvailableTime();
                 dateView.setText(selectedDate);
-                for(Pitch p : currentPitches){
-                    p.removeListener();
-                    p.setListener(selectedDate);
-                }
             }
 
         };
@@ -214,8 +212,11 @@ public class CreateMatch extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception exception) {
                                             }
                                         });
-                                currentPitch.setListener(dateFormat.format(new Date()));
+                                addListenerForNewMatches();
+
                                 pitches.add(currentPitch);
+                                initPitchAvailableTime();
+
 
                             }
                             ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
@@ -232,19 +233,52 @@ public class CreateMatch extends AppCompatActivity {
 
     }
 
+    private void initPitchAvailableTime() {
+        for(final Pitch p : pitches){
+            db.collection("matches").whereEqualTo("pitchcode",p.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    ArrayList notAvailable = new ArrayList();
+                    for (DocumentSnapshot document : task.getResult()) {
+                        if(document.get("date").toString().equals(selectedDate))
+                            notAvailable.add(document.get("time").toString());
+                    }
+                    p.initWithoutThese(notAvailable);
+                }
+            });
+
+        }
+    }
+
+
+    private void addListenerForNewMatches() {
+            if(listener != null)
+                listener.remove();
+            listener = StaticInstance.db.collection("matches").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot snapshot,
+                                    @Nullable FirebaseFirestoreException e) {
+                        for(DocumentSnapshot document : snapshot) {
+                            String bookedDate = document.get("date").toString();
+                            String bookedTime = document.get("time").toString();
+                            String idBookedPitch = document.get("pitchcode").toString();
+                            if(selectedDate.equals(bookedDate))
+                                for (Pitch p : currentPitches)
+                                    if (p.getId().equals(idBookedPitch))
+                                        p.removeTime(Integer.valueOf(bookedTime));
+                        }
+
+                }
+            });
+
+    }
+
     public void updateWithConstraints() {
 
         ArrayList<Pitch> newPitches = new ArrayList<>();
         for (Pitch _pitch : pitches)
-            if ((_pitch.getCity().equals(selectedCity) || selectedCity.equals("")) && (_pitch.isCovered() == selectedCovered)) {
+            if ((_pitch.getCity().equals(selectedCity) || selectedCity.equals("")) && (_pitch.isCovered() == selectedCovered))
                 newPitches.add(_pitch);
-                if(!currentPitches.contains(_pitch))
-                    _pitch.setListener(selectedDate);
-            }
-            else if(currentPitches.contains(_pitch)) {
-                //implementare == altrimenti inutile
-                _pitch.removeListener();
-            }
         currentPitches = newPitches;
         customAdapter.notifyDataSetChanged();
 
@@ -378,25 +412,30 @@ public class CreateMatch extends AppCompatActivity {
                         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setMessage("Booking your pitch...");
                         progressDialog.show();
-                        DocumentReference ref = db.collection("booking").document(pitchId);
-                        HashMap<String, Object> newBook = new HashMap<>();
-                        newBook.put("date", selectedDate);
-                        newBook.put("time", time);
-                        newBook.put("manager", manager);
-                        ArrayList registered = new ArrayList();
-                        HashMap<String, Object> imregistered = new HashMap<>();
-                        imregistered.put("user",manager);
-                        imregistered.put("role",role);
-                        registered.add(imregistered);
-                        newBook.put("registered",registered);
 
+                        String matchCode = String.valueOf(new Date().getTime())+manager;
 
+                        //aggiungo la nuova partita alla collezione matches nel documento data corrente + manager in modo da renderlo univoco con la concorrenza
                         final HashMap<String,Object> saveMyMatch = new HashMap<>();
                         saveMyMatch.put("date",selectedDate);
                         saveMyMatch.put("time",time);
-                        saveMyMatch.put("manager",true);
+                        saveMyMatch.put("manager",manager);
                         saveMyMatch.put("pitchcode",pitchId);
-                        ref.update("prenotazioni", FieldValue.arrayUnion(newBook))
+
+                        HashMap myProfile = new HashMap();
+                        myProfile.put("user",manager);
+                        myProfile.put("role",role);
+                        myProfile.put("team","A");
+                        ArrayList firstRegistered = new ArrayList();
+                        firstRegistered.add(myProfile);
+                        saveMyMatch.put("registered", firstRegistered);
+
+                        ArrayList myName = new ArrayList();
+                        myName.add(manager);
+                        saveMyMatch.put("participants",myName);
+
+                        db.collection("matches").document(matchCode)
+                               .set(saveMyMatch)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -410,13 +449,6 @@ public class CreateMatch extends AppCompatActivity {
                                             }
                                         });
                                         mySnackbar.show();
-                                        db.collection("users").whereEqualTo("username",manager).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                String user_id = task.getResult().getDocuments().get(0).getId();
-                                                db.collection("users").document(user_id).update("matches",FieldValue.arrayUnion(saveMyMatch));
-                                            }
-                                        });
                                     }
                                 });
                     }

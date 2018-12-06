@@ -147,17 +147,16 @@ public class SigninActivity extends AppCompatActivity {
                                                     Map<String,Object> user = new HashMap<>();
                                                     user.put("username",usernameEdit.getText().toString());
                                                     user.put("password",passwordConfirm.getText().toString());
-                                                    if(isUser) {
+                                                    if(isUser)
                                                         user.put("role", role);
-                                                        user.put("matches",new ArrayList<>());
-                                                    }
+
                                                     user.put("player", isUser);
                                                     Log.e("", "Called");
-                                                    db.collection("users")
-                                                            .add(user)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    db.collection("users").document(user.get("username").toString())
+                                                            .set(user)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
-                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                public void onSuccess(Void documentReference) {
                                                                     AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
                                                                     builder_.setMessage("Your account was created successfully");
                                                                     builder_.create().show();

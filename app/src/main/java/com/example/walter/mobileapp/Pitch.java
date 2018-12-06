@@ -23,7 +23,6 @@ public class Pitch {
     ArrayAdapter availableTime;
     String[] time;
     String city;
-    ListenerRegistration listener;
 
     public Pitch(String address,double price,boolean covered, String city){
         this.address=address;
@@ -51,43 +50,18 @@ public class Pitch {
         availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
     }
 
-    public void setListener(final String selectedDate ) {
-        Log.e("listener","aggiungo");
-         listener = StaticInstance.db.collection("booking").document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if(snapshot.get("prenotazioni") != null){
-                    ArrayList<String> nonDisponibili = new ArrayList<>();
-                    ArrayList<HashMap<String,Object>> prenotazioni = (ArrayList<HashMap<String,Object>>)snapshot.get("prenotazioni");
-                    for(HashMap<String,Object> prenotazione:prenotazioni){
-                        if(selectedDate.equals(prenotazione.get("date")))
-                            nonDisponibili.add(prenotazione.get("time").toString());
-
-                    }
-                    initWithoutThese(nonDisponibili);
-                }
-            }
-        });
-    }
-
-    public void removeListener(){
-        Log.e("listener","rimuovo");
-
-        listener.remove();
-    }
 
     public ArrayAdapter getAvailableTime() {
         return availableTime;
     }
 
     public void removeTime(int remove_time){
-        time[remove_time] = "OCCUPATO";
+        time[remove_time-8] = "OCCUPATO";
         availableTime.notifyDataSetChanged();
     }
 
     public void addTime(int add_time){
-        time[add_time] = String.valueOf(add_time+8)+":00";
+        time[add_time-8] = String.valueOf(add_time+8)+":00";
         availableTime.notifyDataSetChanged();
     }
 

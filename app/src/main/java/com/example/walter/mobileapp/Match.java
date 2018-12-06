@@ -4,35 +4,38 @@ import java.io.Serializable;
 
 public class Match implements Serializable {
 
+    private  String pitchCode;
+    private String id;
     private String date;
     private String time;
-    private String address;
-    private boolean covered;
     private String manager;
-    private String howManyRegistered;
+    private boolean bookedByMe;
 
     public Match(){}
 
-    public Match(String date, String time, String address, boolean isCovered, String manager, String howManyRegistered){
+    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe){
+        this.id = id;
         this.date = date;
         this.time = time;
-        this.address = address;
-        covered = isCovered;
         this.manager = manager;
+        this.pitchCode = pitchCode;
+        this.bookedByMe = bookedByMe;
     }
 
-    public Match(Match newMatch){
-        date = newMatch.date;
-        time = newMatch.time;
-        address = newMatch.address;
-        covered = newMatch.covered;
-        manager = newMatch.manager;
-        howManyRegistered = newMatch.howManyRegistered;
+    public void setBookedByMe(boolean bookedByMe) {
+        this.bookedByMe = bookedByMe;
     }
 
+    public boolean isBookedByMe() {
+        return bookedByMe;
+    }
 
-    public String getAddress() {
-        return address;
+    public String getId() {
+        return id;
+    }
+
+    public String getPitchCode() {
+        return pitchCode;
     }
 
     public String getDate() {
@@ -51,12 +54,12 @@ public class Match implements Serializable {
         this.date = date;
     }
 
-    public void setCovered(boolean covered) {
-        this.covered = covered;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setPitchCode(String pitchCode) {
+        this.pitchCode = pitchCode;
     }
 
     public void setManager(String manager) {
@@ -67,16 +70,8 @@ public class Match implements Serializable {
         this.time = time;
     }
 
-    public void setHowManyRegistered(String howManyRegistered) {
-        this.howManyRegistered = howManyRegistered;
+    @Override
+    public boolean equals( Object obj) {
+        return ((Match)obj).getId()==id;
     }
-
-    public String getHowManyRegistered() {
-        return howManyRegistered;
-    }
-
-    public boolean isCovered() {
-        return covered;
-    }
-
 }

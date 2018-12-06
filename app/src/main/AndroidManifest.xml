@@ -50,7 +50,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HandleMatches"
-            android:label="@string/title_activity_handle_matches"></activity>
+            android:label="@string/title_activity_handle_matches" />
+        <activity android:name=".MyMatchesList"></activity>
     </application>
 
 </manifest>

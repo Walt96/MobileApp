@@ -133,13 +133,6 @@ public class CreatePitch extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     });
-            HashMap<String,Object> newValue = new HashMap<>();
-            newValue.put("prenotazioni",new ArrayList());
-            newValue.put("price",price);
-            newValue.put("address",address+", "+city);
-            newValue.put("covered",isCovered);
-            newValue.put("owner",username);
-            db.collection("booking").document(code).set(newValue);
         }
 
     }
