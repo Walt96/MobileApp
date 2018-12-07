@@ -51,7 +51,7 @@ public class MyMatchesList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_matches_list);
         matches = new ArrayList<>();
-        username = getIntent().getStringExtra("username");
+        username = StaticInstance.username;
         final ListView listView = findViewById(R.id.matchlist);
         loadMatch();
         listView.setAdapter(adapter=new CustomAdapter(getApplicationContext()));

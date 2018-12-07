@@ -68,11 +68,11 @@ public class UserHome extends AppCompatActivity
 
         View view_login = navigationView.getHeaderView(0);
         TextView userName = view_login.findViewById(R.id.userName);
-        username = getIntent().getStringExtra("username");
+        username =StaticInstance.username;
         userName.setText("Name: "+username);
 
         TextView userRole = view_login.findViewById(R.id.userRole);
-        role = getIntent().getStringExtra("role");
+        role =StaticInstance.role;
         userRole.setText("Role: "+role);
 
     }
@@ -123,8 +123,6 @@ public class UserHome extends AppCompatActivity
 
         if (id == R.id.nav_createMatch) {
             Intent intent = new Intent(this, CreateMatch.class);
-            intent.putExtra("manager",username);
-            intent.putExtra("role",role);
             startActivity(intent);
         } else if (id == R.id.nav_joinMatch) {
 

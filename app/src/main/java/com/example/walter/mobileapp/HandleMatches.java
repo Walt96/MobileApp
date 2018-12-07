@@ -58,8 +58,9 @@ public class HandleMatches extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Intent intent = getIntent();
-
         handledMatch = (Match)intent.getSerializableExtra("match");
+        navigation.setSelectedItemId(R.id.info);
+
     }
 
 }

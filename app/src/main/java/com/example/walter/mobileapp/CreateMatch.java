@@ -111,8 +111,8 @@ public class CreateMatch extends AppCompatActivity {
         customAdapter = new CustomAdapter(getApplicationContext());
 
         reference = FirebaseStorage.getInstance().getReference();
-        manager = getIntent().getStringExtra("manager");
-        role = getIntent().getStringExtra("role");
+        manager = StaticInstance.username;
+        role = StaticInstance.role;
         setContentView(R.layout.activity_create_match);
         dateView = findViewById(R.id.datePicker);
         covered = findViewById(R.id.covered);

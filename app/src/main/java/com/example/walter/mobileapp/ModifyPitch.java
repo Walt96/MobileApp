@@ -65,7 +65,7 @@ public class ModifyPitch extends AppCompatActivity {
 
         setContentView(R.layout.activity_modify_pitch);
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        username = getIntent().getStringExtra("username");
+        username = StaticInstance.username;
         addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
         priceEditText = findViewById(R.id.price);

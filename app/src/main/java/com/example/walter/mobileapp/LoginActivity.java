@@ -109,12 +109,12 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent;
         if(isAPlayer) {
             intent = new Intent(this, UserHome.class);
-            intent.putExtra("role", role);
         }
         else{
             intent = new Intent(this,OwnerHome.class);
         }
-        intent.putExtra("username",user);
+        StaticInstance.username = user;
+        StaticInstance.role = role;
         startActivity(intent);
     }
 

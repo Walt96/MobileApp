@@ -54,7 +54,7 @@ public class CreatePitch extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pitch);
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        username = getIntent().getStringExtra("username");
+        username = StaticInstance.username;
         addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
         priceEditText = findViewById(R.id.price);

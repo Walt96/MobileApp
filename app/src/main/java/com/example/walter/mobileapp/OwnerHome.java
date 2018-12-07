@@ -49,9 +49,8 @@ public class OwnerHome extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //prendo il valore passato dall'intent
-        Intent generatingIntent = getIntent();
-        username =  generatingIntent.getStringExtra("username");
+
+        username =  StaticInstance.username;
     }
 
     @Override
@@ -100,7 +99,6 @@ public class OwnerHome extends AppCompatActivity
 
         if (id == R.id.create_pitch) {
             Intent intent = new Intent(this,CreatePitch.class);
-            intent.putExtra("username",username);
             startActivity(intent);
             // Handle the camera action
         } else if (id == R.id.show_pitches) {

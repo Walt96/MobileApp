@@ -10,6 +10,8 @@ public class StaticInstance {
     static FirebaseFirestore db = FirebaseFirestore.getInstance();
     static Context currentActivity;
     static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    static String username;
+    static String role;
 
 
 
