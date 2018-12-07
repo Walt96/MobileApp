@@ -159,6 +159,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="75dp"
         android:layout_marginBottom="77dp"
+        android:onClick="fillFields"
         android:text="Fill" />
 
 </RelativeLayout>

@@ -1,6 +1,9 @@
 package com.example.walter.mobileapp;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +28,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 
 public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
 
@@ -41,7 +48,7 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
     private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
     private Location mLastKnownLocation;
 
-   // Button btn;
+    private LatLng actualPoint;
 
     public AddressMap() {}
 
@@ -67,9 +74,24 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
     }
 
+    //TODO Gestire mLastKnownLocation
     public void getCurrentLocation(View v) {
-        Log.e( "",mLastKnownLocation.getLongitude() + " - " + mLastKnownLocation.getLatitude());
 
+        Intent data = new Intent();
+        Double longitude;
+        Double latitude;
+        if(actualPoint != null) {
+            longitude = actualPoint.longitude;
+            latitude = actualPoint.latitude;
+        } else {
+            longitude = mLastKnownLocation.getLongitude();
+            latitude = mLastKnownLocation.getLatitude();
+        }
+
+        data.putExtra("longitude",longitude);
+        data.putExtra("latitude",latitude);
+        setResult(RESULT_OK,data);
+        finish();
     }
 
     private void getLocationPermission() {
@@ -118,6 +140,15 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                actualPoint = point;
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(point));
+            }
+        });
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();

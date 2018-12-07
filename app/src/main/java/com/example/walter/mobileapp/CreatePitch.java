@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -29,9 +31,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CreatePitch extends AppCompatActivity {
@@ -45,6 +50,7 @@ public class CreatePitch extends AppCompatActivity {
     ProgressDialog progressDialog;
     String username;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_ADDRESS_INFO = 3;
     String path;
     StorageReference mStorageRef;
     Bitmap photo;
@@ -139,12 +145,14 @@ public class CreatePitch extends AppCompatActivity {
 
     public void takePhoto(View v){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, REQUEST_ADDRESS_INFO);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("Request Code", requestCode+"");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.e("TAG","REQUEST_IMAGE_CAPTURE");
             Bundle extras = data.getExtras();
             photo = (Bitmap) extras.get("data");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -157,7 +165,29 @@ public class CreatePitch extends AppCompatActivity {
             }else{
                 setPathPhoto();
             }
+        } else if(requestCode == REQUEST_ADDRESS_INFO && resultCode == RESULT_OK) {
+            try {
+                Double longitude = data.getDoubleExtra("longitude",0);
+                Double latitude = data.getDoubleExtra("latitude", 0);
+                Address add = getAddress(latitude, longitude);
+                String address = add.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                String city = add.getLocality();
+                addressEditText.setText(address);
+                cityEditText.setText(city);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private Address getAddress(Double latitude, Double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        return addresses.get(0);
     }
 
     public void setPathPhoto(){
@@ -179,4 +209,11 @@ public class CreatePitch extends AppCompatActivity {
     private Context getActivity() {
         return this;
     }
+
+    public void fillFields(View w) {
+        Intent pickContactIntent = new Intent(this, AddressMap.class);
+        startActivityForResult(pickContactIntent, REQUEST_ADDRESS_INFO);
+    }
+
+
 }
