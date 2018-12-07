@@ -106,8 +106,9 @@ public class OwnerHome extends AppCompatActivity
         } else if (id == R.id.show_pitches) {
             Intent intent = new Intent(this, OwnerPitches.class);
             startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_map) {
+            Intent intent = new Intent(this, AddressMap.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
