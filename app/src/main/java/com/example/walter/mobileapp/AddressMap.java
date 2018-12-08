@@ -57,7 +57,7 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_map);
 
-       // btn = findViewById(R.id.locationBtn);
+       // btn = findViewById(R.id.locationBtn)
 
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this);
