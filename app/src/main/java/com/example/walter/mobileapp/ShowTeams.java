@@ -83,11 +83,11 @@ public class ShowTeams extends Fragment {
             }
             if (players_query.get(i).get("team").equals("A")) {
                 Log.e("in posizione"+(position*5+num[position*2]),"metto "+name+role);
-                eventually[position*5 + num[position * 2]] = name + "(" + role.charAt(0) + ")";
+                eventually[position*5 + num[position * 2]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2]++;
             } else {
                 Log.e("in posizione"+(position*5+num[position*2]),"metto "+name+role);
-                eventually[20 + position*5 + num[position * 2 + 1]] = name + "(" + role.charAt(0) + ")";
+                eventually[20 + position*5 + num[position * 2 + 1]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2 + 1]++;
             }
         }
@@ -105,7 +105,6 @@ public class ShowTeams extends Fragment {
         players[9] = eventually[35];
 
     }
-
 
 
     public class MyClickListener implements View.OnClickListener{

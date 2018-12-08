@@ -24,122 +24,123 @@
     <RelativeLayout
         android:id="@+id/pitch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="500dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="3dp"
         android:layout_marginTop="37dp"
+        android:layout_marginEnd="3dp"
         android:background="@drawable/sfondoteam">
 
         <Button
             android:id="@+id/a1"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="424dp"
-            android:layout_marginEnd="159dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="145dp"
+            android:layout_marginBottom="18dp"
             android:background="@color/design_default_color_primary_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a2"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="370dp"
-            android:layout_marginEnd="159dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="145dp"
+            android:layout_marginBottom="72dp"
             android:background="@color/design_default_color_primary_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a3"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="291dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="23dp"
+            android:layout_marginBottom="151dp"
             android:background="@color/design_default_color_primary_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a4"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="290dp"
-            android:layout_marginEnd="277dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="270dp"
+            android:layout_marginBottom="152dp"
             android:background="@color/design_default_color_primary_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a5"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="244dp"
-            android:layout_marginEnd="155dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="145dp"
+            android:layout_marginBottom="182dp"
             android:background="@color/design_default_color_primary_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a10"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="195dp"
-            android:layout_marginEnd="158dp"
+            android:layout_marginTop="180dp"
+            android:layout_marginEnd="145dp"
             android:background="@android:color/holo_red_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a9"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="132dp"
-            android:layout_marginEnd="278dp"
+            android:layout_marginEnd="270dp"
             android:background="@android:color/holo_red_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a8"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="133dp"
             android:layout_marginEnd="23dp"
             android:background="@android:color/holo_red_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a7"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="71dp"
-            android:layout_marginEnd="158dp"
+            android:layout_marginEnd="145dp"
             android:background="@android:color/holo_red_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
         <Button
             android:id="@+id/a6"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="158dp"
+            android:layout_marginEnd="145dp"
             android:background="@android:color/holo_red_dark"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
     </RelativeLayout>
 

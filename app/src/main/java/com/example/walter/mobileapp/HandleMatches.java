@@ -34,6 +34,8 @@ public class HandleMatches extends AppCompatActivity {
                     replaceFragment(new ShowTeams());
                     return true;
                 case R.id.addplayer:
+                    bundle.putSerializable("match",handledMatch);
+                    replaceFragment(new AddPartecipant()  );
                     return true;
             }
             return false;
