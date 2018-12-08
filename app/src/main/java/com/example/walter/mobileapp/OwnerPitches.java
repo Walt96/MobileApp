@@ -79,7 +79,7 @@ public class OwnerPitches extends AppCompatActivity {
                                 String address= document.get("address").toString() + " , " + city;
                                 boolean covered=(boolean)document.get("covered");
                                 double price = (double) (document.get("price"));
-                                final Pitch currentPitch = new Pitch(id, address,price,covered,city);
+                                final Pitch currentPitch = new Pitch(id, address,price,covered,city,document.get("owner").toString());
                                 Log.e("cerco in ","pitch/"+document.get("code"));
 
                                 mStorageRef.child("pitch/" + document.get("owner")+document.get("code")).getDownloadUrl()

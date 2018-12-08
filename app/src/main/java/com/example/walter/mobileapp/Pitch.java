@@ -23,6 +23,7 @@ public class Pitch {
     ArrayAdapter availableTime;
     String[] time;
     String city;
+    String owner;
 
     public Pitch(String address,double price,boolean covered, String city){
         this.address=address;
@@ -37,17 +38,22 @@ public class Pitch {
 
     }
 
-    public Pitch(String id, String address,double price,boolean covered, String city){
+    public Pitch(String id, String address,double price,boolean covered, String city, String owner){
         this.city = city;
         this.id = id;
         this.address=address;
         this.price=price;
+        this.owner = owner;
         this.covered=covered;
         uri = null;
         time = new String[15];
         for(int i = 8;i<23;i++)
             time[i-8]=String.valueOf(i)+":00";
         availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+    }
+
+    public String getOwner() {
+        return owner;
     }
 
 

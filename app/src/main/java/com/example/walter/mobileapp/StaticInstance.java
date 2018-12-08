@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class StaticInstance {
 
@@ -12,6 +14,8 @@ public class StaticInstance {
     static FirebaseDatabase database = FirebaseDatabase.getInstance();
     static String username;
     static String role;
+    static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
 
 
 
