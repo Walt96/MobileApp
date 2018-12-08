@@ -70,8 +70,8 @@ public class CreateMatch extends AppCompatActivity {
     Spinner chooseCity;
     Switch covered;
     DatePickerDialog.OnDateSetListener mDateSetListener;
-    FirebaseFirestore db = StaticInstance.getInstance();
-    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    FirebaseFirestore db = StaticInstance.db;
+    StorageReference mStorageRef = StaticInstance.mStorageRef;
     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     StorageReference reference;
     CustomAdapter customAdapter;
@@ -201,7 +201,8 @@ public class CreateMatch extends AppCompatActivity {
                                 String address = document.get("address").toString() + " , " + city;
                                 boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
-                                final Pitch currentPitch = new Pitch(document.get("code").toString(),address, price, covered, city);
+                                String owner = document.get("owner").toString();
+                                final Pitch currentPitch = new Pitch(document.get("code").toString(),address, price, covered, city,owner);
 
                                 mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -368,7 +369,7 @@ public class CreateMatch extends AppCompatActivity {
             book.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0],currentPitches.get(position).getAddress());
+                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0],currentPitches.get(position).getAddress(),currentPitches.get(position).getOwner());
                 }
             });
             return convertView;
@@ -376,7 +377,7 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(final String pitchId, final String time, final String address){
+    public void bookPitch(final String pitchId, final String time, final String address, final String owner){
         ConnectivityManager cm =
                 (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -431,6 +432,7 @@ public class CreateMatch extends AppCompatActivity {
                         saveMyMatch.put("pitchcode",pitchId);
                         saveMyMatch.put("address",address);
                         saveMyMatch.put("covered",selectedCovered);
+                        saveMyMatch.put("pitchmanager",owner);
 
                         HashMap myProfile = new HashMap();
                         myProfile.put("user",manager);

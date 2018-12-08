@@ -150,7 +150,7 @@
     </TableLayout>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/pitchImage"
         android:layout_width="363dp"
         android:layout_height="250dp"
         android:layout_marginStart="8dp"

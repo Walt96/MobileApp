@@ -30,6 +30,8 @@ public class HandleMatches extends AppCompatActivity {
                     replaceFragment(new InfoMatch());
                     return true;
                 case R.id.teams:
+                    bundle.putSerializable("match", handledMatch);
+                    replaceFragment(new ShowTeams());
                     return true;
                 case R.id.addplayer:
                     return true;

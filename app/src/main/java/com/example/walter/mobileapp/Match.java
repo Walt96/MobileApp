@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Match implements Serializable {
 
     private  String pitchCode;
+    private String pitchOwner;
     private String id;
     private String date;
     private String time;
@@ -18,7 +19,7 @@ public class Match implements Serializable {
 
     public Match(){}
 
-    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address){
+    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address, String pitchOwner){
         this.id = id;
         this.date = date;
         this.time = time;
@@ -29,6 +30,15 @@ public class Match implements Serializable {
         this.registered = registered;
         this.isCovered = isCovered;
         this.address = address;
+        this.pitchOwner = pitchOwner;
+    }
+
+    public String getPitchOwner() {
+        return pitchOwner;
+    }
+
+    public void setPitchOwner(String pitchOwner) {
+        this.pitchOwner = pitchOwner;
     }
 
     public boolean isCovered() {
@@ -55,14 +65,6 @@ public class Match implements Serializable {
         this.partecipants = partecipants;
     }
 
-
-    public void setPartecipant(ArrayList partecipant) {
-        this.partecipants = partecipant;
-    }
-
-    public ArrayList getPartecipant() {
-        return partecipants;
-    }
 
     public void setRegistered(ArrayList registered) {
         this.registered = registered;
