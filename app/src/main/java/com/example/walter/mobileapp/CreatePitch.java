@@ -76,10 +76,11 @@ public class CreatePitch extends AppCompatActivity {
         boolean isCovered = coveredPitch.isChecked();
         boolean validField = true;
 
-        if (!address.matches("((via)|(piazza)|(contrada)|(corso)).*n(\\d)+")) {
+        /*if (!address.matches("((via)|(piazza)|(contrada)|(corso)).*n(\\d)+")) {
             addressEditText.setError("Please check your address: it's not valid");
             validField = false;
         }
+        */
         if (city.isEmpty()) {
             cityEditText.setError("Please insert a city");
             validField = false;
@@ -145,7 +146,7 @@ public class CreatePitch extends AppCompatActivity {
 
     public void takePhoto(View v){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, REQUEST_ADDRESS_INFO);
+        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override

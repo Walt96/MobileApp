@@ -32,8 +32,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- Google Maps -->
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,8 +67,7 @@
         <activity
             android:name=".HandleMatches"
             android:label="@string/title_activity_handle_matches" />
-        <activity
-            android:name=".MyMatchesList"/>
+        <activity android:name=".MyMatchesList" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -79,7 +82,9 @@
 
         <activity
             android:name=".AddressMap"
-            android:label="@string/title_activity_address_map"></activity>
+            android:label="@string/title_activity_address_map" />
+        <activity android:name=".HandleNotify" />
+        <activity android:name=".YesNotify"></activity>
     </application>
 
 </manifest>

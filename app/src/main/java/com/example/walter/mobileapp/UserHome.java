@@ -2,11 +2,14 @@ package com.example.walter.mobileapp;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -27,7 +30,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -67,7 +73,7 @@ public class UserHome extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View view_login = navigationView.getHeaderView(0);
-        TextView userName = view_login.findViewById(R.id.userName);
+        final TextView userName = view_login.findViewById(R.id.userName);
         username =StaticInstance.username;
         userName.setText("Name: "+username);
 
@@ -75,6 +81,67 @@ public class UserHome extends AppCompatActivity
         role =StaticInstance.role;
         userRole.setText("Role: "+role);
 
+        StaticInstance.db.collection("invite").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                Log.e("ce stato un","");
+                for(DocumentSnapshot document : snapshot) {
+                    Log.e("ecco",username+" "+document.get("invited").toString());
+                    if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
+                        Log.e("mando notifica,","df");
+                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
+                        StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
+                    }
+                }
+
+            }
+        });
+
+    }
+
+    private void sendNotify(String date, String time, String manager, String address, String match, String documentId, String team, String role) {
+        Intent yesIntent = new Intent(this,YesNotify.class);
+        yesIntent.putExtra("match",match);
+        yesIntent.putExtra("accept",true);
+        yesIntent.putExtra("document",documentId);
+        yesIntent.putExtra("username",username);
+        yesIntent.putExtra("team",team);
+        yesIntent.putExtra("role",role);
+
+
+
+        yesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent yesPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
+
+        Intent noIntent = new Intent(this,YesNotify.class);
+        noIntent.putExtra("match",match);
+        noIntent.putExtra("accept",false);
+        noIntent.putExtra("document",documentId);
+        noIntent.putExtra("username",username);
+
+
+        noIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent noPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "YOUR_CHANNEL_NAME",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setContentTitle("You received a new invitation:") // title for notification
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(manager+" invited you for the match that will be played in "+address+ " in "+date+" at "+time+":00"))
+                .setAutoCancel(true)
+                .addAction(R.drawable.addplayer,"Accept",yesPendingIntent)
+                .addAction(R.drawable.addplayer,"Decline",noPendingIntent);
+        mNotificationManager.notify(0, mBuilder.build());
     }
 
     @Override
@@ -154,6 +221,14 @@ public class UserHome extends AppCompatActivity
     }
 
     public void notifica(View view){
+        Intent yesIntent = new Intent(this,YesNotify.class);
+        yesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent yesPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
+
+        Intent noIntent = new Intent(this,YesNotify.class);
+        noIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent noPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -167,7 +242,10 @@ public class UserHome extends AppCompatActivity
                 .setSmallIcon(R.mipmap.ic_launcher) // notification icon
                 .setContentTitle("i") // title for notification
                 .setContentText("n")// message for notification
-                .setAutoCancel(true); // clear notification after click
+                .setAutoCancel(true)// clear notification after clic
+                .addAction(R.drawable.addplayer,"Accept",yesPendingIntent)
+                .addAction(R.drawable.addplayer,"Decline",noPendingIntent);
         mNotificationManager.notify(0, mBuilder.build());
     }
+
 }

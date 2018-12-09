@@ -456,7 +456,7 @@ public class CreateMatch extends AppCompatActivity {
                                         mySnackbar.setAction("View all matches", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Intent intent = new Intent(getActivity(), UserHome.class);
+                                                Intent intent = new Intent(getActivity(), MyMatchesList.class);
                                                 startActivity(intent);
                                             }
                                         });

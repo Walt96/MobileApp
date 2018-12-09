@@ -8,13 +8,11 @@
 
     <Spinner
         android:id="@+id/pitchTime"
-        android:layout_width="155dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/pricePitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="42dp"
-        android:layout_marginTop="40dp"
         android:layout_marginBottom="5dp"
         android:scrollbarSize="50dp" />
 
@@ -72,13 +70,11 @@
 
     <Button
         android:id="@+id/bookPitch"
-        android:layout_width="105dp"
-        android:layout_height="29dp"
-        android:layout_below="@+id/pitchAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="55dp"
-        android:layout_marginTop="99dp"
         android:layout_marginEnd="27dp"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@+id/pitchTime"
