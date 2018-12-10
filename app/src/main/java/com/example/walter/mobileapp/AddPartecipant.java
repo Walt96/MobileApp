@@ -123,7 +123,7 @@ public class AddPartecipant extends Fragment {
                 }
             });
             //teamB
-            alertadd.setNeutralButton("B", new DialogInterface.OnClickListener() {
+            alertadd.setPositiveButton("B", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dlg, int sumthin) {
                     StaticInstance.db.collection("matches").document(handledMatch.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override

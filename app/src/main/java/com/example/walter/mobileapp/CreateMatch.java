@@ -1,19 +1,27 @@
 package com.example.walter.mobileapp;
 
+import android.Manifest;
+import android.Manifest.permission;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,10 +89,13 @@ public class CreateMatch extends AppCompatActivity {
     String selectedCity="";
     String manager;
     String role;
+    final HashMap<String,Object> saveMyMatch = new HashMap<>();
+
 
     int index = 0;
     String selectedDate;
     ListenerRegistration listener;
+    private int CALENDAR_CODE = 10;
 
 
     private Context getActivity() {
@@ -168,7 +179,7 @@ public class CreateMatch extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
                 String day_ = "0";
-                if(day > 10)
+                if(day >= 10)
                     day_=day+"/";
                 else
                     day_+=day+"/";
@@ -422,17 +433,19 @@ public class CreateMatch extends AppCompatActivity {
                         progressDialog.setMessage("Booking your pitch...");
                         progressDialog.show();
 
-                        String matchCode = String.valueOf(new Date().getTime())+manager;
+                        final String matchCode = String.valueOf(new Date().getTime())+manager;
 
                         //aggiungo la nuova partita alla collezione matches nel documento data corrente + manager in modo da renderlo univoco con la concorrenza
-                        final HashMap<String,Object> saveMyMatch = new HashMap<>();
                         saveMyMatch.put("date",selectedDate);
                         saveMyMatch.put("time",time);
                         saveMyMatch.put("manager",manager);
                         saveMyMatch.put("pitchcode",pitchId);
                         saveMyMatch.put("address",address);
                         saveMyMatch.put("covered",selectedCovered);
-                        saveMyMatch.put("pitchmanager",owner);
+
+                        //inserire thread
+                        long id = addCalendarEvent(saveMyMatch);
+                        saveMyMatch.put("calendarid",saveMyMatch);
 
                         HashMap myProfile = new HashMap();
                         myProfile.put("user",manager);
@@ -446,11 +459,13 @@ public class CreateMatch extends AppCompatActivity {
                         myName.add(manager);
                         saveMyMatch.put("partecipants",myName);
 
+
                         db.collection("matches").document(matchCode)
                                .set(saveMyMatch)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+
                                         progressDialog.dismiss();
                                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.pitchList), "Pitch booked successfully!", Snackbar.LENGTH_LONG);
                                         mySnackbar.setAction("View all matches", new View.OnClickListener() {
@@ -476,5 +491,59 @@ public class CreateMatch extends AppCompatActivity {
 
         }
 
+    }
+
+    private long addCalendarEvent(HashMap<String,Object> saveMyMatch) {
+
+        boolean hasPermission = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(permission.READ_CALENDAR)
+                    == PackageManager.PERMISSION_GRANTED && checkSelfPermission(permission.WRITE_CALENDAR)
+                    == PackageManager.PERMISSION_GRANTED) {
+                hasPermission = true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{permission.READ_CALENDAR,permission.WRITE_CALENDAR}, CALENDAR_CODE);
+            }
+        }
+        if(hasPermission) {
+            long startMillis = 0;
+            long endMillis = 0;
+            Calendar beginTime = Calendar.getInstance();
+            String date[] = saveMyMatch.get("date").toString().split("/");
+            beginTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0])-1, Integer.valueOf(saveMyMatch.get("time").toString()) +1, 0);
+            startMillis = beginTime.getTimeInMillis();
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0])-1, Integer.valueOf(saveMyMatch.get("time").toString()) + 1 , 50);
+            endMillis = endTime.getTimeInMillis();
+
+
+            ContentResolver cr = getContentResolver();
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.TITLE, "Football match");
+            String is="is";
+            if((boolean)saveMyMatch.get("covered"))
+                is="is not";
+            values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by "+saveMyMatch.get("manager").toString()+ ". The pitch "+ is +" covered.");
+            values.put(CalendarContract.Events.CALENDAR_ID, 1);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+            values.put(CalendarContract.Events.EVENT_LOCATION, saveMyMatch.get("address").toString());
+            values.put(CalendarContract.Events.HAS_ALARM,true);
+            values.put(CalendarContract.Events.ALL_DAY,0);
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            return Long.parseLong(uri.getLastPathSegment());
+        }
+        return -1;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == CALENDAR_CODE)
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                addCalendarEvent(saveMyMatch);
+            }
     }
 }

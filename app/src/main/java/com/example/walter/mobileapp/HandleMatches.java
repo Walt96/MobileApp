@@ -43,12 +43,10 @@ public class HandleMatches extends AppCompatActivity {
     };
 
     private void replaceFragment(Fragment newFragment) {
-
         newFragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, newFragment);
-        fragmentTransaction.addToBackStack(newFragment.toString());
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
     }
