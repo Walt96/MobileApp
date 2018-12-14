@@ -16,6 +16,7 @@ import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
@@ -429,9 +430,6 @@ public class CreateMatch extends AppCompatActivity {
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                        progressDialog.setMessage("Booking your pitch...");
-                        progressDialog.show();
 
                         final String matchCode = String.valueOf(new Date().getTime())+manager;
 
@@ -442,42 +440,12 @@ public class CreateMatch extends AppCompatActivity {
                         saveMyMatch.put("pitchcode",pitchId);
                         saveMyMatch.put("address",address);
                         saveMyMatch.put("covered",selectedCovered);
-
-                        //inserire thread
-                        long id = addCalendarEvent(saveMyMatch);
-                        saveMyMatch.put("calendarid",saveMyMatch);
-
-                        HashMap myProfile = new HashMap();
-                        myProfile.put("user",manager);
-                        myProfile.put("role",role);
-                        myProfile.put("team","A");
-                        ArrayList firstRegistered = new ArrayList();
-                        firstRegistered.add(myProfile);
-                        saveMyMatch.put("registered", firstRegistered);
-
-                        ArrayList myName = new ArrayList();
-                        myName.add(manager);
-                        saveMyMatch.put("partecipants",myName);
+                        saveMyMatch.put("code",matchCode);
+                        saveMyMatch.put("pitchmanager",owner);
 
 
-                        db.collection("matches").document(matchCode)
-                               .set(saveMyMatch)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
+                        addCalendarEvent(saveMyMatch);
 
-                                        progressDialog.dismiss();
-                                        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.pitchList), "Pitch booked successfully!", Snackbar.LENGTH_LONG);
-                                        mySnackbar.setAction("View all matches", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = new Intent(getActivity(), MyMatchesList.class);
-                                                startActivity(intent);
-                                            }
-                                        });
-                                        mySnackbar.show();
-                                    }
-                                });
                     }
                 }).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     @Override
@@ -506,14 +474,42 @@ public class CreateMatch extends AppCompatActivity {
             }
         }
         if(hasPermission) {
+            AddEventToCalendar task = new AddEventToCalendar(saveMyMatch);
+            task.execute();
+        }
+        return -1;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == CALENDAR_CODE)
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                addCalendarEvent(saveMyMatch);
+            }
+    }
+
+    private class AddEventToCalendar extends AsyncTask<Void, Integer, Long> {
+
+        HashMap saveMyMatch;
+        ProgressDialog progressDialog;
+
+        public AddEventToCalendar(HashMap saveMyMatch){
+            this.saveMyMatch = saveMyMatch;
+        }
+
+        @Override
+        protected Long doInBackground(Void... voids) {
+
             long startMillis = 0;
             long endMillis = 0;
             Calendar beginTime = Calendar.getInstance();
             String date[] = saveMyMatch.get("date").toString().split("/");
-            beginTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0])-1, Integer.valueOf(saveMyMatch.get("time").toString()) +1, 0);
+            beginTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()) , 0);
             startMillis = beginTime.getTimeInMillis();
             Calendar endTime = Calendar.getInstance();
-            endTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0])-1, Integer.valueOf(saveMyMatch.get("time").toString()) + 1 , 50);
+            endTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()) , 50);
             endMillis = endTime.getTimeInMillis();
 
 
@@ -534,16 +530,40 @@ public class CreateMatch extends AppCompatActivity {
             Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
             return Long.parseLong(uri.getLastPathSegment());
         }
-        return -1;
-    }
+
+        protected void onPostExecute(Long result) {
+            saveMyMatch.put("calendarid",result);
+            HashMap myProfile = new HashMap();
+            myProfile.put("user",manager);
+            myProfile.put("role",role);
+            myProfile.put("team","A");
+            ArrayList firstRegistered = new ArrayList();
+            firstRegistered.add(myProfile);
+            saveMyMatch.put("registered", firstRegistered);
+
+            ArrayList myName = new ArrayList();
+            myName.add(manager);
+            saveMyMatch.put("partecipants",myName);
+
+            StaticInstance.db.collection("matches").document(saveMyMatch.get("code").toString())
+                    .set(saveMyMatch)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.pitchList), "Pitch booked successfully!", Snackbar.LENGTH_LONG);
+                            mySnackbar.setAction("View all matches", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(getActivity(), MyMatchesList.class);
+                                    startActivity(intent);
+                                }
+                            });
+                            mySnackbar.show();
+                        }
+                    });
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == CALENDAR_CODE)
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                addCalendarEvent(saveMyMatch);
-            }
+        }
     }
+
 }

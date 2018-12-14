@@ -57,10 +57,11 @@ public class ShowTeams extends Fragment {
 
     private void orderPlayer(ArrayList<HashMap> players_query, String[] players) {
         //portieriA = 0, portieriB = 0, difensoriA = 0, difensoriB = 0, centrocampistiA=0,centrocampistiB=0,attaccantiA=0,attaccantiB=0;
-        int[] num = {0,0,0,0,0,0,0,0};
+        int[] num = {0, 0, 0, 0, 0, 0, 0, 0};
         String[] eventually = new String[40];
-        Arrays.fill(eventually,"");
-        for(int i=0;i<players_query.size();i++) {
+        Arrays.fill(eventually, "");
+        Arrays.fill(players, " ");
+        for (int i = 0; i < players_query.size(); i++) {
             String team = players_query.get(i).get("team").toString();
             String role = players_query.get(i).get("role").toString();
             String name = players_query.get(i).get("user").toString();
@@ -82,28 +83,73 @@ public class ShowTeams extends Fragment {
                     break;
             }
             if (players_query.get(i).get("team").equals("A")) {
-                Log.e("in posizione"+(position*5+num[position*2]),"metto "+name+role);
-                eventually[position*5 + num[position * 2]] = name + "\n(" + role.charAt(0) + ")";
+                Log.e("team A, posizione"+(position * 5 + num[position * 2]),name);
+                eventually[position * 5 + num[position * 2]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2]++;
             } else {
-                Log.e("in posizione"+(position*5+num[position*2]),"metto "+name+role);
-                eventually[20 + position*5 + num[position * 2 + 1]] = name + "\n(" + role.charAt(0) + ")";
+
+                Log.e("team B, posizione"+(20 + position * 5 + num[position * 2 + 1]),name);
+                eventually[20 + position * 5 + num[position * 2 + 1]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2 + 1]++;
             }
         }
-        players[0] = eventually[0];
-        players[1] = eventually[5];
-        players[2] = eventually[10];
-        players[3] = eventually[11];
-        players[4] = eventually[15];
-        Log.e("èvero",players[4]);
+        int found = 0;
+        ArrayList normalize_a = new ArrayList();
+        ArrayList normalize_b = new ArrayList();
+        for (int i = 0, t = 0; i < 40; i++) {
+            if (!eventually[i].equals("")) {
+                if(i<20)
+                    normalize_a.add(eventually[i]);
+                else
+                    normalize_b.add(eventually[i]);
+                found++;
+            }
+            if ((i+1) % 5 == 0) {
+                if (found==0)
+                    if(i<20)
+                        normalize_a.add(" ");
+                    else
+                        normalize_b.add(" ");
+                if(i==14 && found<=1)
+                    normalize_a.add(" ");
+                else if(i==34 && found<=1)
+                    normalize_b.add(" ");
+                found = 0;
+            }
+        }
 
-        players[5] = eventually[20];
-        players[6] = eventually[25];
-        players[7] = eventually[30];
-        players[8] = eventually[31];
-        players[9] = eventually[35];
+        for(int i = 0;i<normalize_a.size();i++)
+                Log.e("i"+i,normalize_a.get(i).toString());
 
+        for(int i = 0;i<normalize_b.size();i++)
+                Log.e("i"+i,normalize_b.get(i).toString());
+
+
+        if(normalize_a.size()>5){
+            for(int i = normalize_a.size()-1;i>=0;i--) {
+                if (normalize_a.get(i).equals(" "))
+                    normalize_a.remove(i);
+                if (normalize_a.size() <= 5)
+                    break;
+            }
+        }
+
+        if(normalize_b.size()>5) {
+            for (int i = normalize_b.size() - 1; i >= 0; i--) {
+                if (normalize_b.get(i).equals(" ")) {
+                    normalize_b.remove(i);
+                }
+                if (normalize_b.size() <= 5)
+                    break;
+            }
+        }
+
+
+        for(int i = 0;i<10;i++)
+            if(i<5)
+                players[i] = normalize_a.get(i).toString();
+            else
+                players[i] = normalize_b.get(i%5).toString();
     }
 
 

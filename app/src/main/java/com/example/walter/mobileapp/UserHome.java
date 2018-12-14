@@ -1,9 +1,11 @@
 package com.example.walter.mobileapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -34,6 +37,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -44,6 +48,7 @@ public class UserHome extends AppCompatActivity
 
     String username;
     String role;
+    ListenerRegistration listenerToInvitation = null;
 
 
     @Override
@@ -81,22 +86,7 @@ public class UserHome extends AppCompatActivity
         role =StaticInstance.role;
         userRole.setText("Role: "+role);
 
-        StaticInstance.db.collection("invite").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                Log.e("ce stato un","");
-                for(DocumentSnapshot document : snapshot) {
-                    Log.e("ecco",username+" "+document.get("invited").toString());
-                    if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
-                        Log.e("mando notifica,","df");
-                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
-                        StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
-                    }
-                }
-
-            }
-        });
+        addListenerForInvitation();
 
     }
 
@@ -141,7 +131,43 @@ public class UserHome extends AppCompatActivity
                 .setAutoCancel(true)
                 .addAction(R.drawable.addplayer,"Accept",yesPendingIntent)
                 .addAction(R.drawable.addplayer,"Decline",noPendingIntent);
+        mBuilder.build().flags |= Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(0, mBuilder.build());
+    }
+
+    void addListenerForInvitation(){
+        Log.e("username",username);
+        StaticInstance.db.collection("invite").whereEqualTo("invited",username).whereEqualTo("notified",false).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
+                                    sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
+                                    StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+        listenerToInvitation = StaticInstance.db.collection("invite").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                Log.e("ce stato un","");
+                for(DocumentSnapshot document : snapshot) {
+                    if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
+                        Log.e("mando notifica,","df");
+                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
+                        StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -152,12 +178,23 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        AlertDialog.Builder alertadd = new AlertDialog.Builder(this);
+        alertadd.setTitle("Do you really want to exit?");
+        alertadd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) { DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+                logout();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertadd.create().show();
+
+
     }
 
     @Override
@@ -217,6 +254,10 @@ public class UserHome extends AppCompatActivity
         editor.remove("user");
         editor.remove("role");
         editor.commit();
+        if (listenerToInvitation != null){
+            listenerToInvitation.remove();
+            listenerToInvitation = null;
+        }
         startActivity(new Intent(this, LoginActivity.class));
     }
 

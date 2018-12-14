@@ -1,5 +1,6 @@
 package com.example.walter.mobileapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -8,6 +9,8 @@ import com.google.firebase.firestore.FieldValue;
 import java.util.HashMap;
 
 public class YesNotify extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,11 @@ public class YesNotify extends AppCompatActivity {
             player.put("team",getIntent().getStringExtra("team"));
             StaticInstance.db.collection("matches").document(match).update("partecipants",FieldValue.arrayUnion(username));
             StaticInstance.db.collection("matches").document(match).update("registered",FieldValue.arrayUnion(player));
-        }
+            StaticInstance.username = username;
+            StaticInstance.role = getIntent().getStringExtra("role");
+            startActivity(new Intent(this, MyMatchesList.class));
 
+        }
 
     }
 }

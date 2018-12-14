@@ -45,17 +45,25 @@ public class MyMatchesList extends AppCompatActivity {
     String username;
     CustomAdapter adapter;
     Lock lockMatch;
-
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_matches_list);
         matches = new ArrayList<>();
         username = StaticInstance.username;
-        final ListView listView = findViewById(R.id.matchlist);
+        lockMatch = new ReentrantLock();
+        listView = findViewById(R.id.matchlist);
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        Log.e("resume","resume");
+        super.onResume();
         loadMatch();
         listView.setAdapter(adapter=new CustomAdapter(getApplicationContext()));
-        lockMatch = new ReentrantLock();
     }
 
     private void loadMatch() {
@@ -65,8 +73,12 @@ public class MyMatchesList extends AppCompatActivity {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     lockMatch.lock();
                     Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(), true, (ArrayList) document.get("partecipants"), (ArrayList) document.get("registered"), (boolean) document.get("covered"), document.get("address").toString(), document.get("pitchmanager").toString());
-                    if(!matches.contains(toAdd)) {
+                    int index = matches.indexOf(toAdd);
+                    if(index==-1) {
                         matches.add(toAdd);
+                        adapter.notifyDataSetChanged();
+                    }else{
+                        matches.set(index,toAdd);
                         adapter.notifyDataSetChanged();
                     }
                     lockMatch.unlock();
@@ -81,8 +93,12 @@ public class MyMatchesList extends AppCompatActivity {
                 for (QueryDocumentSnapshot document : task.getResult()){
                     lockMatch.lock();
                     Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),false,(ArrayList)document.get("partecipants"),(ArrayList)document.get("registered"),(boolean)document.get("covered"),document.get("address").toString(),document.get("pitchmanager").toString());
-                    if(!matches.contains(toAdd)) {
+                    int index = matches.indexOf(toAdd);
+                    if(index==-1) {
                         matches.add(toAdd);
+                        adapter.notifyDataSetChanged();
+                    }else{
+                        matches.set(index,toAdd);
                         adapter.notifyDataSetChanged();
                     }
                     lockMatch.unlock();
@@ -93,6 +109,10 @@ public class MyMatchesList extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,UserHome.class));
+    }
 
     class CustomAdapter extends BaseAdapter {
 
