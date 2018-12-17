@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -22,6 +23,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -67,6 +72,43 @@ public class CreatePitch extends AppCompatActivity {
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
         path=null;
+
+        // Creo la barra di ricerca dei luoghi.
+        // TODO Vale la pena prendere la città?
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                try {
+                    Double lat = place.getLatLng().latitude;
+                    Double lon = place.getLatLng().longitude;
+                    Log.i("", "Place: " + lat + " " + lon);
+                    Geocoder mGeocoder = new Geocoder(getActivity(), Locale.getDefault());
+                    List<Address> addresses = null;
+                    addresses = mGeocoder.getFromLocation(lat, lon, 1);
+                    if (addresses != null && addresses.size() > 0) {
+                        String city = addresses.get(0).getLocality();
+                        cityEditText.setText(city);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+               // String city = place.get
+
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("", "An error occurred: " + status);
+            }
+        });
+
+        ((EditText)autocompleteFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextColor(Color.WHITE);
+
     }
     public void validateFields(View v) {
 
@@ -181,6 +223,47 @@ public class CreatePitch extends AppCompatActivity {
             }
         }
     }
+
+    /*public void searchLocation(View v) {
+        String address = addressEditText.getText().toString();
+        String city = cityEditText.getText().toString();
+        String searchString = address + " " + city;
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try
+        {
+            List<Address> addresses = geocoder.getFromLocationName(searchString, 5);
+            Log.d("SIZE", String.valueOf(addresses.size()));
+            if (addresses.size() == 1)
+            {
+                Double lat = (double) (addresses.get(0).getLatitude());
+                Double lon = (double) (addresses.get(0).getLongitude());
+
+                Log.d("lat-long", "" + lat + "......." + lon);
+                //final LatLng user = new LatLng(lat, lon);
+                /*used marker for show the location */
+                /*Marker hamburg = map.addMarker(new MarkerOptions()
+                        .position(user)
+                        .title(adderess)
+                        .icon(BitmapDescriptorFactory
+                                .fromResource(R.drawable.marker)));
+                // Move the camera instantly to hamburg with a zoom of 15.
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(user, 15));
+
+                // Zoom in, animating the camera.
+                map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);*/
+            /*} else {
+                Log.d("More", "More elements");
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }*/
+
+
 
     private Address getAddress(Double latitude, Double longitude) throws IOException {
         Geocoder geocoder;

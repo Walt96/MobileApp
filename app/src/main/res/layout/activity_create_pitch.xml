@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".CreatePitch">
 
-    <EditText
+    <!-- <EditText
         android:id="@+id/pitchAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,15 +22,25 @@
         android:inputType="textPersonName"
         android:textColor="@android:color/background_light"
         android:textColorHint="@android:color/background_light"
-        android:textSize="20sp" />
+        android:textSize="20sp" /> -->
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="-68dp"
+        android:layout_toStartOf="@+id/textView3"
+        app:srcCompat="@drawable/address" />
 
     <EditText
         android:id="@+id/city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pitchAddress"
+        android:layout_below="@+id/place_autocomplete_fragment"
         android:layout_marginLeft="80dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
         android:hint="City"
         android:inputType="textPersonName"
@@ -44,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/city"
         android:layout_marginLeft="80dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="17dp"
         android:ems="10"
         android:hint="Price"
         android:inputType="numberDecimal"
@@ -72,15 +82,17 @@
         android:id="@+id/covered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/pitchAddress"
+        android:layout_below="@+id/textView3"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="176dp">
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
+        android:layout_marginBottom="146dp">
 
         <RadioButton
             android:id="@+id/coveredPitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/covered"
             android:checked="true"
             android:text="Covered pitch"
             android:textColor="@android:color/background_light"
@@ -90,6 +102,7 @@
             android:id="@+id/radioButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/covered"
             android:layout_weight="1"
             android:text="Uncovered pitch"
             android:textColor="@android:color/background_light"
@@ -97,32 +110,12 @@
     </RadioGroup>
 
     <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/pitchAddress"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="57dp"
-        android:layout_marginTop="13dp"
-        app:srcCompat="@drawable/address" />
-
-    <ImageView
-        android:id="@+id/imageView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="59dp"
-        android:layout_marginTop="98dp"
-        app:srcCompat="@drawable/city" />
-
-    <ImageView
         android:id="@+id/imageView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/price"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="56dp"
+        android:layout_marginStart="45dp"
         android:layout_marginBottom="12dp"
         app:srcCompat="@drawable/price" />
 
@@ -144,22 +137,40 @@
         android:layout_height="34dp"
         android:layout_below="@+id/price"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="9dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="22dp"
         android:layout_toEndOf="@+id/textView3"
         android:onClick="takePhoto"
-        app:srcCompat="@drawable/newphoto" />
+        app:srcCompat="@drawable/newphoto" /><![CDATA[
 
-    <Button
-        android:id="@+id/tryFill"
+    //android:onClick="searchLocation"
+        android:text="Fill" />
+
+    ]]>
+
+    <ImageView
+        android:id="@+id/imageView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="75dp"
-        android:layout_marginBottom="77dp"
-        android:onClick="fillFields"
-        android:text="Fill" />
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="93dp"
+        app:srcCompat="@drawable/city" />
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_width="372dp"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="0dp" />
+
+
 
 </RelativeLayout>
