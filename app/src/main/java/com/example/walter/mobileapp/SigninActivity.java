@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,6 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +49,7 @@ public class SigninActivity extends AppCompatActivity {
     Button nextBtn;
     Fragment actualFragment;
     Boolean isUser;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,7 @@ public class SigninActivity extends AppCompatActivity {
         }
         final String role = userRole;
         boolean firstControl = true;
+        username = usernameEdit.getText().toString();
         if (usernameEdit.getText().length() < 5) {
             usernameEdit.setError("Please choose an username with at least 5 characters");
             firstControl = false;
@@ -157,6 +162,9 @@ public class SigninActivity extends AppCompatActivity {
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void documentReference) {
+                                                                    if(isUser){
+                                                                        savePhoto();
+                                                                    }
                                                                     AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
                                                                     builder_.setMessage("Your account was created successfully");
                                                                     builder_.create().show();
@@ -187,6 +195,27 @@ public class SigninActivity extends AppCompatActivity {
                         }
                     });
 
+        }
+    }
+
+    private void savePhoto() {
+        StorageReference ref = StaticInstance.mStorageRef.child("users/"+username);
+        final FootballerSignIn fragment = ((FootballerSignIn)actualFragment);
+        String path = fragment.getPath();
+        if(path!=null) {
+            ref.putFile(Uri.parse(path))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            fragment.setPath(null);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            fragment.setPath(null);
+                        }
+                    });
         }
     }
 

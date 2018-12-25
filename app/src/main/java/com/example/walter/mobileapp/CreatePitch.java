@@ -57,14 +57,12 @@ public class CreatePitch extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_ADDRESS_INFO = 3;
     String path;
-    StorageReference mStorageRef;
     Bitmap photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pitch);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
         username = StaticInstance.username;
         addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
@@ -151,7 +149,7 @@ public class CreatePitch extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void avoid) {
-                            StorageReference ref = mStorageRef.child("pitch/"+username+code);
+                            StorageReference ref = StaticInstance.mStorageRef.child("pitch/"+username+code);
                             if(path!=null) {
                                 ref.putFile(Uri.parse(path))
                                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

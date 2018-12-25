@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +18,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,6 +32,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class AddPartecipant extends Fragment {
 
@@ -182,6 +192,32 @@ public class AddPartecipant extends Fragment {
                             if(task.getResult().size()==0){
                                 playerSearched.setError("No player found with this username!");
                             }else {
+                                StaticInstance.mStorageRef.child("users/" + playerSearched.getText().toString()).getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri imageUri) {
+                                                if(imageUri!=null) {
+                                                    Glide.with(getView())
+                                                            .load(imageUri).apply(bitmapTransform(new CircleCrop()))
+                                                            .into(imageSearched);
+
+                                                }
+                                                else {
+                                                    Glide.with(getView())
+                                                            .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.ic_person_black_24dp))
+                                                            .into(imageSearched);
+                                                }
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception exception) {
+                                                Glide.with(getView())
+                                                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.ic_person_black_24dp))
+                                                        .into(imageSearched);
+                                            }
+                                        });
                                 DocumentSnapshot player = task.getResult().getDocuments().get(0);
                                 userSearched.setText(player.get("username").toString());
                                 roleSearched.setText(player.get("role").toString());
