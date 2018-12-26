@@ -20,6 +20,14 @@ public class Match implements Serializable {
 
     public Match(){}
 
+    public Match(String id, String date, String time, String manager, String address) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.manager = manager;
+        this.address = address;
+    }
+
     public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address, String pitchOwner, boolean isFinished){
         this.id = id;
         this.isFinished = isFinished;

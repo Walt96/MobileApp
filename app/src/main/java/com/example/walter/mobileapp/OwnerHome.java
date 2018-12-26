@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,13 +18,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 public class OwnerHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String username;
-
+    FirebaseFirestore db = StaticInstance.getInstance();
+    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
+    ArrayList<Match> match;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +70,39 @@ public class OwnerHome extends AppCompatActivity
 
 
         username =  StaticInstance.username;
+
+        Log.e("TAG", username);
+        final ListView listView = findViewById(R.id.dailyMatch);
+        match = new ArrayList<>();
+
+        db.collection("matches")
+                .whereEqualTo("pitchmanager", username)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Log.e("TAG", "Query completed " + task.getResult().size());
+                            final OwnerHome.CustomAdapter customAdapter = new OwnerHome.CustomAdapter(getApplicationContext());
+                            listView.setAdapter(customAdapter);
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String id = document.getId();
+                                String manager = document.get("manager").toString();
+                                String date = document.get("date").toString();
+                                String address= document.get("address").toString();
+                                String time = document.get("time").toString();
+                                final Match currentMatch = new Match(id, date, time, manager, address);
+                                Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
+                                match.add(currentMatch);
+                            }
+
+                        } else {
+                            Log.w("", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
     }
 
     @Override
@@ -119,6 +171,58 @@ public class OwnerHome extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    class CustomAdapter extends BaseAdapter {
+
+        Context context;
+
+        public CustomAdapter(Context applicationContext) {
+            context = applicationContext;
+        }
+
+        @Override
+        public int getCount() {
+            return match.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            Match currentMatch = match.get(position);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView = inflater.inflate(R.layout.matchview, parent, false);
+
+            TextView managerView = convertView.findViewById(R.id.manager_view);
+            TextView addressView = convertView.findViewById(R.id.address_view);
+            TextView dateView = convertView.findViewById(R.id.date_view);
+            TextView timeView = convertView.findViewById(R.id.time_view);
+
+            managerView.setText(currentMatch.getManager());
+            addressView.setText(currentMatch.getAddress());
+            dateView.setText(currentMatch.getDate());
+            timeView.setText(currentMatch.getTime());
+
+            Log.e("TAG", "Loaded");
+
+            return convertView;
+
+        }
+    }
+
+    private Context getActivity() {
+        return this;
     }
 
     private void logout() {

@@ -33,7 +33,7 @@
                 tools:text="Address: " />
 
             <TextView
-                android:id="@+id/address"
+                android:id="@+id/manager_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
