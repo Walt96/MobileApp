@@ -41,6 +41,8 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -50,6 +52,7 @@ public class SigninActivity extends AppCompatActivity {
     Fragment actualFragment;
     Boolean isUser;
     String username;
+    static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,12 @@ public class SigninActivity extends AppCompatActivity {
         EditText passwordEdit = (EditText) actualFragment.getView().findViewById(R.id.passwordSignin);
         final EditText passwordConfirm = (EditText) actualFragment.getView().findViewById(R.id.confirmSignin);
         String userRole = "no role";
+        EditText emailText = (EditText) actualFragment.getView().findViewById(R.id.mailAddress);
+        EditText phoneNumberText = (EditText) actualFragment.getView().findViewById(R.id.phoneNumber);
+        final String email = emailText.getText().toString();
+        final String phoneNumber = phoneNumberText.getText().toString();
+
+
         if(isUser) {
             userRole = ((Spinner) actualFragment.getView().findViewById(R.id.selectrole)).getSelectedItem().toString();
         }
@@ -121,11 +130,21 @@ public class SigninActivity extends AppCompatActivity {
             passwordEdit.setError("Please choose an username with at least 5 characters");
             firstControl = false;
         }
-
         if (!passwordEdit.getText().toString().equals(passwordConfirm.getText().toString())) {
             passwordConfirm.setError("Passwords aren't equals");
             firstControl = false;
         }
+        if(!validate(email)) {
+            emailText.setError("Please, insert a valid email");
+            firstControl = false;
+        }
+
+        if(phoneNumber.length() != 10) {
+            phoneNumberText.setError("Please, insert a valid phone number");
+            firstControl = false;
+        }
+
+
 
 
 
@@ -156,6 +175,8 @@ public class SigninActivity extends AppCompatActivity {
                                                         user.put("role", role);
 
                                                     user.put("player", isUser);
+                                                    user.put("email", email);
+                                                    user.put("phone", phoneNumber);
                                                     Log.e("", "Called");
                                                     db.collection("users").document(user.get("username").toString())
                                                             .set(user)
@@ -303,6 +324,11 @@ public class SigninActivity extends AppCompatActivity {
     */
     private Context getActivity() {
         return this;
+    }
+
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
     }
 
 
