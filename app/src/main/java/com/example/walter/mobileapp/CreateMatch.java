@@ -545,6 +545,11 @@ public class CreateMatch extends AppCompatActivity {
             myName.add(manager);
             saveMyMatch.put("partecipants",myName);
 
+            saveMyMatch.put("finished",false);
+            ArrayList confirmed = new ArrayList();
+            confirmed.add(manager);
+            saveMyMatch.put("confirmed",confirmed);
+
             StaticInstance.db.collection("matches").document(saveMyMatch.get("code").toString())
                     .set(saveMyMatch)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
