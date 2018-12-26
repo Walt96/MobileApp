@@ -91,7 +91,7 @@ public class OwnerHome extends AppCompatActivity
                                 String manager = document.get("manager").toString();
                                 String date = document.get("date").toString();
                                 String address= document.get("address").toString();
-                                String time = document.get("time").toString();
+                                String time = document.get("time").toString() + ":00";
                                 final Match currentMatch = new Match(id, date, time, manager, address);
                                 Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
                                 match.add(currentMatch);
