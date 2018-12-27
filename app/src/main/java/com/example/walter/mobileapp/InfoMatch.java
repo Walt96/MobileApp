@@ -8,12 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -43,7 +38,7 @@ public class InfoMatch extends Fragment {
         ((TextView)(fragmentView.findViewById(R.id.time))).setText(handledMatch.getTime());
         ((TextView)(fragmentView.findViewById(R.id.bookingby))).setText(handledMatch.getManager());
         ((TextView)(fragmentView.findViewById(R.id.registered_))).setText(String.valueOf(handledMatch.getRegistered().size()));
-        ((TextView)(fragmentView.findViewById(R.id.address))).setText(String.valueOf(handledMatch.getAddress()));
+        ((TextView)(fragmentView.findViewById(R.id.address_view))).setText(String.valueOf(handledMatch.getAddress()));
         ((TextView)(fragmentView.findViewById(R.id.covered))).setText(String.valueOf(handledMatch.isCovered()));
         return fragmentView;
     }
