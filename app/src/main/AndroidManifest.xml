@@ -12,8 +12,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- Location Permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -88,7 +88,8 @@
             android:label="@string/title_activity_address_map" />
         <activity android:name=".HandleNotify" />
         <activity android:name=".YesNotify" />
-        <activity android:name=".CreateQRCode"></activity>
+        <activity android:name=".CreateQRCode" />
+        <activity android:name=".StartMatch"></activity>
     </application>
 
 </manifest>

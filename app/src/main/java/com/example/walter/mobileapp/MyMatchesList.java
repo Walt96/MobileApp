@@ -165,7 +165,7 @@ public class MyMatchesList extends AppCompatActivity {
 
             ImageButton confirm = convertView.findViewById(R.id.confirm);
             //cambiare con if is finished
-            if(!currentMatch.isFinished()) {
+            if(currentMatch.isFinished()) {
                 confirm.setImageResource(R.drawable.qr);
                 confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -177,6 +177,18 @@ public class MyMatchesList extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+            }else{
+                if(currentMatch.getManager().equals(username)) {
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //StaticInstance.db.collection("matches").document(currentMatch.getId()).update("finished", true);
+                            Intent intent = new Intent(getApplicationContext(), StartMatch.class);
+                            startActivity(intent);
+                        }
+                    });
+                }else
+                    confirm.setVisibility(View.INVISIBLE);
             }
             ImageButton delete = convertView.findViewById(R.id.delete);
             if (currentMatch.isBookedByMe()){
