@@ -38,7 +38,7 @@ public class InfoMatch extends Fragment {
         ((TextView)(fragmentView.findViewById(R.id.time))).setText(handledMatch.getTime());
         ((TextView)(fragmentView.findViewById(R.id.bookingby))).setText(handledMatch.getManager());
         ((TextView)(fragmentView.findViewById(R.id.registered_))).setText(String.valueOf(handledMatch.getRegistered().size()));
-        ((TextView)(fragmentView.findViewById(R.id.manager_view))).setText(String.valueOf(handledMatch.getAddress()));
+        ((TextView)(fragmentView.findViewById(R.id.address_view))).setText(String.valueOf(handledMatch.getAddress()));
         ((TextView)(fragmentView.findViewById(R.id.covered))).setText(String.valueOf(handledMatch.isCovered()));
         return fragmentView;
     }

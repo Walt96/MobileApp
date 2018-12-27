@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="350dp"
+    android:layout_height="475dp"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/txtclose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end"
+        android:gravity="center"
+        android:text="X"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="match_parent"
+        android:id="@+id/tableLayout2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/textView15"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Address:"
+                android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Address: " />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/address_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
 
         <TableRow
@@ -45,21 +57,22 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/textView17"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Date:"
+                android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Date: " />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
 
         <TableRow
@@ -67,21 +80,22 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/textView19"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Time:"
+                android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Time:" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
 
         <TableRow
@@ -89,21 +103,22 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView20"
+                android:id="@+id/textView21"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Covered:"
+                android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Covered" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/covered"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
 
         <TableRow
@@ -111,11 +126,12 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/textView22"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Booking by:"
+                android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -124,7 +140,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
 
         <TableRow
@@ -132,50 +149,39 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView18"
+                android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Registered:"
+                android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/registered_"
+                android:id="@+id/registered"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center" />
         </TableRow>
+
     </TableLayout>
 
     <ImageView
-        android:id="@+id/pitchImage"
-        android:layout_width="363dp"
-        android:layout_height="250dp"
+        android:id="@+id/pitchImage2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
-        app:srcCompat="@drawable/login" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
-        android:text="Info about your match"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout2"
+        app:srcCompat="@drawable/ic_launcher_background" />
 
 </android.support.constraint.ConstraintLayout>

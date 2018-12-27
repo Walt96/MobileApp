@@ -1,8 +1,11 @@
 package com.example.walter.mobileapp;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -32,7 +35,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class OwnerHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,15 +49,20 @@ public class OwnerHome extends AppCompatActivity
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
     ArrayList<Match> match;
+    Dialog infoDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        infoDialog = new Dialog(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,8 +87,13 @@ public class OwnerHome extends AppCompatActivity
         final ListView listView = findViewById(R.id.dailyMatch);
         match = new ArrayList<>();
 
+        Date date = Calendar.getInstance().getTime();
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        //String today = formatter.format(date);
+        String today = "26/12/2018";
         db.collection("matches")
                 .whereEqualTo("pitchmanager", username)
+                .whereEqualTo("date", today)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -92,7 +109,9 @@ public class OwnerHome extends AppCompatActivity
                                 String date = document.get("date").toString();
                                 String address= document.get("address").toString();
                                 String time = document.get("time").toString() + ":00";
-                                final Match currentMatch = new Match(id, date, time, manager, address);
+                                ArrayList registered = (ArrayList) document.get("registered");
+                                boolean covered = document.getBoolean("covered");
+                                final Match currentMatch = new Match(id, date, time, manager, address, registered, covered);
                                 Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
                                 match.add(currentMatch);
                             }
@@ -200,11 +219,52 @@ public class OwnerHome extends AppCompatActivity
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            Match currentMatch = match.get(position);
+            final Match currentMatch = match.get(position);
             LayoutInflater inflater = LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.matchview, parent, false);
+            convertView = inflater.inflate(R.layout.match_view, parent, false);
 
-            TextView managerView = convertView.findViewById(R.id.manager_view);
+
+            convertView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                    {
+                        infoDialog.setContentView(R.layout.info_dialog);
+                        TextView txtclose;
+                        txtclose =(TextView) infoDialog.findViewById(R.id.txtclose);
+                        txtclose.setText("X");
+                        txtclose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                infoDialog.dismiss();
+                            }
+                        });
+
+                        TextView address_view = (TextView) infoDialog.findViewById(R.id.address_view);
+                        TextView date_view = (TextView) infoDialog.findViewById(R.id.date);
+                        TextView time_view = (TextView) infoDialog.findViewById(R.id.time);
+                        TextView covered_view = (TextView) infoDialog.findViewById(R.id.covered);
+                        TextView booking_view = (TextView) infoDialog.findViewById(R.id.bookingby);
+                        TextView registered_view = (TextView) infoDialog.findViewById(R.id.registered);
+
+                        address_view.setText(currentMatch.getAddress());
+                        date_view.setText(currentMatch.getDate());
+                        time_view.setText(currentMatch.getTime());
+                        String covered = "No";
+                        if(currentMatch.isCovered()) {
+                            covered = "Yes";
+                        }
+                        covered_view.setText(covered);
+                        booking_view.setText(currentMatch.getManager());
+                        registered_view.setText(String.valueOf(currentMatch.getRegistered().size()));
+
+                        //manager_view.setText(currentMatch.getManager());
+                        infoDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+                        infoDialog.show();
+                    }
+            });
+
+            TextView managerView = convertView.findViewById(R.id.address_view);
             TextView addressView = convertView.findViewById(R.id.address_view);
             TextView dateView = convertView.findViewById(R.id.date_view);
             TextView timeView = convertView.findViewById(R.id.time_view);
