@@ -1,5 +1,6 @@
 package com.example.walter.mobileapp;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,9 @@ public class StartMatch extends AppCompatActivity {
 
     MediaPlayer mp;
     boolean started;
+
+    String matchcode;
+    String username;
 
 
     @Override
@@ -52,6 +56,9 @@ public class StartMatch extends AppCompatActivity {
                }
             }
         });
+
+        username = StaticInstance.username;
+        matchcode = getIntent().getStringExtra("matchcode");
     }
 
     public void start(View view) {
@@ -103,6 +110,8 @@ public class StartMatch extends AppCompatActivity {
     }
 
     public void end(View view){
-       //fine partita
+        Intent intent = new Intent(this,RatePlayer.class);
+        intent.putExtra("matchcode",matchcode);
+        startActivity(intent);
     }
 }

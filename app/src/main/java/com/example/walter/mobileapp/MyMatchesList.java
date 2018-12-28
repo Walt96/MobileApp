@@ -184,6 +184,7 @@ public class MyMatchesList extends AppCompatActivity {
                         public void onClick(View v) {
                             //StaticInstance.db.collection("matches").document(currentMatch.getId()).update("finished", true);
                             Intent intent = new Intent(getApplicationContext(), StartMatch.class);
+                            intent.putExtra("matchcode",currentMatch.getId());
                             startActivity(intent);
                         }
                     });

@@ -89,7 +89,8 @@
         <activity android:name=".HandleNotify" />
         <activity android:name=".YesNotify" />
         <activity android:name=".CreateQRCode" />
-        <activity android:name=".StartMatch"></activity>
+        <activity android:name=".StartMatch" />
+        <activity android:name=".RatePlayer"></activity>
     </application>
 
 </manifest>
