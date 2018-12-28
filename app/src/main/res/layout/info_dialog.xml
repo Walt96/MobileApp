@@ -182,6 +182,6 @@
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tableLayout2"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        android:src="@drawable/login" />
 
 </android.support.constraint.ConstraintLayout>
