@@ -23,6 +23,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,16 +43,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OwnerHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String username;
     FirebaseFirestore db = StaticInstance.getInstance();
-    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-    DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
     ArrayList<Match> match;
     Dialog infoDialog;
+    DateFormat formatter;
+    EditText matchDatePicker;
+    ListView listView;
+    private final String DATEREGEX = "^(0[1-9]|[1-2][0-9]|3[0-1])\\/(0[1-9]|1[0-2])\\/(20[0-9][0-9])$";
+    private Pattern datePattern;
+    private Matcher dateMatcher;
+    private Calendar actualCalendar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +69,18 @@ public class OwnerHome extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        actualCalendar = Calendar.getInstance();
+        Date actualDate = actualCalendar.getTime();
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String today = formatter.format(actualDate);
+        matchDatePicker = findViewById(R.id.match_date);
+        matchDatePicker.setText(today);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        datePattern = Pattern.compile(DATEREGEX);
+
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,44 +103,91 @@ public class OwnerHome extends AppCompatActivity
         username =  StaticInstance.username;
 
         Log.e("TAG", username);
-        final ListView listView = findViewById(R.id.dailyMatch);
+        listView = findViewById(R.id.dailyMatch);
+
+        ImageButton searchButton = findViewById(R.id.search_button);
+        searchButton.callOnClick();
+
+    }
+
+    public boolean isValidDate(String date) {
+        dateMatcher = datePattern.matcher(date);
+        if(dateMatcher.matches()) {
+            Log.e("TAG", date + " - " + "matches");
+            int day = Integer.parseInt(dateMatcher.group(1));
+            int month = Integer.parseInt(dateMatcher.group(2));
+            int year = Integer.parseInt(dateMatcher.group(3));
+
+            dateMatcher.reset();
+
+            int actualYear = actualCalendar.get(Calendar.YEAR);
+            int actualMonth = actualCalendar.get(Calendar.MONTH) + 1;
+            int actualDay = actualCalendar.get(Calendar.DAY_OF_MONTH);
+
+            Log.e("TAG", day + " " + actualDay);
+            Log.e("TAG", month + " " + actualMonth);
+            Log.e("TAG", year + " " + actualYear);
+
+
+            if(year < 2018 || year > actualYear) {
+                Log.e("TAG", "First test");
+                return false;
+            }
+
+            if(year == actualYear) {
+                if(month > actualMonth) {
+                    Log.e("TAG", "Second test");
+                    return false;
+                } else if(month == actualMonth && day > actualDay){
+                    Log.e("TAG", "Third test");
+                    return false;
+                }
+            }
+
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    public void showMatch(View w) {
         match = new ArrayList<>();
+        String match_date = String.valueOf(matchDatePicker.getText());
+        if(isValidDate(match_date)) {
+            db.collection("matches")
+                    .whereEqualTo("pitchmanager", username)
+                    .whereEqualTo("date", match_date)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.e("TAG", "Query completed " + task.getResult().size());
+                                final OwnerHome.CustomAdapter customAdapter = new OwnerHome.CustomAdapter(getApplicationContext());
+                                listView.setAdapter(customAdapter);
 
-        Date date = Calendar.getInstance().getTime();
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        //String today = formatter.format(date);
-        String today = "26/12/2018";
-        db.collection("matches")
-                .whereEqualTo("pitchmanager", username)
-                .whereEqualTo("date", today)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Log.e("TAG", "Query completed " + task.getResult().size());
-                            final OwnerHome.CustomAdapter customAdapter = new OwnerHome.CustomAdapter(getApplicationContext());
-                            listView.setAdapter(customAdapter);
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    String id = document.getId();
+                                    String manager = document.get("manager").toString();
+                                    String date = document.get("date").toString();
+                                    String address= document.get("address").toString();
+                                    String time = document.get("time").toString() + ":00";
+                                    ArrayList registered = (ArrayList) document.get("registered");
+                                    boolean covered = document.getBoolean("covered");
+                                    final Match currentMatch = new Match(id, date, time, manager, address, registered, covered);
+                                    Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
+                                    match.add(currentMatch);
+                                }
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getId();
-                                String manager = document.get("manager").toString();
-                                String date = document.get("date").toString();
-                                String address= document.get("address").toString();
-                                String time = document.get("time").toString() + ":00";
-                                ArrayList registered = (ArrayList) document.get("registered");
-                                boolean covered = document.getBoolean("covered");
-                                final Match currentMatch = new Match(id, date, time, manager, address, registered, covered);
-                                Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
-                                match.add(currentMatch);
+                            } else {
+                                Log.w("", "Error getting documents.", task.getException());
                             }
-
-                        } else {
-                            Log.w("", "Error getting documents.", task.getException());
                         }
-                    }
-                });
+                    });
 
+        } else {
+            matchDatePicker.setError("Please, insert a valid date.");
+        }
     }
 
     @Override
