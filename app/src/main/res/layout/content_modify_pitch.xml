@@ -25,7 +25,7 @@
         android:textSize="20sp" />
 
     <EditText
-        android:id="@+id/city"
+        android:id="@+id/cityIcon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pitchAddress"
@@ -42,7 +42,7 @@
         android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/city"
+        android:layout_below="@+id/cityIcon"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="18dp"
         android:ems="10"

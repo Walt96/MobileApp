@@ -14,7 +14,6 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -29,15 +29,12 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +44,7 @@ import java.util.Map;
 public class CreatePitch extends AppCompatActivity {
 
     private static final int WRITE_EXTERNAL_CODE = 2 ;
-    EditText addressEditText;
+    //EditText addressEditText;
     EditText cityEditText;
     EditText priceEditText;
     RadioButton coveredPitch;
@@ -58,13 +55,16 @@ public class CreatePitch extends AppCompatActivity {
     static final int REQUEST_ADDRESS_INFO = 3;
     String path;
     Bitmap photo;
+    private Double latitude;
+    private Double longitude;
+    private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pitch);
         username = StaticInstance.username;
-        addressEditText = findViewById(R.id.pitchAddress);
+        //addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
@@ -73,21 +73,24 @@ public class CreatePitch extends AppCompatActivity {
 
         // Creo la barra di ricerca dei luoghi.
         // TODO Vale la pena prendere la città?
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+        final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 try {
-                    Double lat = place.getLatLng().latitude;
-                    Double lon = place.getLatLng().longitude;
-                    Log.i("", "Place: " + lat + " " + lon);
+                    latitude = place.getLatLng().latitude;
+                    longitude = place.getLatLng().longitude;
+                    Log.i("", "Place: " + latitude + " " + longitude);
                     Geocoder mGeocoder = new Geocoder(getActivity(), Locale.getDefault());
                     List<Address> addresses = null;
-                    addresses = mGeocoder.getFromLocation(lat, lon, 1);
+                    addresses = mGeocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && addresses.size() > 0) {
-                        String city = addresses.get(0).getLocality();
+                        Address selectedAddress = addresses.get(0);
+                        address  = selectedAddress.getAddressLine(0);
+                        Log.e("TAG", address);
+                        String city = selectedAddress.getLocality();
                         cityEditText.setText(city);
                     }
                 } catch (IOException e) {
@@ -95,8 +98,6 @@ public class CreatePitch extends AppCompatActivity {
                 }
 
             }
-               // String city = place.get
-
 
             @Override
             public void onError(Status status) {
@@ -110,7 +111,7 @@ public class CreatePitch extends AppCompatActivity {
     }
     public void validateFields(View v) {
 
-        String address = addressEditText.getText().toString();
+        //String address = addressEditText.getText().toString();
         String city = cityEditText.getText().toString();
         double price = 0;
         boolean isCovered = coveredPitch.isChecked();
@@ -144,6 +145,8 @@ public class CreatePitch extends AppCompatActivity {
             pitch.put("price", price);
             pitch.put("covered",isCovered);
             pitch.put("code",code);
+            pitch.put("latitude", latitude);
+            pitch.put("longitude", longitude);
             db.collection("pitch").document(code)
                     .set(pitch)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -213,7 +216,8 @@ public class CreatePitch extends AppCompatActivity {
                 Address add = getAddress(latitude, longitude);
                 String address = add.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = add.getLocality();
-                addressEditText.setText(address);
+                //addressEditText.setText(address);
+                cityEditText.clearFocus();
                 cityEditText.setText(city);
 
             } catch (IOException e) {

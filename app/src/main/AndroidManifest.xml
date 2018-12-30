@@ -3,6 +3,7 @@
     package="com.example.walter.mobileapp">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -14,8 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Location Permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -90,7 +90,10 @@
         <activity android:name=".YesNotify" />
         <activity android:name=".CreateQRCode" />
         <activity android:name=".StartMatch" />
-        <activity android:name=".RatePlayer"></activity>
+        <activity android:name=".RatePlayer" />
+        <activity
+            android:name=".ShowMap"
+            android:label="@string/title_activity_show_map"></activity>
     </application>
 
 </manifest>

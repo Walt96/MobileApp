@@ -154,7 +154,7 @@ public class OwnerPitches extends AppCompatActivity {
             TextView pitchAddress = convertView.findViewById(R.id.pitchAddress);
             TextView pitchPrice = convertView.findViewById(R.id.pricePitch);
             TextView pitchCover = convertView.findViewById(R.id.pitchCover);
-            Spinner availableTime = convertView.findViewById(R.id.pitchTime);
+            //Spinner availableTime = convertView.findViewById(R.id.pitchTime);
             Button modify = convertView.findViewById(R.id.modifyButton);
             final int index = position;
             modify.setOnClickListener(new View.OnClickListener() {
@@ -171,17 +171,17 @@ public class OwnerPitches extends AppCompatActivity {
                 }
             });
 
-            try {
+            /*try {
                 Field popup = Spinner.class.getDeclaredField("mPopup");
                 popup.setAccessible(true);
                 // Get private mPopup member variable and try cast to ListPopupWindow
-                android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
+               // android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
                 // Set popupWindow height to 500px
                 popupWindow.setHeight(350);
             }
             catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            }
-            availableTime.setAdapter(pitches.get(position).getAvailableTime());
+            }*/
+           // availableTime.setAdapter(pitches.get(position).getAvailableTime());
             pitchPrice.setText("Price: "+ String.valueOf(pitches.get(position).getPrice()) + "€");
             pitchAddress.setText(pitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
