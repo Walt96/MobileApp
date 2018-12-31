@@ -94,7 +94,7 @@ public class AddPartecipant extends Fragment {
 
             // possofare un solo listener
             //team A
-            alertadd.setNeutralButton("A", new DialogInterface.OnClickListener() {
+            alertadd.setNegativeButton("A", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dlg, int sumthin) {
                     StaticInstance.db.collection("matches").document(handledMatch.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -171,7 +171,7 @@ public class AddPartecipant extends Fragment {
                     });
                 }
             });
-            alertadd.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+            alertadd.setNeutralButton("Decline", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dlg, int sumthin) {
 
                 }

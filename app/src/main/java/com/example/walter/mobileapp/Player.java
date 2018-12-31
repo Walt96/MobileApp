@@ -8,12 +8,22 @@ public class Player {
     private String team;
     private String username;
     private Uri uri;
+    private int rate;
 
     public Player(String role, String team, String username, Uri uri){
         this.role = role;
         this.team = team;
         this.username = username;
         this.uri = uri;
+        this.rate = 0;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
+    public int getRate() {
+        return rate;
     }
 
     public String getRole() {

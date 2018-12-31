@@ -90,7 +90,7 @@ public class UserHome extends AppCompatActivity
 
     }
 
-    private void sendNotify(String date, String time, String manager, String address, String match, String documentId, String team, String role) {
+    private void sendNotify(String date, String time, String manager, String address, String match, String documentId, String team, String role, boolean covered) {
         Intent yesIntent = new Intent(this,YesNotify.class);
         yesIntent.putExtra("match",match);
         yesIntent.putExtra("accept",true);
@@ -98,7 +98,11 @@ public class UserHome extends AppCompatActivity
         yesIntent.putExtra("username",username);
         yesIntent.putExtra("team",team);
         yesIntent.putExtra("role",role);
-
+        yesIntent.putExtra("covered",covered);
+        yesIntent.putExtra("date",date);
+        yesIntent.putExtra("time",time);
+        yesIntent.putExtra("manager",manager);
+        yesIntent.putExtra("address",address);
 
 
         yesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -112,7 +116,7 @@ public class UserHome extends AppCompatActivity
 
 
         noIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent noPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent noPendingIntent = PendingIntent.getActivity(this,0,noIntent,PendingIntent.FLAG_ONE_SHOT);
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -124,7 +128,7 @@ public class UserHome extends AppCompatActivity
             mNotificationManager.createNotificationChannel(channel);
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setSmallIcon(R.drawable.logo) // notification icon
                 .setContentTitle("You received a new invitation:") // title for notification
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(manager+" invited you for the match that will be played in "+address+ " in "+date+" at "+time+":00"))
@@ -144,7 +148,7 @@ public class UserHome extends AppCompatActivity
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
-                                    sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
+                                    sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
                                     StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
                                 }
                             }
@@ -161,7 +165,7 @@ public class UserHome extends AppCompatActivity
                 for(DocumentSnapshot document : snapshot) {
                     if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
                         Log.e("mando notifica,","df");
-                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString());
+                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
                         StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
                     }
                 }
@@ -261,32 +265,6 @@ public class UserHome extends AppCompatActivity
         startActivity(new Intent(this, LoginActivity.class));
     }
 
-    public void notifica(View view){
-        Intent yesIntent = new Intent(this,YesNotify.class);
-        yesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent yesPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
 
-        Intent noIntent = new Intent(this,YesNotify.class);
-        noIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent noPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("default",
-                    "YOUR_CHANNEL_NAME",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
-            mNotificationManager.createNotificationChannel(channel);
-        }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
-                .setContentTitle("i") // title for notification
-                .setContentText("n")// message for notification
-                .setAutoCancel(true)// clear notification after clic
-                .addAction(R.drawable.addplayer,"Accept",yesPendingIntent)
-                .addAction(R.drawable.addplayer,"Decline",noPendingIntent);
-        mNotificationManager.notify(0, mBuilder.build());
-    }
 
 }

@@ -243,7 +243,6 @@ public class CreateMatch extends AppCompatActivity {
                             ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.spinneritem, items);
                             chooseCity.setAdapter(adapter);
                             chooseCity.setSelection(0);
-                            //updateWithConstraints();
 
 
                         } else {

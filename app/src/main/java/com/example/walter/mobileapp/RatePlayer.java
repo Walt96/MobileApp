@@ -1,9 +1,12 @@
 package com.example.walter.mobileapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,9 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +28,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firestore.admin.v1beta1.Progress;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +43,7 @@ public class RatePlayer extends AppCompatActivity {
     ArrayList<Player> players;
     PlayersAdapter adapter;
     ListView listView;
-
+    Button confirm;
 
 
     @Override
@@ -46,6 +53,7 @@ public class RatePlayer extends AppCompatActivity {
         players = new ArrayList<>();
         username = StaticInstance.username;
         matchcode = getIntent().getStringExtra("matchcode");
+        confirm = findViewById(R.id.Confirm);
 
         StaticInstance.getInstance().collection("matches").document(matchcode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -54,7 +62,10 @@ public class RatePlayer extends AppCompatActivity {
                     if(task.getResult()!=null) {
                         ArrayList<HashMap> registered = (ArrayList) task.getResult().get("registered");
                         for(int i = 0;i<registered.size();i++) {
+
                             final Player player = new Player(registered.get(i).get("role").toString(),registered.get(i).get("team").toString(),registered.get(i).get("user").toString(),null);
+                            if(player.getUsername().equals(StaticInstance.username))
+                                continue;
                             StaticInstance.mStorageRef.child("users/" + registered.get(i).get("user")).getDownloadUrl()
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
@@ -69,13 +80,30 @@ public class RatePlayer extends AppCompatActivity {
                                         }
                                     });
                             players.add(player);
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 }
         });
 
-        listView = findViewById(R.id.listView);
+        listView = findViewById(R.id.list);
         listView.setAdapter(adapter = new PlayersAdapter());
+    }
+
+    public void confirmRates(View v) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getRate() == 0) {
+                confirm.setError("Please rate all the players: 0 is not admitted.");
+                return;
+            }
+        }
+
+        for(int i = 0;i<players.size();i++) {
+            StaticInstance.db.collection("users").document(players.get(i).getUsername()).update("rates", FieldValue.arrayUnion(players.get(i).getRate()));
+        }
+        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.list), "Your rates have been saved!", Snackbar.LENGTH_LONG);
+        mySnackbar.show();
+        startActivity(new Intent(this,UserHome.class));
 
     }
 
@@ -96,7 +124,7 @@ public class RatePlayer extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
             convertView = inflater.inflate(R.layout.list_rate, parent, false);
 
@@ -104,6 +132,16 @@ public class RatePlayer extends AppCompatActivity {
             TextView teamRate = convertView.findViewById(R.id.teamRate);
             TextView roleRate = convertView.findViewById(R.id.roleRate);
             ImageView imageRate = convertView.findViewById(R.id.imageRate);
+            NumberPicker ratePicker = convertView.findViewById(R.id.ratePicker);
+            ratePicker.setMinValue(0);
+            ratePicker.setMaxValue(10);
+            ratePicker.setWrapSelectorWheel(true);
+            ratePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+                    players.get(position).setRate(newVal);
+                }
+            });
 
             final Player currentPlayer = players.get(position);
 

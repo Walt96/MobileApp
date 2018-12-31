@@ -171,9 +171,10 @@ public class SigninActivity extends AppCompatActivity {
                                                     Map<String,Object> user = new HashMap<>();
                                                     user.put("username",usernameEdit.getText().toString());
                                                     user.put("password",passwordConfirm.getText().toString());
-                                                    if(isUser)
+                                                    if(isUser) {
                                                         user.put("role", role);
-
+                                                        user.put("rates", new ArrayList<>());
+                                                    }
                                                     user.put("player", isUser);
                                                     user.put("email", email);
                                                     user.put("phone", phoneNumber);

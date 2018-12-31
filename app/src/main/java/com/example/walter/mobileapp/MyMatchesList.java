@@ -164,7 +164,6 @@ public class MyMatchesList extends AppCompatActivity {
             });
 
             ImageButton confirm = convertView.findViewById(R.id.confirm);
-            //cambiare con if is finished
             if(currentMatch.isFinished()) {
                 confirm.setImageResource(R.drawable.qr);
                 confirm.setOnClickListener(new View.OnClickListener() {
@@ -173,7 +172,6 @@ public class MyMatchesList extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(),CreateQRCode.class);
                         intent.putExtra("code",currentMatch.getId());
                         intent.putExtra("scan",!currentMatch.getManager().equals(username));
-                        intent.putExtra("username",username);
                         startActivity(intent);
                     }
                 });
@@ -182,7 +180,7 @@ public class MyMatchesList extends AppCompatActivity {
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //StaticInstance.db.collection("matches").document(currentMatch.getId()).update("finished", true);
+                            StaticInstance.db.collection("matches").document(currentMatch.getId()).update("finished", true);
                             Intent intent = new Intent(getApplicationContext(), StartMatch.class);
                             intent.putExtra("matchcode",currentMatch.getId());
                             startActivity(intent);

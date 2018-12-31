@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FieldValue;
 import com.google.zxing.WriterException;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -23,7 +26,6 @@ import androidmads.library.qrgenearator.QRGEncoder;
 
 public class CreateQRCode extends AppCompatActivity {
 
-    String username;
     String m_Text = "";
 
     @Override
@@ -42,7 +44,6 @@ public class CreateQRCode extends AppCompatActivity {
                 e.printStackTrace();
             }
         }else{
-            username = getIntent().getStringExtra("username");
             AlertDialog.Builder alertadd = new AlertDialog.Builder(this);
             alertadd.setTitle("Choose the way to confirm:");
             alertadd.setPositiveButton("Scan", new DialogInterface.OnClickListener() {
@@ -98,8 +99,15 @@ public class CreateQRCode extends AppCompatActivity {
         }
     }
 
-    private void confirm(String contents) {
-        StaticInstance.db.collection("matches").document(contents).update("confirmed",FieldValue.arrayUnion(username));
+    private void confirm(final String contents) {
+        StaticInstance.db.collection("matches").document(contents).update("confirmed",FieldValue.arrayUnion(StaticInstance.username)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Intent intent = new Intent(getApplicationContext(),RatePlayer.class);
+                intent.putExtra("matchcode",contents);
+                startActivity(intent);
+            }
+        });
 
     }
 }

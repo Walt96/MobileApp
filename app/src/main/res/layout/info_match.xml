@@ -8,7 +8,7 @@
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
         android:layout_marginTop="10dp"
@@ -24,8 +24,8 @@
 
             <TextView
                 android:id="@+id/textView12"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Address:"
                 android:textSize="16sp"
@@ -35,7 +35,7 @@
             <TextView
                 android:id="@+id/address_view"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
@@ -46,8 +46,8 @@
 
             <TextView
                 android:id="@+id/textView14"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Date:"
                 android:textSize="16sp"
@@ -57,7 +57,7 @@
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
@@ -68,8 +68,8 @@
 
             <TextView
                 android:id="@+id/textView16"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Time:"
                 android:textSize="16sp"
@@ -79,7 +79,7 @@
             <TextView
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
@@ -90,8 +90,8 @@
 
             <TextView
                 android:id="@+id/textView20"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Covered:"
                 android:textSize="16sp"
@@ -101,7 +101,7 @@
             <TextView
                 android:id="@+id/covered"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
@@ -112,8 +112,8 @@
 
             <TextView
                 android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Booking by:"
                 android:textSize="16sp"
@@ -122,7 +122,7 @@
             <TextView
                 android:id="@+id/bookingby"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
@@ -133,8 +133,8 @@
 
             <TextView
                 android:id="@+id/textView18"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Registered:"
                 android:textSize="16sp"
@@ -143,7 +143,7 @@
             <TextView
                 android:id="@+id/registered_"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="TextView" />
         </TableRow>
