@@ -110,6 +110,7 @@ public class AddPartecipant extends Fragment {
                                     newInvite.put("time",handledMatch.getTime());
                                     newInvite.put("address",handledMatch.getAddress());
                                     newInvite.put("manager",handledMatch.getManager());
+                                    newInvite.put("from",StaticInstance.username);
                                     newInvite.put("covered",handledMatch.isCovered());
                                     newInvite.put("invited",username);
                                     newInvite.put("notified",false);
@@ -151,6 +152,7 @@ public class AddPartecipant extends Fragment {
                                     newInvite.put("manager",handledMatch.getManager());
                                     newInvite.put("covered",handledMatch.isCovered());
                                     newInvite.put("invited",username);
+                                    newInvite.put("from",StaticInstance.username);
                                     newInvite.put("notified",false);
                                     newInvite.put("accepted","pending");
                                     newInvite.put("role",role);

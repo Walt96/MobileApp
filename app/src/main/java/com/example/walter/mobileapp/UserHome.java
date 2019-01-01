@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,21 +27,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,12 +51,17 @@ public class UserHome extends AppCompatActivity
     String username;
     String role;
     ListenerRegistration listenerToInvitation = null;
-
+    ArrayList<com.example.walter.mobileapp.Notification> notifications;
+    Lock lock;
+    ListView notificationsList;
+    CustomAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        notifications = new ArrayList<>();
+        lock = new ReentrantLock();
         setContentView(R.layout.activity_user_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,6 +95,70 @@ public class UserHome extends AppCompatActivity
 
         addListenerForInvitation();
 
+        notificationsList = findViewById(R.id.notificationsList);
+        notificationsList.setAdapter(adapter = new CustomAdapter());
+
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        loadNotifications();
+    }
+
+    private void loadNotifications() {
+        //aggiungere controllo sul tipo di notifica se richiesta o invito
+        StaticInstance.getInstance().collection("invite").whereEqualTo("invited",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    lock.lock();
+                    String from = document.get("from").toString();
+                    String to = username;
+                    String state = document.get("accept").toString();
+                    String date = document.get("date").toString();
+                    String address = document.get("address").toString();
+                    String covered = "is covered";
+                    if(!(boolean)document.get("covered"))
+                        covered = "is not covered";
+                    String info_match = date+" in "+address+". The pitch " + covered;
+                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(from,to,state,info_match);
+                    int index = notifications.indexOf(notification);
+
+                    if(index==-1) {
+                        notifications.add(notification);
+                        adapter.notifyDataSetChanged();
+                    }else if(!state.equals(notifications.get(index).getState())){
+                        notifications.set(index,notification);
+                        adapter.notifyDataSetChanged();
+                    }
+                    lock.unlock();
+
+                }
+            }
+        });
+
+        StaticInstance.getInstance().collection("invite").whereEqualTo("from",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    lock.lock();
+                    String from = username;
+                    String to = document.get("invited").toString();
+                    String state = document.get("accept").toString();
+                    String date = document.get("date").toString();
+                    String address = document.get("address").toString();
+                    String covered = "is covered";
+                    if(!(boolean)document.get("covered"))
+                        covered = "is not covered";
+                    String info_match = date+" in "+address+". The pitch " + covered;
+                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(from,to,state,info_match);
+                    notifications.add(notification);
+                    adapter.notifyDataSetChanged();
+                    lock.unlock();
+                }
+            }
+        });
     }
 
     private void sendNotify(String date, String time, String manager, String address, String match, String documentId, String team, String role, boolean covered) {
@@ -148,7 +219,7 @@ public class UserHome extends AppCompatActivity
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
-                                    sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
+                                    sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("from").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
                                     StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
                                 }
                             }
@@ -165,7 +236,7 @@ public class UserHome extends AppCompatActivity
                 for(DocumentSnapshot document : snapshot) {
                     if(document.get("invited") != null && document.get("invited").toString().equals(username)&& (boolean)document.get("notified") == false){
                         Log.e("mando notifica,","df");
-                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("manager").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
+                        sendNotify(document.get("date").toString(),document.get("time").toString(),document.get("from").toString(),document.get("address").toString(),document.get("match").toString(),document.getId(),document.get("team").toString(),document.get("role").toString(),(boolean)document.get("covered"));
                         StaticInstance.db.collection("invite").document(document.getId()).update("notified",true);
                     }
                 }
@@ -265,6 +336,54 @@ public class UserHome extends AppCompatActivity
         startActivity(new Intent(this, LoginActivity.class));
     }
 
+    class CustomAdapter extends BaseAdapter {
+
+
+        public CustomAdapter(){
+        }
+
+        @Override
+        public int getCount() {
+            return notifications.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+            convertView = inflater.inflate(R.layout.custom_list_notifications, parent, false);
+
+            TextView from = convertView.findViewById(R.id.from);
+            TextView to = convertView.findViewById(R.id.to);
+            TextView state = convertView.findViewById(R.id.state);
+            TextView info = convertView.findViewById(R.id.info);
+
+            final com.example.walter.mobileapp.Notification notification = notifications.get(position);
+            from.setText(notification.getFrom());
+            to.setText(notification.getTo());
+            state.setText(notification.getState());
+            info.setText(notification.getInfo_match());
+
+
+            if(!notification.getTo().equals(StaticInstance.username)) {
+                convertView.findViewById(R.id.accept).setVisibility(View.INVISIBLE);
+                convertView.findViewById(R.id.decline).setVisibility(View.INVISIBLE);
+            }
+
+            return convertView;
+
+        }
+    }
 
 
 }

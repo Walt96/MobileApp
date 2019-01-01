@@ -111,7 +111,7 @@ public class YesNotify extends AppCompatActivity {
              String is = "is";
              if ((boolean) intent.getBooleanExtra("covered", false))
                  is = "is not";
-             values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by " + intent.getStringExtra("manager") + ". The pitch " + is + " covered.");
+             values.put(CalendarContract.Events.DESCRIPTION, "You have been invited by " + intent.getStringExtra("manager") + ". The pitch " + is + " covered.");
              values.put(CalendarContract.Events.CALENDAR_ID, 1);
              values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
              values.put(CalendarContract.Events.EVENT_LOCATION, intent.getStringExtra("address"));

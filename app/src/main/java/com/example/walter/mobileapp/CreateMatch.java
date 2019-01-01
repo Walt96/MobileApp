@@ -528,7 +528,7 @@ public class CreateMatch extends AppCompatActivity {
             String is="is";
             if((boolean)saveMyMatch.get("covered"))
                 is="is not";
-            values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by "+saveMyMatch.get("manager").toString()+ ". The pitch "+ is +" covered.");
+            values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by you. The pitch "+ is +" covered.");
             values.put(CalendarContract.Events.CALENDAR_ID, 1);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
             values.put(CalendarContract.Events.EVENT_LOCATION, saveMyMatch.get("address").toString());
