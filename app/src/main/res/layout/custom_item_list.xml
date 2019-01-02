@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="360dp"
-    android:background="@color/common_google_signin_btn_text_light_focused">
+    android:background="@color/common_google_signin_btn_text_dark_default">
 
     <Spinner
         android:id="@+id/pitchTime"
@@ -52,7 +52,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="40dp"
-        app:srcCompat="@mipmap/ic_launcher"
+        app:srcCompat="@drawable/login"
         tools:layout_editor_absoluteX="46dp"
         tools:layout_editor_absoluteY="31dp" />
 

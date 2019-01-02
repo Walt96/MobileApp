@@ -103,7 +103,9 @@ public class RatePlayer extends AppCompatActivity {
         }
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.list), "Your rates have been saved!", Snackbar.LENGTH_LONG);
         mySnackbar.show();
-        startActivity(new Intent(this,UserHome.class));
+        Intent intent = new Intent(this,RateMatch.class);
+        intent.putExtra("matchcode",matchcode);
+        startActivity(intent);
 
     }
 

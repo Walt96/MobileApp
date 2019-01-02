@@ -174,6 +174,7 @@ public class SigninActivity extends AppCompatActivity {
                                                     if(isUser) {
                                                         user.put("role", role);
                                                         user.put("rates", new ArrayList<>());
+                                                        user.put("preferences", new ArrayList<>());
                                                     }
                                                     user.put("player", isUser);
                                                     user.put("email", email);

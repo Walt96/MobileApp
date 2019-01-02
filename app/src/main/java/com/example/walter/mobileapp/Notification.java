@@ -1,16 +1,26 @@
 package com.example.walter.mobileapp;
 
 public class Notification {
+    String id;
     String from;
     String to;
     String state;
     String info_match;
 
-    public Notification(String from, String to, String state, String info_match) {
+    public Notification(String id, String from, String to, String state, String info_match) {
         this.from = from;
         this.to = to;
         this.state = state;
         this.info_match = info_match;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFrom() {

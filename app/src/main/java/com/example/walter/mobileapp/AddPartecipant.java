@@ -117,6 +117,8 @@ public class AddPartecipant extends Fragment {
                                     newInvite.put("accept","pending");
                                     newInvite.put("role",role);
                                     newInvite.put("team","A");
+                                    newInvite.put("readFrom",false);
+                                    newInvite.put("readTo",false);
                                     StaticInstance.db.collection("invite")
                                             .add(newInvite)
                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -154,9 +156,11 @@ public class AddPartecipant extends Fragment {
                                     newInvite.put("invited",username);
                                     newInvite.put("from",StaticInstance.username);
                                     newInvite.put("notified",false);
-                                    newInvite.put("accepted","pending");
+                                    newInvite.put("accept","pending");
                                     newInvite.put("role",role);
                                     newInvite.put("team","B");
+                                    newInvite.put("readFrom",false);
+                                    newInvite.put("readTo",false);
                                     StaticInstance.db.collection("invite")
                                             .add(newInvite)
                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

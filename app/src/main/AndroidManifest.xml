@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -93,7 +92,8 @@
         <activity android:name=".RatePlayer" />
         <activity
             android:name=".ShowMap"
-            android:label="@string/title_activity_show_map"></activity>
+            android:label="@string/title_activity_show_map" />
+        <activity android:name=".RateMatch"></activity>
     </application>
 
 </manifest>
