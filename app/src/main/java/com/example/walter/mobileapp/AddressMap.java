@@ -50,14 +50,15 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
 
     private LatLng actualPoint;
 
-    public AddressMap() {}
+    public AddressMap() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_map);
 
-       // btn = findViewById(R.id.locationBtn)
+        // btn = findViewById(R.id.locationBtn)
 
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this);
@@ -80,7 +81,7 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
         Intent data = new Intent();
         Double longitude;
         Double latitude;
-        if(actualPoint != null) {
+        if (actualPoint != null) {
             longitude = actualPoint.longitude;
             latitude = actualPoint.latitude;
         } else {
@@ -88,9 +89,9 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
             latitude = mLastKnownLocation.getLatitude();
         }
 
-        data.putExtra("longitude",longitude);
-        data.putExtra("latitude",latitude);
-        setResult(RESULT_OK,data);
+        data.putExtra("longitude", longitude);
+        data.putExtra("latitude", latitude);
+        setResult(RESULT_OK, data);
         finish();
     }
 
@@ -197,7 +198,7 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
-                            if(mLastKnownLocation != null)  {
+                            if (mLastKnownLocation != null) {
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(mLastKnownLocation.getLatitude(),
                                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -216,7 +217,7 @@ public class AddressMap extends FragmentActivity implements OnMapReadyCallback {
                     }
                 });
             }
-        } catch(SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

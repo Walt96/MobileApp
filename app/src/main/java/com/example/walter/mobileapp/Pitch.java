@@ -25,31 +25,31 @@ public class Pitch {
     String city;
     String owner;
 
-    public Pitch(String address,double price,boolean covered, String city){
-        this.address=address;
-        this.price=price;
-        this.covered=covered;
+    public Pitch(String address, double price, boolean covered, String city) {
+        this.address = address;
+        this.price = price;
+        this.covered = covered;
         uri = null;
         time = new String[15];
-        for(int i = 8;i<23;i++)
-            time[i-8]=String.valueOf(i)+":00";
-        availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+        for (int i = 8; i < 23; i++)
+            time[i - 8] = String.valueOf(i) + ":00";
+        availableTime = new ArrayAdapter(StaticInstance.currentActivity, R.layout.spinneritem, time);
         this.city = city;
 
     }
 
-    public Pitch(String id, String address,double price,boolean covered, String city, String owner){
+    public Pitch(String id, String address, double price, boolean covered, String city, String owner) {
         this.city = city;
         this.id = id;
-        this.address=address;
-        this.price=price;
+        this.address = address;
+        this.price = price;
         this.owner = owner;
-        this.covered=covered;
+        this.covered = covered;
         uri = null;
         time = new String[15];
-        for(int i = 8;i<23;i++)
-            time[i-8]=String.valueOf(i)+":00";
-        availableTime  = new ArrayAdapter(StaticInstance.currentActivity,R.layout.spinneritem,time);
+        for (int i = 8; i < 23; i++)
+            time[i - 8] = String.valueOf(i) + ":00";
+        availableTime = new ArrayAdapter(StaticInstance.currentActivity, R.layout.spinneritem, time);
     }
 
     public String getOwner() {
@@ -61,29 +61,33 @@ public class Pitch {
         return availableTime;
     }
 
-    public void removeTime(int remove_time){
-        time[remove_time-8] = "OCCUPATO";
+    public void removeTime(int remove_time) {
+        time[remove_time - 8] = "OCCUPATO";
         availableTime.notifyDataSetChanged();
     }
 
-    public void addTime(int add_time){
-        time[add_time-8] = String.valueOf(add_time+8)+":00";
+    public void addTime(int add_time) {
+        time[add_time - 8] = String.valueOf(add_time + 8) + ":00";
         availableTime.notifyDataSetChanged();
     }
 
-    public void initWithoutThese(ArrayList<String> notAvailable){
-        for(int i = 8;i<23;i++)
-            if(notAvailable.contains(String.valueOf(i)))
-                time[i-8] = "OCCUPATO";
-            else{
-                time[i-8] = String.valueOf(i)+":00";
+    public void initWithoutThese(ArrayList<String> notAvailable) {
+        for (int i = 8; i < 23; i++)
+            if (notAvailable.contains(String.valueOf(i)))
+                time[i - 8] = "OCCUPATO";
+            else {
+                time[i - 8] = String.valueOf(i) + ":00";
             }
         availableTime.notifyDataSetChanged();
     }
 
-    public String getCity() {return city;}
+    public String getCity() {
+        return city;
+    }
 
-    public String getId() {return id;}
+    public String getId() {
+        return id;
+    }
 
     public Uri getUri() {
         return uri;
@@ -119,7 +123,7 @@ public class Pitch {
 
     @Override
     public boolean equals(Object obj) {
-        return id.equals(((Pitch)(obj)).id);
+        return id.equals(((Pitch) (obj)).id);
     }
 
 

@@ -202,15 +202,14 @@ public class AddPartecipant extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
                                             public void onSuccess(Uri imageUri) {
-                                                if(imageUri!=null) {
+                                                if (imageUri != null) {
                                                     Glide.with(getView())
                                                             .load(imageUri).apply(bitmapTransform(new CircleCrop()))
                                                             .into(imageSearched);
 
-                                                }
-                                                else {
+                                                } else {
                                                     Glide.with(getView())
-                                                            .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.ic_person_black_24dp))
+                                                            .load(Uri.parse("android.resource://com.example.walter.mobileapp/" + R.drawable.ic_person_black_24dp))
                                                             .into(imageSearched);
                                                 }
 
@@ -220,7 +219,7 @@ public class AddPartecipant extends Fragment {
                                             @Override
                                             public void onFailure(@NonNull Exception exception) {
                                                 Glide.with(getView())
-                                                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.ic_person_black_24dp))
+                                                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/" + R.drawable.ic_person_black_24dp))
                                                         .into(imageSearched);
                                             }
                                         });

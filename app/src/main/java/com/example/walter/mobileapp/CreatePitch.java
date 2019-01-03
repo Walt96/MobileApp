@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class CreatePitch extends AppCompatActivity {
 
-    private static final int WRITE_EXTERNAL_CODE = 2 ;
+    private static final int WRITE_EXTERNAL_CODE = 2;
     //EditText addressEditText;
     EditText cityEditText;
     EditText priceEditText;
@@ -69,7 +69,7 @@ public class CreatePitch extends AppCompatActivity {
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
-        path=null;
+        path = null;
 
         // Creo la barra di ricerca dei luoghi.
         // TODO Vale la pena prendere la città?
@@ -88,7 +88,7 @@ public class CreatePitch extends AppCompatActivity {
                     addresses = mGeocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && addresses.size() > 0) {
                         Address selectedAddress = addresses.get(0);
-                        address  = selectedAddress.getAddressLine(0);
+                        address = selectedAddress.getAddressLine(0);
                         Log.e("TAG", address);
                         String city = selectedAddress.getLocality();
                         cityEditText.setText(city);
@@ -106,9 +106,10 @@ public class CreatePitch extends AppCompatActivity {
             }
         });
 
-        ((EditText)autocompleteFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextColor(Color.WHITE);
+        ((EditText) autocompleteFragment.getView().findViewById(R.id.place_autocomplete_search_input)).setTextColor(Color.WHITE);
 
     }
+
     public void validateFields(View v) {
 
         //String address = addressEditText.getText().toString();
@@ -129,8 +130,7 @@ public class CreatePitch extends AppCompatActivity {
         if (priceEditText.getText().length() == 0) {
             priceEditText.setError("Do you really want to make your pitch free? :)");
             validField = false;
-        }
-        else {
+        } else {
             String value_price = priceEditText.getText().toString();
             price = Double.valueOf(value_price);
         }
@@ -143,8 +143,8 @@ public class CreatePitch extends AppCompatActivity {
             pitch.put("address", address);
             pitch.put("city", city.toLowerCase());
             pitch.put("price", price);
-            pitch.put("covered",isCovered);
-            pitch.put("code",code);
+            pitch.put("covered", isCovered);
+            pitch.put("code", code);
             pitch.put("latitude", latitude);
             pitch.put("longitude", longitude);
             db.collection("pitch").document(code)
@@ -152,19 +152,19 @@ public class CreatePitch extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void avoid) {
-                            StorageReference ref = StaticInstance.mStorageRef.child("pitch/"+username+code);
-                            if(path!=null) {
+                            StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
+                            if (path != null) {
                                 ref.putFile(Uri.parse(path))
                                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                             @Override
                                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                path=null;
+                                                path = null;
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception exception) {
-                                                path=null;
+                                                path = null;
                                             }
                                         });
                             }
@@ -187,16 +187,16 @@ public class CreatePitch extends AppCompatActivity {
 
     }
 
-    public void takePhoto(View v){
+    public void takePhoto(View v) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("Request Code", requestCode+"");
+        Log.e("Request Code", requestCode + "");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.e("TAG","REQUEST_IMAGE_CAPTURE");
+            Log.e("TAG", "REQUEST_IMAGE_CAPTURE");
             Bundle extras = data.getExtras();
             photo = (Bitmap) extras.get("data");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -206,12 +206,12 @@ public class CreatePitch extends AppCompatActivity {
                 } else {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_CODE);
                 }
-            }else{
+            } else {
                 setPathPhoto();
             }
-        } else if(requestCode == REQUEST_ADDRESS_INFO && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_ADDRESS_INFO && resultCode == RESULT_OK) {
             try {
-                Double longitude = data.getDoubleExtra("longitude",0);
+                Double longitude = data.getDoubleExtra("longitude", 0);
                 Double latitude = data.getDoubleExtra("latitude", 0);
                 Address add = getAddress(latitude, longitude);
                 String address = add.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
@@ -266,7 +266,6 @@ public class CreatePitch extends AppCompatActivity {
     }*/
 
 
-
     private Address getAddress(Double latitude, Double longitude) throws IOException {
         Geocoder geocoder;
         List<Address> addresses;
@@ -276,7 +275,7 @@ public class CreatePitch extends AppCompatActivity {
         return addresses.get(0);
     }
 
-    public void setPathPhoto(){
+    public void setPathPhoto() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         path = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, "Title", null);
@@ -285,7 +284,7 @@ public class CreatePitch extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == WRITE_EXTERNAL_CODE)
+        if (requestCode == WRITE_EXTERNAL_CODE)
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setPathPhoto();

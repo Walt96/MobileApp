@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('embasp_3.1.0.aar'))

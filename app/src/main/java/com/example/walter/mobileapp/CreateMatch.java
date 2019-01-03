@@ -77,6 +77,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import it.unical.mat.embasp.base.Callback;
+import it.unical.mat.embasp.base.Handler;
+import it.unical.mat.embasp.base.InputProgram;
+import it.unical.mat.embasp.base.Output;
+import it.unical.mat.embasp.platforms.android.AndroidHandler;
+import it.unical.mat.embasp.specializations.dlv.android.DLVAndroidService;
+
 public class CreateMatch extends AppCompatActivity {
 
     TextView dateView;
@@ -91,10 +98,10 @@ public class CreateMatch extends AppCompatActivity {
     ArrayList<Pitch> pitches;
     ArrayList<Pitch> currentPitches;
     boolean selectedCovered;
-    String selectedCity="";
+    String selectedCity = "";
     String manager;
     String role;
-    final HashMap<String,Object> saveMyMatch = new HashMap<>();
+    final HashMap<String, Object> saveMyMatch = new HashMap<>();
 
 
     int index = 0;
@@ -110,20 +117,21 @@ public class CreateMatch extends AppCompatActivity {
     // aggiunta tasto back nella barra
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.comeback,menu);
+        getMenuInflater().inflate(R.menu.comeback, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //torniamo al menu se ha premuto su back
-        startActivity(new Intent(this,UserHome.class));
+        startActivity(new Intent(this, UserHome.class));
         return true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        provaEmbasp();
         customAdapter = new CustomAdapter(getApplicationContext());
 
         reference = FirebaseStorage.getInstance().getReference();
@@ -135,8 +143,8 @@ public class CreateMatch extends AppCompatActivity {
         selectedCovered = false;
         covered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                selectedCovered=isChecked;
-                if(isChecked)
+                selectedCovered = isChecked;
+                if (isChecked)
                     covered.setText("Covered");
                 else
                     covered.setText("Not Covered");
@@ -173,7 +181,7 @@ public class CreateMatch extends AppCompatActivity {
                         getActivity(),
                         android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                         mDateSetListener,
-                        year,month,day);
+                        year, month, day);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
             }
@@ -184,11 +192,11 @@ public class CreateMatch extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
                 String day_ = "0";
-                if(day >= 10)
-                    day_=day+"/";
+                if (day >= 10)
+                    day_ = day + "/";
                 else
-                    day_+=day+"/";
-                selectedDate  = day_ + month + "/" + year;
+                    day_ += day + "/";
+                selectedDate = day_ + month + "/" + year;
                 initPitchAvailableTime();
                 dateView.setText(selectedDate);
             }
@@ -218,7 +226,7 @@ public class CreateMatch extends AppCompatActivity {
                                 boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
                                 String owner = document.get("owner").toString();
-                                final Pitch currentPitch = new Pitch(document.get("code").toString(),address, price, covered, city,owner);
+                                final Pitch currentPitch = new Pitch(document.get("code").toString(), address, price, covered, city, owner);
 
                                 mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -253,19 +261,34 @@ public class CreateMatch extends AppCompatActivity {
 
     }
 
+    private void provaEmbasp() {
+        Log.e("ciao","ciamo");
+        Handler handler = new AndroidHandler(getApplicationContext(), DLVAndroidService.class);
+        InputProgram inputProgram = new InputProgram();
+        inputProgram.addProgram("a(1)");
+        handler.addProgram(inputProgram);
+        handler.startAsync(new Callback() {
+            @Override
+            public void callback(Output output) {
+                //codice
+            }
+        });
+        Log.e("cccc","cc");
+    }
+
     public void openMap(View w) {
         startActivity(new Intent(this, ShowMap.class));
     }
 
     private void initPitchAvailableTime() {
-        for(final Pitch p : pitches){
-            db.collection("matches").whereEqualTo("pitchcode",p.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        for (final Pitch p : pitches) {
+            db.collection("matches").whereEqualTo("pitchcode", p.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     ArrayList notAvailable = new ArrayList();
                     for (DocumentSnapshot document : task.getResult()) {
-                        Log.e("trovati",document.toString());
-                        if(document.get("date").toString().equals(selectedDate))
+                        Log.e("trovati", document.toString());
+                        if (document.get("date").toString().equals(selectedDate))
                             notAvailable.add(document.get("time").toString());
                     }
                     p.initWithoutThese(notAvailable);
@@ -277,27 +300,27 @@ public class CreateMatch extends AppCompatActivity {
 
 
     private void addListenerForNewMatches() {
-            if(listener != null)
-                listener.remove();
-            listener = StaticInstance.db.collection("matches").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot snapshot,
-                                    @Nullable FirebaseFirestoreException e) {
-                        for(DocumentSnapshot document : snapshot) {
-                            Log.e("datacercata",selectedDate);
-                            String bookedDate = document.get("date").toString();
-                            String bookedTime = document.get("time").toString();
-                            String idBookedPitch = document.get("pitchcode").toString();
-                            if(selectedDate.equals(bookedDate))
-                                for (Pitch p : currentPitches)
-                                    if (p.getId().equals(idBookedPitch)) {
-                                        Log.e("rimuovo","tolgo il "+bookedTime);
-                                        p.removeTime(Integer.valueOf(bookedTime));
-                                    }
-                        }
-
+        if (listener != null)
+            listener.remove();
+        listener = StaticInstance.db.collection("matches").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                for (DocumentSnapshot document : snapshot) {
+                    Log.e("datacercata", selectedDate);
+                    String bookedDate = document.get("date").toString();
+                    String bookedTime = document.get("time").toString();
+                    String idBookedPitch = document.get("pitchcode").toString();
+                    if (selectedDate.equals(bookedDate))
+                        for (Pitch p : currentPitches)
+                            if (p.getId().equals(idBookedPitch)) {
+                                Log.e("rimuovo", "tolgo il " + bookedTime);
+                                p.removeTime(Integer.valueOf(bookedTime));
+                            }
                 }
-            });
+
+            }
+        });
 
     }
 
@@ -313,14 +336,13 @@ public class CreateMatch extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
         StaticInstance.currentActivity = this;
     }
 
-    class CustomAdapter extends BaseAdapter{
+    class CustomAdapter extends BaseAdapter {
 
         Context context;
 
@@ -360,26 +382,24 @@ public class CreateMatch extends AppCompatActivity {
                 android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
                 // Set popupWindow height to 500px
                 popupWindow.setHeight(350);
-            }
-            catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             }
             availableTime.setAdapter(currentPitches.get(position).getAvailableTime());
-            pitchPrice.setText("Price: "+ String.valueOf(currentPitches.get(position).getPrice()) + "€");
-            pitchAddress.setText("Address: "+currentPitches.get(position).getAddress());
+            pitchPrice.setText("Price: " + String.valueOf(currentPitches.get(position).getPrice()) + "€");
+            pitchAddress.setText("Address: " + currentPitches.get(position).getAddress());
             ImageView pitchImage = convertView.findViewById(R.id.pitchImage);
             Uri imageUri = currentPitches.get(position).getUri();
-            if(imageUri!=null) {
+            if (imageUri != null) {
                 Glide.with(convertView)
                         .load(currentPitches.get(position).getUri())
                         .into(pitchImage);
-            }
-            else {
+            } else {
                 Glide.with(convertView)
-                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.login))
+                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/" + R.drawable.login))
                         .into(pitchImage);
             }
             pitchCover.setText("Covered: Yes");
-            if(!currentPitches.get(position).isCovered())
+            if (!currentPitches.get(position).isCovered())
                 pitchCover.setText("Covered: No");
 
             final Spinner time = convertView.findViewById(R.id.pitchTime);
@@ -388,7 +408,7 @@ public class CreateMatch extends AppCompatActivity {
             book.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bookPitch(currentPitches.get(position).getId(),time.getSelectedItem().toString().split(":")[0],currentPitches.get(position).getAddress(),currentPitches.get(position).getOwner());
+                    bookPitch(currentPitches.get(position).getId(), time.getSelectedItem().toString().split(":")[0], currentPitches.get(position).getAddress(), currentPitches.get(position).getOwner());
                 }
             });
             return convertView;
@@ -396,15 +416,15 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(final String pitchId, final String time, final String address, final String owner){
+    public void bookPitch(final String pitchId, final String time, final String address, final String owner) {
         ConnectivityManager cm =
-                (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
-        if(!isConnected){
+        if (!isConnected) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You don't have internet connection, please check it!")
                     .setTitle("An error occurred");
@@ -422,13 +442,13 @@ public class CreateMatch extends AppCompatActivity {
             builder.create().show();
 
 
-        }else{
-            if(time.equals("OCCUPATO")){
+        } else {
+            if (time.equals("OCCUPATO")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("The pitch you selected is already booked at this time, sorry!")
                         .setTitle("An error occurred");
                 builder.create().show();
-            }else {
+            } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Address: " + address + "\n" +
                         "Date: " + selectedDate + "\n" +
@@ -438,17 +458,17 @@ public class CreateMatch extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        final String matchCode = String.valueOf(new Date().getTime())+manager;
+                        final String matchCode = String.valueOf(new Date().getTime()) + manager;
 
                         //aggiungo la nuova partita alla collezione matches nel documento data corrente + manager in modo da renderlo univoco con la concorrenza
-                        saveMyMatch.put("date",selectedDate);
-                        saveMyMatch.put("time",time);
-                        saveMyMatch.put("manager",manager);
-                        saveMyMatch.put("pitchcode",pitchId);
-                        saveMyMatch.put("address",address);
-                        saveMyMatch.put("covered",selectedCovered);
-                        saveMyMatch.put("code",matchCode);
-                        saveMyMatch.put("pitchmanager",owner);
+                        saveMyMatch.put("date", selectedDate);
+                        saveMyMatch.put("time", time);
+                        saveMyMatch.put("manager", manager);
+                        saveMyMatch.put("pitchcode", pitchId);
+                        saveMyMatch.put("address", address);
+                        saveMyMatch.put("covered", selectedCovered);
+                        saveMyMatch.put("code", matchCode);
+                        saveMyMatch.put("pitchmanager", owner);
 
 
                         addCalendarEvent(saveMyMatch);
@@ -468,7 +488,7 @@ public class CreateMatch extends AppCompatActivity {
 
     }
 
-    private long addCalendarEvent(HashMap<String,Object> saveMyMatch) {
+    private long addCalendarEvent(HashMap<String, Object> saveMyMatch) {
 
         boolean hasPermission = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -477,10 +497,10 @@ public class CreateMatch extends AppCompatActivity {
                     == PackageManager.PERMISSION_GRANTED) {
                 hasPermission = true;
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{permission.READ_CALENDAR,permission.WRITE_CALENDAR}, CALENDAR_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{permission.READ_CALENDAR, permission.WRITE_CALENDAR}, CALENDAR_CODE);
             }
         }
-        if(hasPermission) {
+        if (hasPermission) {
             AddEventToCalendar task = new AddEventToCalendar(saveMyMatch);
             task.execute();
         }
@@ -490,7 +510,7 @@ public class CreateMatch extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == CALENDAR_CODE)
+        if (requestCode == CALENDAR_CODE)
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 addCalendarEvent(saveMyMatch);
@@ -502,7 +522,7 @@ public class CreateMatch extends AppCompatActivity {
         HashMap saveMyMatch;
         ProgressDialog progressDialog;
 
-        public AddEventToCalendar(HashMap saveMyMatch){
+        public AddEventToCalendar(HashMap saveMyMatch) {
             this.saveMyMatch = saveMyMatch;
         }
 
@@ -513,10 +533,10 @@ public class CreateMatch extends AppCompatActivity {
             long endMillis = 0;
             Calendar beginTime = Calendar.getInstance();
             String date[] = saveMyMatch.get("date").toString().split("/");
-            beginTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()) , 0);
+            beginTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()), 0);
             startMillis = beginTime.getTimeInMillis();
             Calendar endTime = Calendar.getInstance();
-            endTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1])-1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()) , 50);
+            endTime.set(Integer.valueOf(date[2]), Integer.valueOf(date[1]) - 1, Integer.valueOf(date[0]), Integer.valueOf(saveMyMatch.get("time").toString()), 50);
             endMillis = endTime.getTimeInMillis();
 
 
@@ -525,37 +545,37 @@ public class CreateMatch extends AppCompatActivity {
             values.put(CalendarContract.Events.DTSTART, startMillis);
             values.put(CalendarContract.Events.DTEND, endMillis);
             values.put(CalendarContract.Events.TITLE, "Football match");
-            String is="is";
-            if((boolean)saveMyMatch.get("covered"))
-                is="is not";
-            values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by you. The pitch "+ is +" covered.");
+            String is = "is";
+            if ((boolean) saveMyMatch.get("covered"))
+                is = "is not";
+            values.put(CalendarContract.Events.DESCRIPTION, "The match was organized by you. The pitch " + is + " covered.");
             values.put(CalendarContract.Events.CALENDAR_ID, 1);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
             values.put(CalendarContract.Events.EVENT_LOCATION, saveMyMatch.get("address").toString());
-            values.put(CalendarContract.Events.HAS_ALARM,true);
-            values.put(CalendarContract.Events.ALL_DAY,0);
+            values.put(CalendarContract.Events.HAS_ALARM, true);
+            values.put(CalendarContract.Events.ALL_DAY, 0);
             Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
             return Long.parseLong(uri.getLastPathSegment());
         }
 
         protected void onPostExecute(Long result) {
-            saveMyMatch.put("calendarid",result);
+            saveMyMatch.put("calendarid", result);
             HashMap myProfile = new HashMap();
-            myProfile.put("user",manager);
-            myProfile.put("role",role);
-            myProfile.put("team","A");
+            myProfile.put("user", manager);
+            myProfile.put("role", role);
+            myProfile.put("team", "A");
             ArrayList firstRegistered = new ArrayList();
             firstRegistered.add(myProfile);
             saveMyMatch.put("registered", firstRegistered);
 
             ArrayList myName = new ArrayList();
             myName.add(manager);
-            saveMyMatch.put("partecipants",myName);
+            saveMyMatch.put("partecipants", myName);
 
-            saveMyMatch.put("finished",false);
+            saveMyMatch.put("finished", false);
             ArrayList confirmed = new ArrayList();
             confirmed.add(manager);
-            saveMyMatch.put("confirmed",confirmed);
+            saveMyMatch.put("confirmed", confirmed);
 
             StaticInstance.db.collection("matches").document(saveMyMatch.get("code").toString())
                     .set(saveMyMatch)

@@ -32,8 +32,8 @@ public class CreateQRCode extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_qrcode);
-        boolean haveToScan = getIntent().getBooleanExtra("scan",false);
-        if(!haveToScan) {
+        boolean haveToScan = getIntent().getBooleanExtra("scan", false);
+        if (!haveToScan) {
             String code = getIntent().getStringExtra("code");
             QRGEncoder qrgEncoder = new QRGEncoder(code, null, QRGContents.Type.TEXT, 200);
             try {
@@ -43,7 +43,7 @@ public class CreateQRCode extends AppCompatActivity {
             } catch (WriterException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             AlertDialog.Builder alertadd = new AlertDialog.Builder(this);
             alertadd.setTitle("Choose the way to confirm:");
             alertadd.setPositiveButton("Scan", new DialogInterface.OnClickListener() {
@@ -80,7 +80,7 @@ public class CreateQRCode extends AppCompatActivity {
                     builder.show();
 
                 }
-            }) ;
+            });
             alertadd.show();
         }
     }
@@ -91,7 +91,7 @@ public class CreateQRCode extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result =   IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
                 confirm(result.getContents());
@@ -100,11 +100,11 @@ public class CreateQRCode extends AppCompatActivity {
     }
 
     private void confirm(final String contents) {
-        StaticInstance.db.collection("matches").document(contents).update("confirmed",FieldValue.arrayUnion(StaticInstance.username)).addOnCompleteListener(new OnCompleteListener<Void>() {
+        StaticInstance.db.collection("matches").document(contents).update("confirmed", FieldValue.arrayUnion(StaticInstance.username)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Intent intent = new Intent(getApplicationContext(),RatePlayer.class);
-                intent.putExtra("matchcode",contents);
+                Intent intent = new Intent(getApplicationContext(), RatePlayer.class);
+                intent.putExtra("matchcode", contents);
                 startActivity(intent);
             }
         });
