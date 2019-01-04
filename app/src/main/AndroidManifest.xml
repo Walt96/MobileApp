@@ -102,7 +102,6 @@
             android:exported="false"
             android:process=":remote" />
 
-        <activity android:name=".JoinMatch"></activity>
     </application>
 
 </manifest>
