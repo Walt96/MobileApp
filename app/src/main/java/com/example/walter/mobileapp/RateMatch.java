@@ -71,7 +71,7 @@ public class RateMatch extends AppCompatActivity {
                 rate_.put("time",time);
                 rate_.put("rate",rate);
                 StaticInstance.db.collection("users").document(StaticInstance.username).update("preferences", FieldValue.arrayUnion(rate_));
-                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Thanks!");
                 builder.setMessage("We saved your rate and we'll use it for advice you!");
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -80,8 +80,7 @@ public class RateMatch extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(),UserHome.class));
                     }
                 });
-                builder.show();
-
+                builder.create().show();
             }
         }
     }

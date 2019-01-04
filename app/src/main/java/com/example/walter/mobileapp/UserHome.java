@@ -159,6 +159,9 @@ public class UserHome extends AppCompatActivity
                     }
                     String toDisplay = String.valueOf(sumRate/rates.size());
                     rateText.setText(toDisplay.substring(0,Math.min(3,toDisplay.length())));
+
+                    ((TextView)findViewById(R.id.name)).setText(StaticInstance.username);
+
                 }
             }
         });
@@ -187,7 +190,11 @@ public class UserHome extends AppCompatActivity
                     if(!(boolean)document.get("covered"))
                         covered = "is not covered";
                     String info_match = date+" in "+address+". The pitch " + covered;
-                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(id,from,to,state,info_match);
+                    String match = document.get("match").toString();
+                    String role = document.get("role").toString();
+                    String team = document.get("team").toString();
+                    String time = document.get("time").toString();
+                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(id,from,to,state,info_match, match, role, team, date, time, (boolean)document.get("covered"), address);
                     int index = notifications.indexOf(notification);
 
                     if(index==-1) {
@@ -218,7 +225,11 @@ public class UserHome extends AppCompatActivity
                     if(!(boolean)document.get("covered"))
                         covered = "is not covered";
                     String info_match = date+" in "+address+". The pitch " + covered;
-                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(id,from,to,state,info_match);
+                    String match = document.get("match").toString();
+                    String role = document.get("role").toString();
+                    String team = document.get("team").toString();
+                    String time = document.get("time").toString();
+                    com.example.walter.mobileapp.Notification notification = new com.example.walter.mobileapp.Notification(id,from,to,state,info_match, match, role, team, date, time, (boolean)document.get("covered"), address);
                     notifications.add(notification);
                     adapter.notifyDataSetChanged();
                     lock.unlock();
@@ -442,7 +453,7 @@ public class UserHome extends AppCompatActivity
             info.setText(notification.getInfo_match());
 
 
-            if(!notification.getTo().equals(StaticInstance.username)) {
+            if(!notification.getTo().equals(StaticInstance.username) || !notification.getState().equals("pending")) {
                 convertView.findViewById(R.id.accept).setVisibility(View.INVISIBLE);
                 convertView.findViewById(R.id.decline).setVisibility(View.INVISIBLE);
             }
@@ -455,6 +466,36 @@ public class UserHome extends AppCompatActivity
                     if(username.equals(notification.getFrom()))
                         field = "readFrom";
                     StaticInstance.db.collection("invite").document(notification.getId()).update(field,true);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+            (convertView.findViewById(R.id.accept)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notifications.remove(position);
+                    Intent intent = new Intent(getApplicationContext(), YesNotify.class);
+                    intent.putExtra("match",notification.getMatch());
+                    intent.putExtra("accept",true);
+                    intent.putExtra("document",notification.getId());
+                    intent.putExtra("username",notification.getTo());
+                    intent.putExtra("team",notification.getTeam());
+                    intent.putExtra("role",notification.getRole());
+                    intent.putExtra("date",notification.getDate());
+                    intent.putExtra("time",notification.getTime());
+                    intent.putExtra("covered",notification.isCovered());
+                    intent.putExtra("manager",notification.getFrom());
+                    intent.putExtra("address",notification.getAddress());
+                    startActivity(intent);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+            (convertView.findViewById(R.id.decline)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notifications.remove(position);
+                    StaticInstance.db.collection("invite").document(notification.getId()).update("accept",false);
                     adapter.notifyDataSetChanged();
                 }
             });

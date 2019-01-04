@@ -110,6 +110,7 @@ public class StartMatch extends AppCompatActivity {
     }
 
     public void end(View view){
+        StaticInstance.db.collection("matches").document(matchcode).update("finished", true);
         Intent intent = new Intent(this,RatePlayer.class);
         intent.putExtra("matchcode",matchcode);
         startActivity(intent);

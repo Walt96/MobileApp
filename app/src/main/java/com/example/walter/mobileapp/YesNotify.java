@@ -56,7 +56,6 @@ public class YesNotify extends AppCompatActivity {
             StaticInstance.role = getIntent().getStringExtra("role");
             addEventToCalendar(getIntent());
             startActivity(new Intent(this, MyMatchesList.class));
-
         }
 
     }

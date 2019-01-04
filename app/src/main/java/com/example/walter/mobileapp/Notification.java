@@ -6,13 +6,48 @@ public class Notification {
     String to;
     String state;
     String info_match;
+    String match;
+    String team;
+    String role;
+    String date;
+    String time;
+    boolean covered;
+    String address;
 
-    public Notification(String id, String from, String to, String state, String info_match) {
+    public Notification(String id, String from, String to, String state, String info_match, String match, String role, String team, String date, String time, boolean covered, String address) {
+        this.id = id;
         this.from = from;
         this.to = to;
         this.state = state;
         this.info_match = info_match;
-        this.id = id;
+        this.match = match;
+        this.team = team;
+        this.role = role;
+        this.date = date;
+        this.time = time;
+        this.covered = covered;
+        this.address = address;
+    }
+
+
+    public String getTeam() {
+        return team;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setMatch(String match) {
+        this.match = match;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getId() {
@@ -58,6 +93,42 @@ public class Notification {
     @Override
     public boolean equals( Object obj) {
         Notification notification = (Notification)obj;
-        return notification.from.equals(from) && notification.to.equals(to) && notification.info_match.equals(info_match);
+        return notification.id.equals(id);
+    }
+
+    public String getMatch() {
+        return match;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setCovered(boolean covered) {
+        this.covered = covered;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public boolean isCovered() {
+        return covered;
     }
 }

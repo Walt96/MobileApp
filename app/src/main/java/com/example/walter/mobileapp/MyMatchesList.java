@@ -180,7 +180,6 @@ public class MyMatchesList extends AppCompatActivity {
                     confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            StaticInstance.db.collection("matches").document(currentMatch.getId()).update("finished", true);
                             Intent intent = new Intent(getApplicationContext(), StartMatch.class);
                             intent.putExtra("matchcode",currentMatch.getId());
                             startActivity(intent);
