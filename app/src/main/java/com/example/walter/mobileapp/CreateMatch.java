@@ -102,7 +102,7 @@ public class CreateMatch extends AppCompatActivity {
     String manager;
     String role;
     final HashMap<String, Object> saveMyMatch = new HashMap<>();
-
+    private ArrayList<String> cities;
 
     int index = 0;
     String selectedDate;
@@ -133,6 +133,7 @@ public class CreateMatch extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         provaEmbasp();
         customAdapter = new CustomAdapter(getApplicationContext());
+        cities = new ArrayList<>();
 
         reference = FirebaseStorage.getInstance().getReference();
         manager = StaticInstance.username;
@@ -221,6 +222,7 @@ public class CreateMatch extends AppCompatActivity {
                                 String city = document.get("city").toString();
                                 if (!items.contains(city)) {
                                     items.add(city);
+                                    cities.add(city); //TODO Usare un solo array
                                 }
                                 String address = document.get("address").toString() + " , " + city;
                                 boolean covered = (boolean) document.get("covered");
@@ -277,7 +279,10 @@ public class CreateMatch extends AppCompatActivity {
     }
 
     public void openMap(View w) {
-        startActivity(new Intent(this, ShowMap.class));
+        Intent mapIntent = new Intent(this, ShowMap.class);
+        mapIntent.putExtra("cities", cities);
+        startActivity(mapIntent);
+        //mapIntent.putExtra("fields", pitches);
     }
 
     private void initPitchAvailableTime() {

@@ -38,7 +38,7 @@ public class ShowTeams extends Fragment {
             Log.e("il player a"+i,"ha valore"+players[i-1]);
         }
 
-        ((RelativeLayout) fragmentView.findViewById(R.id.pitch)).setOnTouchListener(new View.OnTouchListener() {
+        fragmentView.findViewById(R.id.pitch).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (selectedPlayer != null) {

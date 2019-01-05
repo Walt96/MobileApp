@@ -90,13 +90,13 @@ public class OwnerHome extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -198,7 +198,7 @@ public class OwnerHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -253,7 +253,7 @@ public class OwnerHome extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -297,7 +297,7 @@ public class OwnerHome extends AppCompatActivity
                     {
                         infoDialog.setContentView(R.layout.info_dialog);
                         TextView txtclose;
-                        txtclose =(TextView) infoDialog.findViewById(R.id.txtclose);
+                        txtclose = infoDialog.findViewById(R.id.txtclose);
                         txtclose.setText("X");
                         txtclose.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -306,12 +306,12 @@ public class OwnerHome extends AppCompatActivity
                             }
                         });
 
-                        TextView address_view = (TextView) infoDialog.findViewById(R.id.address_view);
-                        TextView date_view = (TextView) infoDialog.findViewById(R.id.date);
-                        TextView time_view = (TextView) infoDialog.findViewById(R.id.time);
-                        TextView covered_view = (TextView) infoDialog.findViewById(R.id.covered);
-                        TextView booking_view = (TextView) infoDialog.findViewById(R.id.bookingby);
-                        TextView registered_view = (TextView) infoDialog.findViewById(R.id.registered);
+                        TextView address_view = infoDialog.findViewById(R.id.address_view);
+                        TextView date_view = infoDialog.findViewById(R.id.date);
+                        TextView time_view = infoDialog.findViewById(R.id.time);
+                        TextView covered_view = infoDialog.findViewById(R.id.covered);
+                        TextView booking_view = infoDialog.findViewById(R.id.bookingby);
+                        TextView registered_view = infoDialog.findViewById(R.id.registered);
 
                         address_view.setText(currentMatch.getAddress());
                         date_view.setText(currentMatch.getDate());
