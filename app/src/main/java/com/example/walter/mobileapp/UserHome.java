@@ -147,6 +147,7 @@ public class UserHome extends AppCompatActivity
                 if(task.isSuccessful()){
                     ((TextView)findViewById(R.id.role)).setText(task.getResult().get("role").toString());
                     ArrayList rates = (ArrayList) task.getResult().get("rates");
+                    ((TextView)findViewById(R.id.name)).setText(StaticInstance.username);
 
                     TextView rateText = findViewById(R.id.rate);
                     if(rates.isEmpty()) {
@@ -160,7 +161,6 @@ public class UserHome extends AppCompatActivity
                     String toDisplay = String.valueOf(sumRate/rates.size());
                     rateText.setText(toDisplay.substring(0,Math.min(3,toDisplay.length())));
 
-                    ((TextView)findViewById(R.id.name)).setText(StaticInstance.username);
 
                 }
             }
