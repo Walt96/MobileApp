@@ -50,6 +50,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -228,7 +229,9 @@ public class CreateMatch extends AppCompatActivity {
                                 boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
                                 String owner = document.get("owner").toString();
-                                final Pitch currentPitch = new Pitch(document.get("code").toString(), address, price, covered, city, owner);
+                                String ownermail = document.get("ownermail").toString();
+
+                                final Pitch currentPitch = new Pitch(document.get("code").toString(), address, price, covered, city, owner, ownermail);
 
                                 mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -413,7 +416,7 @@ public class CreateMatch extends AppCompatActivity {
             book.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bookPitch(currentPitches.get(position).getId(), time.getSelectedItem().toString().split(":")[0], currentPitches.get(position).getAddress(), currentPitches.get(position).getOwner());
+                    bookPitch(currentPitches.get(position).getId(), time.getSelectedItem().toString().split(":")[0], currentPitches.get(position).getAddress(), currentPitches.get(position).getOwner(),currentPitches.get(position).getOwnermail());
                 }
             });
             return convertView;
@@ -421,7 +424,7 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(final String pitchId, final String time, final String address, final String owner) {
+    public void bookPitch(final String pitchId, final String time, final String address, final String owner, final String ownermail) {
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -474,6 +477,7 @@ public class CreateMatch extends AppCompatActivity {
                         saveMyMatch.put("covered", selectedCovered);
                         saveMyMatch.put("code", matchCode);
                         saveMyMatch.put("pitchmanager", owner);
+                        saveMyMatch.put("managermail", ownermail);
 
 
                         addCalendarEvent(saveMyMatch);
@@ -587,6 +591,7 @@ public class CreateMatch extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            sendMailToOwnerPitch();
                             Snackbar mySnackbar = Snackbar.make(findViewById(R.id.pitchList), "Pitch booked successfully!", Snackbar.LENGTH_LONG);
                             mySnackbar.setAction("View all matches", new View.OnClickListener() {
                                 @Override
@@ -600,6 +605,19 @@ public class CreateMatch extends AppCompatActivity {
                     });
 
 
+        }
+
+        private void sendMailToOwnerPitch() {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("message/rfc822");
+            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{saveMyMatch.get("managermail").toString()});
+            i.putExtra(Intent.EXTRA_SUBJECT, "Booking pitch");
+            i.putExtra(Intent.EXTRA_TEXT   , "Hi, I have booked your pitch located in "+saveMyMatch.get("address")+" for the day "+saveMyMatch.get("date")+" at the "+saveMyMatch.get("time")+ ":00.".);
+            try {
+                startActivity(Intent.createChooser(i, "Send mail..."));
+            } catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(getActivity(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

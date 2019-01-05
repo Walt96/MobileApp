@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -191,6 +192,7 @@ public class SigninActivity extends AppCompatActivity {
                                                                     AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
                                                                     builder_.setMessage("Your account was created successfully");
                                                                     builder_.create().show();
+                                                                    startActivity(new Intent(getActivity(),LoginActivity.class));
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {

@@ -140,6 +140,7 @@ public class CreatePitch extends AppCompatActivity {
             progressDialog.show();
             Map<String, Object> pitch = new HashMap<>();
             pitch.put("owner", username);
+            pitch.put("ownermail", StaticInstance.email);
             pitch.put("address", address);
             pitch.put("city", city.toLowerCase());
             pitch.put("price", price);

@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 public class Pitch {
 
+    String ownermail;
     String id;
     String address;
     double price;
@@ -36,6 +37,21 @@ public class Pitch {
         availableTime = new ArrayAdapter(StaticInstance.currentActivity, R.layout.spinneritem, time);
         this.city = city;
 
+    }
+
+    public Pitch(String id, String address, double price, boolean covered, String city, String owner, String ownermail) {
+        this.city = city;
+        this.id = id;
+        this.address = address;
+        this.price = price;
+        this.owner = owner;
+        this.covered = covered;
+        this.ownermail = ownermail;
+        uri = null;
+        time = new String[15];
+        for (int i = 8; i < 23; i++)
+            time[i - 8] = String.valueOf(i) + ":00";
+        availableTime = new ArrayAdapter(StaticInstance.currentActivity, R.layout.spinneritem, time);
     }
 
     public Pitch(String id, String address, double price, boolean covered, String city, String owner) {
@@ -87,6 +103,10 @@ public class Pitch {
 
     public String getId() {
         return id;
+    }
+
+    public String getOwnermail() {
+        return ownermail;
     }
 
     public Uri getUri() {

@@ -14,6 +14,7 @@ public class StaticInstance {
     static FirebaseDatabase database = FirebaseDatabase.getInstance();
     static String username;
     static String role;
+    static String email;
     static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
 

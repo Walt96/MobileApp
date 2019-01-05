@@ -44,10 +44,11 @@ public class LoginActivity extends AppCompatActivity {
         String user = sharedPref.getString("user","");
         if(!user.equals("")) {
             String role = sharedPref.getString("role", "");
+            String email = sharedPref.getString("email", "");
             if (role.equals(""))
-                doLogin(user, "", false);
+                doLogin(user, "", false, email);
             else {
-                doLogin(user, role, true);
+                doLogin(user, role, true, email);
             }
 
         }
@@ -96,8 +97,10 @@ public class LoginActivity extends AppCompatActivity {
                                    role = user_doc.get("role").toString();
                                    editor.putString("role", role);
                                 }
+                                String email = user_doc.get("email").toString();
+                                editor.putString("email",email);
                                 editor.commit();
-                                doLogin(user,role,isAPlayer);
+                                doLogin(user,role,isAPlayer,email);
                             }
                         }
 
@@ -105,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
     }
-    public void doLogin(String user, String role, boolean isAPlayer){
+    public void doLogin(String user, String role, boolean isAPlayer, String email){
         Intent intent;
         if(isAPlayer) {
             intent = new Intent(this, UserHome.class);
@@ -115,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         StaticInstance.username = user;
         StaticInstance.role = role;
+        StaticInstance.email = email;
         startActivity(intent);
     }
 
