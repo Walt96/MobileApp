@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/info"
+        android:title="info"
+        android:icon="@drawable/info"
+        />
+    <item android:id="@+id/teams"
+        android:title="teams"
+        android:icon="@drawable/teams"/>
 
+    <item android:id="@+id/addplayer"
+        android:title="add player"
+        android:icon="@drawable/addplayer"/>
 </menu>

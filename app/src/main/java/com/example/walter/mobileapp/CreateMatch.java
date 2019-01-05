@@ -132,7 +132,6 @@ public class CreateMatch extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        provaEmbasp();
         customAdapter = new CustomAdapter(getApplicationContext());
         cities = new ArrayList<>();
 
@@ -264,21 +263,6 @@ public class CreateMatch extends AppCompatActivity {
                     }
                 });
 
-    }
-
-    private void provaEmbasp() {
-        Log.e("ciao","ciamo");
-        Handler handler = new AndroidHandler(getApplicationContext(), DLVAndroidService.class);
-        InputProgram inputProgram = new InputProgram();
-        inputProgram.addProgram("a(1)");
-        handler.addProgram(inputProgram);
-        handler.startAsync(new Callback() {
-            @Override
-            public void callback(Output output) {
-                //codice
-            }
-        });
-        Log.e("cccc","cc");
     }
 
     public void openMap(View w) {

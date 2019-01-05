@@ -23,8 +23,6 @@ public class HandleMatches extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.chat:
-                    return true;
                 case R.id.info:
                     bundle.putSerializable("match", handledMatch);
                     replaceFragment(new InfoMatch());
