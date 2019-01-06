@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,6 +35,8 @@ public class InfoMatch extends Fragment {
         owner = handledMatch.getPitchOwner();
 
         loadImage(((ImageView)(fragmentView.findViewById(R.id.pitchImage))));
+        View buttonNotUsed = fragmentView.findViewById(R.id.confirm);
+        ((ViewGroup)(buttonNotUsed.getParent())).removeView(buttonNotUsed);
         ((TextView)(fragmentView.findViewById(R.id.date))).setText(handledMatch.getDate());
         ((TextView)(fragmentView.findViewById(R.id.time))).setText(handledMatch.getTime());
         ((TextView)(fragmentView.findViewById(R.id.bookingby))).setText(handledMatch.getManager());

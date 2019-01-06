@@ -72,6 +72,15 @@ public class Pitch {
         return owner;
     }
 
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public void setOwnermail(String ownermail) {
+        this.ownermail = ownermail;
+    }
+
+
 
     public ArrayAdapter getAvailableTime() {
         return availableTime;

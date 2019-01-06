@@ -513,7 +513,6 @@ public class CreateMatch extends AppCompatActivity {
     private class AddEventToCalendar extends AsyncTask<Void, Integer, Long> {
 
         HashMap saveMyMatch;
-        ProgressDialog progressDialog;
 
         public AddEventToCalendar(HashMap saveMyMatch) {
             this.saveMyMatch = saveMyMatch;
