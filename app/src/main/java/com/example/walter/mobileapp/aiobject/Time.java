@@ -12,11 +12,24 @@ public class Time {
     @Param(1)
     private int rate;
 
+    @Param(2)
+    private int numTimesAtThisTime;
+
+
     public Time(){}
 
-    public Time(String time, int rate) {
+    public Time(String time, int rate, int numTimesAtThisTime) {
         this.time = time;
         this.rate = rate;
+        this.numTimesAtThisTime = numTimesAtThisTime;
+    }
+
+    public int getNumTimesAtThisTime() {
+        return numTimesAtThisTime;
+    }
+
+    public void setNumTimesAtThisTime(int numTimesAtThisTime) {
+        this.numTimesAtThisTime = numTimesAtThisTime;
     }
 
     public String getTime() {
