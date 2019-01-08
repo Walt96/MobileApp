@@ -15,7 +15,9 @@ public class StaticInstance {
     static String username;
     static String role;
     static String email;
+    static boolean fblogged = false;
     static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    
 
 
 

@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -381,6 +382,12 @@ public class UserHome extends AppCompatActivity
     }
 
     public void logout() {
+
+        if(StaticInstance.fblogged) {
+            LoginManager.getInstance().logOut();
+            StaticInstance.fblogged = false;
+        }
+
         SharedPreferences sharedPref = getSharedPreferences("logged user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove("user");

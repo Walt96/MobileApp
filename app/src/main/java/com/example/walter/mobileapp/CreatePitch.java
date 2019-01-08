@@ -88,9 +88,14 @@ public class CreatePitch extends AppCompatActivity {
                     addresses = mGeocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && addresses.size() > 0) {
                         Address selectedAddress = addresses.get(0);
-                        address = selectedAddress.getAddressLine(0);
-                        Log.e("TAG", address);
+                        String streetName = selectedAddress.getThoroughfare();
+                        String number = selectedAddress.getSubThoroughfare();
+                        address = streetName;
+                        if(number != null) {
+                            address += " " + number;
+                        }
                         String city = selectedAddress.getLocality();
+                        Log.e("TAG", address + " " + city);
                         cityEditText.setText(city);
                     }
                 } catch (IOException e) {
@@ -140,9 +145,8 @@ public class CreatePitch extends AppCompatActivity {
             progressDialog.show();
             Map<String, Object> pitch = new HashMap<>();
             pitch.put("owner", username);
-            pitch.put("ownermail", StaticInstance.email);
             pitch.put("address", address);
-            pitch.put("city", city.toLowerCase());
+            pitch.put("city", city);
             pitch.put("price", price);
             pitch.put("covered", isCovered);
             pitch.put("code", code);
@@ -217,6 +221,7 @@ public class CreatePitch extends AppCompatActivity {
                 Address add = getAddress(latitude, longitude);
                 String address = add.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = add.getLocality();
+                Log.e("TAG", "City " + city);
                 //addressEditText.setText(address);
                 cityEditText.clearFocus();
                 cityEditText.setText(city);
