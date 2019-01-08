@@ -226,8 +226,15 @@ public class AddPartecipant extends Fragment {
                                 DocumentSnapshot player = task.getResult().getDocuments().get(0);
                                 userSearched.setText(player.get("username").toString());
                                 roleSearched.setText(player.get("role").toString());
-                                //scoreSearched.setText(player.get("role").toString());
-                                //caricare l'immagine
+                                ArrayList rates = (ArrayList) player.get("rates");
+                                float sum = 0;
+                                for(int i = 0 ; i<rates.size();i++)
+                                    sum+=Float.valueOf(String.valueOf((Long)rates.get(i)));
+                                String rate_string = "-";
+                                if(rates.size() != 0) {
+                                    rate_string = String.valueOf((sum / rates.size()));
+                                }
+                                scoreSearched.setText(rate_string.substring(0,Math.min(4,rate_string.length())));
                             }
                         }
                     }
