@@ -99,7 +99,9 @@ public class RatePlayer extends AppCompatActivity {
         }
 
         for(int i = 0;i<players.size();i++) {
-            StaticInstance.db.collection("users").document(players.get(i).getUsername()).update("rates", FieldValue.arrayUnion(players.get(i).getRate()));
+            ArrayList rates = (ArrayList) StaticInstance.db.collection("users").document(players.get(i).getUsername()).get().getResult().get("rates");
+            rates.add(players.get(i).getRate());
+            StaticInstance.db.collection("users").document(players.get(i).getUsername()).update("rates", rates);
         }
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.list), "Your rates have been saved!", Snackbar.LENGTH_LONG);
         mySnackbar.show();

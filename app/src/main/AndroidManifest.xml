@@ -50,6 +50,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AiHelper"></activity>
         <activity android:name=".SigninActivity" />
         <activity android:name=".CreatePitch" />
         <activity
@@ -96,13 +97,13 @@
             android:name=".ShowMap"
             android:label="@string/title_activity_show_map" />
         <activity android:name=".RateMatch" />
-        <!--
+
         <service
             android:name="it.unical.mat.embasp.specializations.dlv.android.DLVAndroidReasoner"
             android:enabled="true"
             android:exported="false"
             android:process=":remote" />
-        -->
+
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

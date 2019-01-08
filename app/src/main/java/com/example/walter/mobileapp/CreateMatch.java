@@ -197,7 +197,10 @@ public class CreateMatch extends AppCompatActivity {
                     day_ = day + "/";
                 else
                     day_ += day + "/";
-                selectedDate = day_ + month + "/" + year;
+                String surplus="";
+                if(month<10)
+                    surplus="0";
+                selectedDate = day_ + surplus + month + "/" + year;
                 initPitchAvailableTime();
                 dateView.setText(selectedDate);
             }

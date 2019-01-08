@@ -45,7 +45,6 @@ public class YesNotify extends AppCompatActivity {
             StaticInstance.db.collection("invite").document(document).update("accept", "no");
         else {
             StaticInstance.db.collection("invite").document(document).update("accept", "yes");
-            StaticInstance.db.collection("matches").document(match).update("partecipants", FieldValue.arrayUnion(username));
             HashMap player = new HashMap();
             player.put("user", username);
             player.put("role", getIntent().getStringExtra("role"));

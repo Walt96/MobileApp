@@ -162,7 +162,7 @@ public class SigninActivity extends AppCompatActivity {
                                     usernameEdit.setError("This username is already used");
                                 else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n";
+                                    String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "mail: "+ email + "\n" + "phone: "+phoneNumber;
                                     if(isUser) {
                                         message += "Role " + role;
                                     }

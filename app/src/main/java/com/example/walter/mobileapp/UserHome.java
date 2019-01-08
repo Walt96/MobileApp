@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -383,10 +384,9 @@ public class UserHome extends AppCompatActivity
 
     public void logout() {
 
-        if(StaticInstance.fblogged) {
+        if(AccessToken.getCurrentAccessToken()!= null)
             LoginManager.getInstance().logOut();
-            StaticInstance.fblogged = false;
-        }
+        StaticInstance.fblogged = false;
 
         SharedPreferences sharedPref = getSharedPreferences("logged user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

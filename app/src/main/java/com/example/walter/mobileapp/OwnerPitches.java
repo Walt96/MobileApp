@@ -193,7 +193,7 @@ public class OwnerPitches extends AppCompatActivity {
             }
             else {
                 Glide.with(convertView)
-                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.email))
+                        .load(Uri.parse("android.resource://com.example.walter.mobileapp/"+R.drawable.login))
                         .into(pitchImage);
             }
             pitchCover.setText("Covered");

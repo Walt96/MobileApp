@@ -230,11 +230,11 @@ public class AiHelper extends AppCompatActivity {
                 ":- choosedResult(Pitch,Time),notAvailable(Pitch,Time).\n" +
                 " \n" +
                 "\n"));
-        Log.e("risultato",inputProgram.getPrograms());
 
         handler.startAsync(new Callback() {
             @Override
             public void callback(Output output) {
+                Log.e("outputDLV",output.toString());
                 if (!(output instanceof AnswerSets))
                     return;
                 AnswerSets answerSets = (AnswerSets) output;
@@ -248,6 +248,7 @@ public class AiHelper extends AppCompatActivity {
                                 ChoosedResult choosedResult = (ChoosedResult) obj;
 
                                 if (!choosedResult.getMatchtime().equals("\"-1\"")) {
+                                    Log.e("almeno uno","");
                                     matchSelectedByAI.add(choosedResult);
                                     if(!pitchesSelectedByAI.containsKey(choosedResult.getPitchcode()))
                                        loadPitchValueFromDB(choosedResult.getPitchcode());
