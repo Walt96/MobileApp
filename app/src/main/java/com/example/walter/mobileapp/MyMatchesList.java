@@ -72,7 +72,7 @@ public class MyMatchesList extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     lockMatch.lock();
-                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(), true, (ArrayList) document.get("partecipants"), (ArrayList) document.get("registered"), (boolean) document.get("covered"), document.get("address").toString(), document.get("pitchmanager").toString(),(boolean)document.get("finished"));
+                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(), true, (ArrayList) document.get("partecipants"), (ArrayList) document.get("registered"), (boolean) document.get("covered"), document.get("address").toString(), document.get("pitchmanager").toString(),(boolean)document.get("finished"),(ArrayList)document.get("confirmed"));
                     int index = matches.indexOf(toAdd);
                     if(index==-1) {
                         matches.add(toAdd);
@@ -92,7 +92,7 @@ public class MyMatchesList extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()){
                     lockMatch.lock();
-                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),false,(ArrayList)document.get("partecipants"),(ArrayList)document.get("registered"),(boolean)document.get("covered"),document.get("address").toString(),document.get("pitchmanager").toString(),(boolean)document.get("finished"));
+                    Match toAdd = new Match(document.getId(), document.get("date").toString(), document.get("time").toString(), document.get("manager").toString(), document.get("pitchcode").toString(),false,(ArrayList)document.get("partecipants"),(ArrayList)document.get("registered"),(boolean)document.get("covered"),document.get("address").toString(),document.get("pitchmanager").toString(),(boolean)document.get("finished"), (ArrayList<HashMap>) document.get("confirmed"));
                     int index = matches.indexOf(toAdd);
                     if(index==-1) {
                         matches.add(toAdd);
@@ -163,18 +163,33 @@ public class MyMatchesList extends AppCompatActivity {
                 }
             });
 
+
             ImageButton confirm = convertView.findViewById(R.id.confirm);
             if(currentMatch.isFinished()) {
-                confirm.setImageResource(R.drawable.qr);
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(),CreateQRCode.class);
-                        intent.putExtra("code",currentMatch.getId());
-                        intent.putExtra("scan",!currentMatch.getManager().equals(username));
-                        startActivity(intent);
-                    }
-                });
+                boolean found = false;
+                if(!currentMatch.getManager().equals(username)) {
+                    //controllo se è gia confermato
+                    ArrayList<String> confirmed = currentMatch.getConfirmed();
+                    for(String confirm_ : confirmed)
+                        if(confirm_.equals(username)) {
+                            confirm.setVisibility(View.INVISIBLE);
+                            found = true;
+                            break;
+                        }
+
+                }
+                if(!found) {
+                    confirm.setImageResource(R.drawable.qr);
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), CreateQRCode.class);
+                            intent.putExtra("code", currentMatch.getId());
+                            intent.putExtra("scan", !currentMatch.getManager().equals(username));
+                            startActivity(intent);
+                        }
+                    });
+                }
             }else{
                 if(currentMatch.getManager().equals(username)) {
                     confirm.setOnClickListener(new View.OnClickListener() {
@@ -188,17 +203,7 @@ public class MyMatchesList extends AppCompatActivity {
                 }else
                     confirm.setVisibility(View.INVISIBLE);
             }
-            ImageButton delete = convertView.findViewById(R.id.delete);
-            if (currentMatch.isBookedByMe()){
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //delete
-                    }
-                });
-            }else {
-                delete.setClickable(false);
-            }
+
             return convertView;
 
         }

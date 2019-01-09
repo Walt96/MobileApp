@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Match implements Serializable {
 
@@ -17,6 +18,7 @@ public class Match implements Serializable {
     private ArrayList registered;
     private String address;
     private boolean isCovered;
+    private ArrayList confirmed;
 
     public Match(){}
 
@@ -30,7 +32,7 @@ public class Match implements Serializable {
         this.isCovered = covered;
     }
 
-    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address, String pitchOwner, boolean isFinished){
+    public Match(String id,String date, String time,String manager, String pitchCode, boolean bookedByMe,ArrayList partecipants, ArrayList registered, boolean isCovered, String address, String pitchOwner, boolean isFinished, ArrayList confirmed){
         this.id = id;
         this.isFinished = isFinished;
         this.date = date;
@@ -43,6 +45,12 @@ public class Match implements Serializable {
         this.isCovered = isCovered;
         this.address = address;
         this.pitchOwner = pitchOwner;
+        this.confirmed = confirmed;
+
+    }
+
+    public ArrayList getConfirmed() {
+        return confirmed;
     }
 
     public String getPitchOwner() {

@@ -176,6 +176,12 @@ public class SigninActivity extends AppCompatActivity {
                                                         user.put("role", role);
                                                         user.put("rates", new ArrayList<>());
                                                         user.put("preferences", new ArrayList<>());
+                                                        user.put("wantNotification", true);
+                                                        user.put("wantSound", true);
+                                                        user.put("wantSendMail", true);
+                                                        user.put("wantEventCalendar", true);
+                                                        user.put("wantRateMatch", true);
+
                                                     }
                                                     user.put("player", isUser);
                                                     user.put("email", email);

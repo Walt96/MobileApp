@@ -17,6 +17,11 @@ public class StaticInstance {
     static String email;
     static boolean fblogged = false;
     static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    static boolean notificationEnabled = true;
+    static boolean sound = true;
+    static boolean calendarEvent = true;
+    static boolean wantToRateMatch = true;
+    static boolean wantToSendMail = true;
     
 
 

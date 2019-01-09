@@ -90,19 +90,16 @@
                 android:id="@+id/search"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
+                android:layout_weight="1"
                 android:src="@drawable/search" />
 
             <ImageButton
                 android:id="@+id/confirm"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
+                android:layout_weight="1"
                 android:src="@drawable/confirm" />
 
-            <ImageButton
-                android:id="@+id/delete"
-                android:layout_width="35dp"
-                android:layout_height="36dp"
-                android:src="@drawable/delete" />
         </LinearLayout>
 
     </LinearLayout>

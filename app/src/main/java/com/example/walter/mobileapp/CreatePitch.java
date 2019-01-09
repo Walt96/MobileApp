@@ -147,6 +147,7 @@ public class CreatePitch extends AppCompatActivity {
             pitch.put("owner", username);
             pitch.put("address", address);
             pitch.put("city", city);
+            pitch.put("ownermail", StaticInstance.email);
             pitch.put("price", price);
             pitch.put("covered", isCovered);
             pitch.put("code", code);

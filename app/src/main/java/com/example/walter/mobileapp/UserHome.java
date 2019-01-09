@@ -282,8 +282,7 @@ public class UserHome extends AppCompatActivity
     }
 
     void addListenerForInvitation(){
-        Log.e("username",username);
-        StaticInstance.db.collection("invite").whereEqualTo("invited",username).whereEqualTo("notified",false).get()
+        /*StaticInstance.db.collection("invite").whereEqualTo("invited",username).whereEqualTo("notified",false).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -297,7 +296,7 @@ public class UserHome extends AppCompatActivity
                         }
                     }
                 });
-
+*/
 
         listenerToInvitation = StaticInstance.db.collection("invite").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
