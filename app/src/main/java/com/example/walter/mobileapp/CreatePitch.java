@@ -3,6 +3,7 @@ package com.example.walter.mobileapp;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -140,57 +141,73 @@ public class CreatePitch extends AppCompatActivity {
             price = Double.valueOf(value_price);
         }
         if (validField) {
-            final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
-            progressDialog.setMessage("Adding your pitch...");
-            progressDialog.show();
-            Map<String, Object> pitch = new HashMap<>();
-            pitch.put("owner", username);
-            pitch.put("address", address);
-            pitch.put("city", city);
-            pitch.put("ownermail", StaticInstance.email);
-            pitch.put("price", price);
-            pitch.put("covered", isCovered);
-            pitch.put("code", code);
-            pitch.put("latitude", latitude);
-            pitch.put("longitude", longitude);
-            db.collection("pitch").document(code)
-                    .set(pitch)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void avoid) {
-                            StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
-                            if (path != null) {
-                                ref.putFile(Uri.parse(path))
-                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                            @Override
-                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                path = null;
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception exception) {
-                                                path = null;
-                                            }
-                                        });
+            if (!CheckConnection.isConnected(this)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("You don't have internet connection, please check it!")
+                        .setTitle("An error occurred");
+                builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                    }
+                });
+                builder.create().show();
+            } else {
+                final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
+                progressDialog.setMessage("Adding your pitch...");
+                progressDialog.show();
+                Map<String, Object> pitch = new HashMap<>();
+                pitch.put("owner", username);
+                pitch.put("address", address);
+                pitch.put("city", city);
+                pitch.put("ownermail", StaticInstance.email);
+                pitch.put("price", price);
+                pitch.put("covered", isCovered);
+                pitch.put("code", code);
+                pitch.put("latitude", latitude);
+                pitch.put("longitude", longitude);
+                db.collection("pitch").document(code)
+                        .set(pitch)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void avoid) {
+                                StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
+                                if (path != null) {
+                                    ref.putFile(Uri.parse(path))
+                                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                @Override
+                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                    path = null;
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    path = null;
+                                                }
+                                            });
+                                }
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("Your pitch was created successfully");
+                                builder.create().show();
+                                progressDialog.dismiss();
                             }
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Your pitch was created successfully");
-                            builder.create().show();
-                            progressDialog.dismiss();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("An error occured, please try again!");
-                            builder.create().show();
-                            progressDialog.dismiss();
-                        }
-                    });
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("An error occured, please try again!");
+                                builder.create().show();
+                                progressDialog.dismiss();
+                            }
+                        });
+            }
         }
-
     }
 
     public void takePhoto(View v) {
@@ -302,10 +319,6 @@ public class CreatePitch extends AppCompatActivity {
         return this;
     }
 
-    public void fillFields(View w) {
-        Intent pickContactIntent = new Intent(this, AddressMap.class);
-        startActivityForResult(pickContactIntent, REQUEST_ADDRESS_INFO);
-    }
 
 
 }

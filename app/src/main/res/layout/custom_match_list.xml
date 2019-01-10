@@ -89,29 +89,26 @@
                 android:id="@+id/search"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
+                android:layout_weight="1"
                 android:src="@drawable/search" />
 
             <ImageButton
                 android:id="@+id/confirm"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
+                android:layout_weight="1"
                 android:src="@drawable/confirm" />
 
             <ImageButton
-                android:id="@+id/delete"
+                android:id="@+id/shareButton"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
-                android:src="@drawable/delete" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:onClick="shareFacebook"
+                app:srcCompat="@drawable/ic_menu_share" />
 
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/shareButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:onClick="shareFacebook"
-            app:srcCompat="@drawable/ic_menu_share" />
 
     </LinearLayout>
 

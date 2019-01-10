@@ -412,14 +412,8 @@ public class CreateMatch extends AppCompatActivity {
     }
 
     public void bookPitch(final String pitchId, final String time, final String address, final String owner, final String ownermail) {
-        ConnectivityManager cm =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        if (!isConnected) {
+        if (!CheckConnection.isConnected(getActivity())) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You don't have internet connection, please check it!")
                     .setTitle("An error occurred");

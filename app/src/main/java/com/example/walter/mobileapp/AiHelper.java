@@ -81,7 +81,25 @@ public class AiHelper extends AppCompatActivity {
         pitchesSelectedByAI = new HashMap<>();
         ListView listView = findViewById(R.id.matchList);
         listView.setAdapter(adapter = new CustomAdapter());
-        computeBestMatch();
+        if(!CheckConnection.isConnected(this)){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("You don't have internet connection, please check it!")
+                        .setTitle("An error occurred");
+                builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(getApplicationContext(), UserHome.class));
+                    }
+                }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                    }
+                });
+                builder.create().show();
+        }else {
+            computeBestMatch();
+        }
 
     }
 

@@ -11,23 +11,17 @@
         <item
             android:id="@+id/nav_joinMatch"
             android:icon="@drawable/ic_group_black_24dp"
-            android:title="Join Match" />
+            android:title="Compute Best Match" />
         <item
             android:id="@+id/my_matches"
             android:icon="@drawable/list"
             android:title="My matches" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+
     </group>
 
     <item android:title="Communicate">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"

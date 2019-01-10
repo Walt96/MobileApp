@@ -83,7 +83,25 @@ public class MyMatchesList extends AppCompatActivity {
     protected void onResume() {
         Log.e("resume","resume");
         super.onResume();
-        loadMatch();
+        if(!CheckConnection.isConnected(this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You don't have internet connection, please check it!")
+                    .setTitle("An error occurred");
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(getApplicationContext(), UserHome.class));
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+            });
+            builder.create().show();
+        }else {
+            loadMatch();
+        }
         listView.setAdapter(adapter=new CustomAdapter(getApplicationContext()));
     }
 
@@ -209,17 +227,7 @@ public class MyMatchesList extends AppCompatActivity {
                 }else
                     confirm.setVisibility(View.INVISIBLE);
             }
-            ImageButton delete = convertView.findViewById(R.id.delete);
-            if (currentMatch.isBookedByMe()){
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //delete
-                    }
-                });
-            }else {
-                delete.setClickable(false);
-            }
+
 
             ImageButton share = convertView.findViewById(R.id.shareButton);
             share.setOnClickListener(new View.OnClickListener() {

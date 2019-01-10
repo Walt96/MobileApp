@@ -86,9 +86,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".AddressMap"
-            android:label="@string/title_activity_address_map" />
         <activity android:name=".YesNotify" />
         <activity android:name=".CreateQRCode" />
         <activity android:name=".StartMatch" />
@@ -127,7 +124,7 @@
         </activity>
         <activity android:name=".FacebookLogin"></activity>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1192655554218244"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider349792485844073"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
     </application>

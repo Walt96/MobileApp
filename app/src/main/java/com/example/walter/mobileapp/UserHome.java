@@ -108,6 +108,7 @@ public class UserHome extends AppCompatActivity
     }
 
     private void loadProfile() {
+
         final ImageView profile = findViewById(R.id.imagePlayer);
         StaticInstance.mStorageRef.child("users/" + StaticInstance.username).getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -368,11 +369,7 @@ public class UserHome extends AppCompatActivity
             intent.putExtra("username",username);
             startActivity(intent);
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        }   else if (id == R.id.nav_send) {
             logout();
         }
 

@@ -2,6 +2,7 @@ package com.example.walter.mobileapp;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +64,7 @@ public class OwnerHome extends AppCompatActivity
     private Pattern datePattern;
     private Matcher dateMatcher;
     private Calendar actualCalendar;
+    private String email;
 
 
     @Override
@@ -109,6 +112,34 @@ public class OwnerHome extends AppCompatActivity
 
         ImageButton searchButton = findViewById(R.id.search_button);
         searchButton.callOnClick();
+
+        if(!CheckConnection.isConnected(this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You don't have internet connection, please check it!")
+                    .setTitle("An error occurred");
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+            });
+            builder.create().show();
+        }
+
+        View view_login = navigationView.getHeaderView(0);
+
+        final TextView userName = view_login.findViewById(R.id.userName);
+        username = StaticInstance.username;
+        userName.setText("Name: "+username);
+
+        TextView userRole = view_login.findViewById(R.id.userMail);
+        email = StaticInstance.email;
+        userRole.setText("Email: "+email);
+
 
     }
 
@@ -229,14 +260,7 @@ public class OwnerHome extends AppCompatActivity
         } else if (id == R.id.show_pitches) {
             Intent intent = new Intent(this, OwnerPitches.class);
             startActivity(intent);
-        } else if (id == R.id.nav_map) {
-            Intent intent = new Intent(this, AddressMap.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        }  else if (id == R.id.nav_send) {
             logout();
 
         }

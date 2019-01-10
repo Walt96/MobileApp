@@ -70,7 +70,25 @@ public class AddPartecipant extends Fragment {
         invitePlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addPartecipant();
+                if(CheckConnection.isConnected(getActivity()))
+                    addPartecipant();
+                else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("You don't have internet connection, please check it!")
+                            .setTitle("An error occurred");
+                    builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                        }
+                    });
+                    builder.create().show();
+                }
             }
         });
 
@@ -103,6 +121,8 @@ public class AddPartecipant extends Fragment {
                                 ArrayList currentPartecipants = (ArrayList) task.getResult().get("partecipants");
                                 if(currentPartecipants.contains(username))
                                     invitePlayer.setError("Watch out, this player is already in your match!");
+                                else if(currentPartecipants.size() == 10)
+                                    invitePlayer.setError("Watch out, your match contains already 10 players!");
                                 else{
                                     final HashMap newInvite = new HashMap();
                                     newInvite.put("match",handledMatch.getId());

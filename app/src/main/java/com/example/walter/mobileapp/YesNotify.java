@@ -1,60 +1,103 @@
 package com.example.walter.mobileapp;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class YesNotify extends AppCompatActivity {
     private int CALENDAR_CODE = 10;
-
+    Lock lock = new ReentrantLock();
+    Condition condition = lock.newCondition();
+    boolean finished = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StaticInstance.currentActivity = this;
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
         setContentView(R.layout.activity_yes_notify);
 
-        String match = getIntent().getStringExtra("match");
+        final String match = getIntent().getStringExtra("match");
         boolean accepted = getIntent().getBooleanExtra("accept", false);
-        String document = getIntent().getStringExtra("document");
-        String username = getIntent().getStringExtra("username");
+        final String document = getIntent().getStringExtra("document");
+        final String username = getIntent().getStringExtra("username");
 
         if (!accepted)
             StaticInstance.db.collection("invite").document(document).update("accept", "no");
         else {
-            StaticInstance.db.collection("invite").document(document).update("accept", "yes");
-            HashMap player = new HashMap();
-            player.put("user", username);
-            player.put("role", getIntent().getStringExtra("role"));
-            player.put("team", getIntent().getStringExtra("team"));
-            StaticInstance.db.collection("matches").document(match).update("partecipants", FieldValue.arrayUnion(username));
-            StaticInstance.db.collection("matches").document(match).update("registered", FieldValue.arrayUnion(player));
-            StaticInstance.username = username;
-            StaticInstance.role = getIntent().getStringExtra("role");
-            addEventToCalendar(getIntent());
-            startActivity(new Intent(this, MyMatchesList.class));
+
+            StaticInstance.db.collection("matches").document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        if(((ArrayList)(task.getResult().get("partecipants"))).size()==10){
+                            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(StaticInstance.currentActivity);
+                            builder.setMessage("The match is already completed. You are late.");
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    StaticInstance.db.collection("invite").document(document).update("accept", "no");
+                                    startActivity(new Intent(getApplicationContext(), MyMatchesList.class));
+                                }
+                            });
+                            builder.create().show();
+
+                        }
+                        else{
+                            StaticInstance.db.collection("invite").document(document).update("accept", "yes");
+                            HashMap player = new HashMap();
+                            player.put("user", username);
+                            player.put("role", getIntent().getStringExtra("role"));
+                            player.put("team", getIntent().getStringExtra("team"));
+                            StaticInstance.db.collection("matches").document(match).update("partecipants", FieldValue.arrayUnion(username));
+                            StaticInstance.db.collection("matches").document(match).update("registered", FieldValue.arrayUnion(player));
+                            StaticInstance.username = username;
+                            StaticInstance.role = getIntent().getStringExtra("role");
+                            addEventToCalendar(getIntent());
+                            startActivity(new Intent(getApplicationContext(), MyMatchesList.class));
+                        }
+
+                    }
+                }
+            });
+            /*while(!finished) {
+                try {
+                    condition.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }*/
         }
 
     }

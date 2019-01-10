@@ -1,10 +1,12 @@
 package com.example.walter.mobileapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -162,27 +164,43 @@ public class FacebookLogin extends AppCompatActivity {
 
 
     public void sharepost(View w) {
-        Log.e("TAG", "Clicked");
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                Log.e("TAG", "Callback success");
-                Toast.makeText(FacebookLogin.this, "Share Successful!", Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onCancel() {
-                Log.e("TAG", "Callback cancel");
-                Toast.makeText(FacebookLogin.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
-            }
+        if(!CheckConnection.isConnected(this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You don't have internet connection, please check it!")
+                    .setTitle("An error occurred");
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+            });
+            builder.create().show();
+        }else {
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    Log.e("TAG", "Callback success");
+                    Toast.makeText(FacebookLogin.this, "Share Successful!", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("TAG", error.getMessage());
-                Toast.makeText(FacebookLogin.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        //Picasso.get().load("https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg").into(target);
+                @Override
+                public void onCancel() {
+                    Log.e("TAG", "Callback cancel");
+                    Toast.makeText(FacebookLogin.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Log.e("TAG", error.getMessage());
+                    Toast.makeText(FacebookLogin.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            //Picasso.get().load("https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg").into(target);
        /* ShareLinkContent linkContent = new ShareLinkContent.Builder().setQuote("Quote").setContentUrl(Uri.parse("http://youtube.com")).build();
         if(ShareDialog.canShow(ShareLinkContent.class)) {
 
@@ -190,24 +208,24 @@ public class FacebookLogin extends AppCompatActivity {
 
         }*/
 
-        ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
-                .putString("og:type", "product")
-                .putString("og:title", "Sample Course")
-                .putString("og:description", "Ho appena creato ouna partita! Scarica anche tu l'applicazione!.")
-                .putString("og:image", "https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg")
-                .build();
-        ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
-                .setActionType("games.achieves")
-                .putObject("product", object)
-                .build();
-        ShareOpenGraphContent content = new ShareOpenGraphContent.Builder()
-                .setPreviewPropertyName("product")
-                .setAction(action)
-                .build();
-        shareDialog.show(content);
+            ShareOpenGraphObject object = new ShareOpenGraphObject.Builder()
+                    .putString("og:type", "product")
+                    .putString("og:title", "Sample Course")
+                    .putString("og:description", "Ho appena creato ouna partita! Scarica anche tu l'applicazione!.")
+                    .putString("og:image", "https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg")
+                    .build();
+            ShareOpenGraphAction action = new ShareOpenGraphAction.Builder()
+                    .setActionType("games.achieves")
+                    .putObject("product", object)
+                    .build();
+            ShareOpenGraphContent content = new ShareOpenGraphContent.Builder()
+                    .setPreviewPropertyName("product")
+                    .setAction(action)
+                    .build();
+            shareDialog.show(content);
 
 
-
+        }
 
     }
 

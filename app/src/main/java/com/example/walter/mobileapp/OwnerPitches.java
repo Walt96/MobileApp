@@ -1,6 +1,7 @@
 package com.example.walter.mobileapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -65,81 +67,98 @@ public class OwnerPitches extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_owner_pitches);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        if(!CheckConnection.isConnected(this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You don't have internet connection, please check it!")
+                    .setTitle("An error occurred");
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(getApplicationContext(), OwnerHome.class));
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+            });
+            builder.create().show();
+        }else {
+            setContentView(R.layout.activity_owner_pitches);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        shareDialog = new ShareDialog(this);
-        callbackManager = CallbackManager.Factory.create();
+            shareDialog = new ShareDialog(this);
+            callbackManager = CallbackManager.Factory.create();
 
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            });
 
-        final ListView listView = findViewById(R.id.pitches);
-        pitches = new ArrayList<>();
-        db.collection("pitch")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            final OwnerPitches.CustomAdapter customAdapter = new OwnerPitches.CustomAdapter(getApplicationContext());
-                            listView.setAdapter(customAdapter);
+            final ListView listView = findViewById(R.id.pitches);
+            pitches = new ArrayList<>();
+            db.collection("pitch")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final OwnerPitches.CustomAdapter customAdapter = new OwnerPitches.CustomAdapter(getApplicationContext());
+                                listView.setAdapter(customAdapter);
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getId();
-                                String city = document.get("city").toString();
-                                String address= document.get("address").toString() + " , " + city;
-                                boolean covered=(boolean)document.get("covered");
-                                double price = (double) (document.get("price"));
-                                final Pitch currentPitch = new Pitch(id, address,price,covered,city,document.get("owner").toString());
-                                Log.e("cerco in ","pitch/"+document.get("code"));
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    String id = document.getId();
+                                    String city = document.get("city").toString();
+                                    String address = document.get("address").toString() + " , " + city;
+                                    boolean covered = (boolean) document.get("covered");
+                                    double price = (double) (document.get("price"));
+                                    final Pitch currentPitch = new Pitch(id, address, price, covered, city, document.get("owner").toString());
+                                    Log.e("cerco in ", "pitch/" + document.get("code"));
 
-                                mStorageRef.child("pitch/" + document.get("owner")+document.get("code")).getDownloadUrl()
-                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                Log.e("il mio uri è",uri.toString());
-                                                currentPitch.setUri(uri);
-                                                customAdapter.notifyDataSetChanged();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception exception) {
-                                                // Handle any errors
-                                            }
-                                        });
+                                    mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    Log.e("il mio uri è", uri.toString());
+                                                    currentPitch.setUri(uri);
+                                                    customAdapter.notifyDataSetChanged();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    // Handle any errors
+                                                }
+                                            });
 
-                                myRef.child(document.get("code").toString()).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        dataSnapshot.getValue();
-                                    }
+                                    myRef.child(document.get("code").toString()).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            dataSnapshot.getValue();
+                                        }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError error) {
-                                        // Failed to read value
-                                        Log.e("Hey", "Failed to read app title value.", error.toException());
-                                    }
-                                });
-                                currentPitch.initWithoutThese(new ArrayList<String>());
-                                pitches.add(currentPitch);
+                                        @Override
+                                        public void onCancelled(DatabaseError error) {
+                                            // Failed to read value
+                                            Log.e("Hey", "Failed to read app title value.", error.toException());
+                                        }
+                                    });
+                                    currentPitch.initWithoutThese(new ArrayList<String>());
+                                    pitches.add(currentPitch);
 
+                                }
+                            } else {
+                                Log.w("", "Error getting documents.", task.getException());
                             }
-                        } else {
-                            Log.w("", "Error getting documents.", task.getException());
                         }
-                    }
-                });
-
+                    });
+        }
     }
 
     class CustomAdapter extends BaseAdapter {

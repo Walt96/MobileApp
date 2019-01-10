@@ -2,9 +2,11 @@ package com.example.walter.mobileapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
@@ -277,39 +279,56 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void checkLogin(View v){
-        progressDialog.setMessage("Checking your credentials...");
-        progressDialog.show();
-         Task<QuerySnapshot> querySnapshotTask = db.collection("users").whereEqualTo("username", username.getText().toString()).whereEqualTo("password", password.getText().toString())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            progressDialog.dismiss();
-                            if (task.getResult().isEmpty())
-                                password.setError("Please check your credentials");
-                            else {
+        if(!CheckConnection.isConnected(this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You don't have internet connection, please check it!")
+                    .setTitle("An error occurred");
+            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(getApplicationContext(), UserHome.class));
+                }
+            }).setPositiveButton("Check now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                }
+            });
+            builder.create().show();
+        }else {
+            progressDialog.setMessage("Checking your credentials...");
+            progressDialog.show();
+            Task<QuerySnapshot> querySnapshotTask = db.collection("users").whereEqualTo("username", username.getText().toString()).whereEqualTo("password", password.getText().toString())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                progressDialog.dismiss();
+                                if (task.getResult().isEmpty())
+                                    password.setError("Please check your credentials");
+                                else {
 
-                                //salvo l'utente loggato nelle pref
-                                DocumentSnapshot user_doc = task.getResult().getDocuments().get(0);
-                                String user = user_doc.get("username").toString();
-                                editor.putString("user", user);
-                                boolean isAPlayer = (boolean)user_doc.get("player");
-                                String role="";
-                                if(isAPlayer){
-                                   role = user_doc.get("role").toString();
-                                   editor.putString("role", role);
+                                    //salvo l'utente loggato nelle pref
+                                    DocumentSnapshot user_doc = task.getResult().getDocuments().get(0);
+                                    String user = user_doc.get("username").toString();
+                                    editor.putString("user", user);
+                                    boolean isAPlayer = (boolean) user_doc.get("player");
+                                    String role = "";
+                                    if (isAPlayer) {
+                                        role = user_doc.get("role").toString();
+                                        editor.putString("role", role);
+                                    }
+                                    String email = user_doc.get("email").toString();
+                                    editor.putString("email", email);
+                                    editor.commit();
+                                    doLogin(user, role, isAPlayer, email);
                                 }
-                                String email = user_doc.get("email").toString();
-                                editor.putString("email",email);
-                                editor.commit();
-                                doLogin(user,role,isAPlayer,email);
                             }
+
                         }
-
-                    }
-                });
-
+                    });
+        }
     }
     public void doLogin(String user, String role, boolean isAPlayer, String email){
         Intent intent;
