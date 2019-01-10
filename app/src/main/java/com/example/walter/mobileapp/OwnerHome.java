@@ -231,12 +231,21 @@ public class OwnerHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        AlertDialog.Builder alertadd = new AlertDialog.Builder(this);
+        alertadd.setTitle("Do you really want to exit?");
+        alertadd.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) { DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+                logout();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertadd.create().show();
     }
 
     @Override
@@ -357,10 +366,6 @@ public class OwnerHome extends AppCompatActivity
             return convertView;
 
         }
-    }
-
-    private Context getActivity() {
-        return this;
     }
 
     private void logout() {

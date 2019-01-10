@@ -28,9 +28,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
@@ -267,27 +269,31 @@ public class MyMatchesList extends AppCompatActivity {
     };
 
     public void shareOnFacebook() {
-        Log.e("TAG", "Clicked");
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                Log.e("TAG", "Callback success");
-                Toast.makeText(MyMatchesList.this, "Share Successful!", Toast.LENGTH_SHORT).show();
-            }
+        if(AccessToken.getCurrentAccessToken()!= null) {
+            Log.e("TAG", "Clicked");
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    Log.e("TAG", "Callback success");
+                    Toast.makeText(MyMatchesList.this, "Share Successful!", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onCancel() {
-                Log.e("TAG", "Callback cancel");
-                Toast.makeText(MyMatchesList.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onCancel() {
+                    Log.e("TAG", "Callback cancel");
+                    Toast.makeText(MyMatchesList.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("TAG", error.getMessage());
-                Toast.makeText(MyMatchesList.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        Picasso.get().load("https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg").into(target);
+                @Override
+                public void onError(FacebookException error) {
+                    Log.e("TAG", error.getMessage());
+                    Toast.makeText(MyMatchesList.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            Picasso.get().load("https://i.imgur.com/cZ4AYuV.png").into(target);
+        } else {
+            Toast.makeText(this, "Please, Sign In with Facebook first!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

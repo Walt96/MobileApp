@@ -111,7 +111,7 @@ public class SigninActivity extends AppCompatActivity {
         EditText passwordEdit = (EditText) actualFragment.getView().findViewById(R.id.passwordSignin);
         final EditText passwordConfirm = (EditText) actualFragment.getView().findViewById(R.id.confirmSignin);
         String userRole = "no role";
-        EditText emailText = (EditText) actualFragment.getView().findViewById(R.id.mailAddress);
+        final EditText emailText = (EditText) actualFragment.getView().findViewById(R.id.mailAddress);
         EditText phoneNumberText = (EditText) actualFragment.getView().findViewById(R.id.phoneNumber);
         final String email = emailText.getText().toString();
         final String phoneNumber = phoneNumberText.getText().toString();
@@ -145,10 +145,6 @@ public class SigninActivity extends AppCompatActivity {
             firstControl = false;
         }
 
-
-
-
-
         if (firstControl) {
             if(!CheckConnection.isConnected(this)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -166,80 +162,95 @@ public class SigninActivity extends AppCompatActivity {
                 });
                 builder.create().show();
             }else {
-                final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
-                        .whereEqualTo("username", usernameEdit.getText().toString())
+                final Task<QuerySnapshot> queryTask = db.collection("users")
+                        .whereEqualTo("email", email)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    if (task.getResult().size() != 0)
-                                        usernameEdit.setError("This username is already used");
-                                    else {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                        String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "mail: " + email + "\n" + "phone: " + phoneNumber;
-                                        if (isUser) {
-                                            message += "Role " + role;
-                                        }
-                                        builder.setMessage(message)
-                                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int id) {
-                                                        Map<String, Object> user = new HashMap<>();
-                                                        user.put("username", usernameEdit.getText().toString());
-                                                        user.put("password", passwordConfirm.getText().toString());
-                                                        if (isUser) {
-                                                            user.put("role", role);
-                                                            user.put("rates", new ArrayList<>());
-                                                            user.put("preferences", new ArrayList<>());
-                                                            user.put("wantNotification", true);
-                                                            user.put("wantSound", true);
-                                                            user.put("wantSendMail", true);
-                                                            user.put("wantEventCalendar", true);
-                                                            user.put("wantRateMatch", true);
-
-                                                        }
-                                                        user.put("player", isUser);
-                                                        user.put("email", email);
-                                                        user.put("phone", phoneNumber);
-                                                        Log.e("", "Called");
-                                                        db.collection("users").document(user.get("username").toString())
-                                                                .set(user)
-                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void documentReference) {
-                                                                        if (isUser) {
-                                                                            savePhoto();
-                                                                        }
-                                                                        AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
-                                                                        builder_.setMessage("Your account was created successfully");
-                                                                        builder_.create().show();
-                                                                        startActivity(new Intent(getActivity(), LoginActivity.class));
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
-                                                                        builder_.setMessage("An error occurred, please try again!");
-                                                                        builder_.create().show();
-                                                                    }
-                                                                });
-                                                    }
-                                                })
-                                                .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                            public void onComplete(@NonNull Task<QuerySnapshot> firstTask) {
+                                if(firstTask.isSuccessful()) {
+                                    if(firstTask.getResult().size() != 0) {
+                                       emailText.setError("This email is already used");
+                                    } else {
+                                        final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
+                                                .whereEqualTo("username", usernameEdit.getText().toString())
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            if (task.getResult().size() != 0)
+                                                                usernameEdit.setError("This username is already used");
+                                                            else {
+                                                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                                                String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "mail: " + email + "\n" + "phone: " + phoneNumber;
+                                                                if (isUser) {
+                                                                    message += "Role " + role;
+                                                                }
+                                                                builder.setMessage(message)
+                                                                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                                Map<String, Object> user = new HashMap<>();
+                                                                                user.put("username", usernameEdit.getText().toString());
+                                                                                user.put("password", passwordConfirm.getText().toString());
+                                                                                if (isUser) {
+                                                                                    user.put("role", role);
+                                                                                    user.put("rates", new ArrayList<>());
+                                                                                    user.put("preferences", new ArrayList<>());
+                                                                                    user.put("wantNotification", true);
+                                                                                    user.put("wantSound", true);
+                                                                                    user.put("wantSendMail", true);
+                                                                                    user.put("wantEventCalendar", true);
+                                                                                    user.put("wantRateMatch", true);
 
+                                                                                }
+                                                                                user.put("player", isUser);
+                                                                                user.put("email", email);
+                                                                                user.put("phone", phoneNumber);
+                                                                                Log.e("", "Called");
+                                                                                db.collection("users").document(user.get("username").toString())
+                                                                                        .set(user)
+                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void documentReference) {
+                                                                                                if (isUser) {
+                                                                                                    savePhoto();
+                                                                                                }
+                                                                                                AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
+                                                                                                builder_.setMessage("Your account was created successfully");
+                                                                                                builder_.create().show();
+                                                                                                startActivity(new Intent(getActivity(), LoginActivity.class));
+                                                                                            }
+                                                                                        })
+                                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                AlertDialog.Builder builder_ = new AlertDialog.Builder(getActivity());
+                                                                                                builder_.setMessage("An error occurred, please try again!");
+                                                                                                builder_.create().show();
+                                                                                            }
+                                                                                        });
+                                                                            }
+                                                                        })
+                                                                        .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                                            }
+                                                                        });
+
+
+                                                                // Create the AlertDialog object and return it
+                                                                builder.create().show();
+                                                            }
+                                                        }
                                                     }
                                                 });
-
-
-                                        // Create the AlertDialog object and return it
-                                        builder.create().show();
                                     }
                                 }
                             }
                         });
+
             }
         }
     }

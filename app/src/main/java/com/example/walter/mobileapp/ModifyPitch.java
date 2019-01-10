@@ -41,6 +41,7 @@ public class ModifyPitch extends AppCompatActivity {
 
     EditText priceEditText;
     RadioButton coveredPitch;
+    RadioButton uncoveredPitch;
     FirebaseFirestore db = StaticInstance.getInstance();
     ProgressDialog progressDialog;
     String username;
@@ -72,6 +73,7 @@ public class ModifyPitch extends AppCompatActivity {
 
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
+        uncoveredPitch = findViewById(R.id.uncoveredPitch);
         progressDialog = new ProgressDialog(this);
         path=null;
 
@@ -79,6 +81,8 @@ public class ModifyPitch extends AppCompatActivity {
 
         if(covered) {
             coveredPitch.toggle();
+        } else {
+            uncoveredPitch.toggle();
         }
 
     }
@@ -116,7 +120,7 @@ public class ModifyPitch extends AppCompatActivity {
             }else {
             boolean makeUpdate = false;
             final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
-            progressDialog.setMessage("Adding your pitch...");
+            progressDialog.setMessage("Modifying your pitch...");
             progressDialog.show();
 
             Map<String, Object> updates = new HashMap<>();
@@ -137,10 +141,8 @@ public class ModifyPitch extends AppCompatActivity {
                 StaticInstance.db.collection("pitch").document(id).update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void avoid) {
-                        StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
-
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("Your pitch was created successfully");
+                        builder.setMessage("Your pitch was updated successfully");
                         builder.create().show();
                         progressDialog.dismiss();
                     }

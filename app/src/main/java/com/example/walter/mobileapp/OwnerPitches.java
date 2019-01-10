@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -104,6 +105,7 @@ public class OwnerPitches extends AppCompatActivity {
             final ListView listView = findViewById(R.id.pitches);
             pitches = new ArrayList<>();
             db.collection("pitch")
+                    .whereEqualTo("owner", StaticInstance.username)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -278,27 +280,31 @@ public class OwnerPitches extends AppCompatActivity {
     };
 
     public void shareOnFacebook() {
-        Log.e("TAG", "Clicked");
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                Log.e("TAG", "Callback success");
-                Toast.makeText(OwnerPitches.this, "Share Successful!", Toast.LENGTH_SHORT).show();
-            }
+        if(AccessToken.getCurrentAccessToken()!= null) {
+            Log.e("TAG", "Clicked");
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    Log.e("TAG", "Callback success");
+                    Toast.makeText(OwnerPitches.this, "Share Successful!", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onCancel() {
-                Log.e("TAG", "Callback cancel");
-                Toast.makeText(OwnerPitches.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onCancel() {
+                    Log.e("TAG", "Callback cancel");
+                    Toast.makeText(OwnerPitches.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("TAG", error.getMessage());
-                Toast.makeText(OwnerPitches.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        Picasso.get().load("https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg").into(target);
+                @Override
+                public void onError(FacebookException error) {
+                    Log.e("TAG", error.getMessage());
+                    Toast.makeText(OwnerPitches.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            Picasso.get().load("https://i.imgur.com/rLkSTRf.png").into(target);
+        } else {
+            Toast.makeText(this, "Please, Sign in with Facebook first", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

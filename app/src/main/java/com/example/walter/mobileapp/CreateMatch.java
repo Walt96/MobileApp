@@ -271,6 +271,7 @@ public class CreateMatch extends AppCompatActivity {
     public void openMap(View w) {
         Intent mapIntent = new Intent(this, ShowMap.class);
         mapIntent.putExtra("cities", cities);
+        mapIntent.putExtra("date", selectedDate);
         startActivity(mapIntent);
         //mapIntent.putExtra("fields", pitches);
     }
