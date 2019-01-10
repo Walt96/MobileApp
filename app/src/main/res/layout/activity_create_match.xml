@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backCol">
     tools:context=".CreateMatch">
 
     <Button
@@ -14,8 +15,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="openMap"
         android:text="Map"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.971"
@@ -34,6 +37,7 @@
             android:layout_width="129dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="@android:color/white"
             android:scrollbarSize="50dp" />
 
         <TextView
@@ -44,7 +48,7 @@
             android:paddingTop="8dp"
             android:text="Date"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@android:color/white" />
 
         <Switch
             android:id="@+id/covered"
@@ -52,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Not Covered"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
@@ -63,7 +67,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" >
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
     </ListView>
 

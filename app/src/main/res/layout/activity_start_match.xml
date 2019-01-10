@@ -42,6 +42,7 @@
         android:background="@color/colorPrimary"
         android:onClick="start"
         android:text="Start "
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/change_"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/change" />
@@ -56,6 +57,7 @@
         android:background="@color/colorPrimary"
         android:onClick="resume"
         android:text="resume"
+        android:textColor="@android:color/white"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/change_"
         app:layout_constraintStart_toStartOf="parent"

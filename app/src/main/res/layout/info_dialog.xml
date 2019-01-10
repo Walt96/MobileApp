@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="350dp"
     android:layout_height="475dp"
+    android:background="@color/backCol"
     android:layout_gravity="center"
-    android:background="@android:color/white"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -16,6 +16,7 @@
         android:layout_gravity="end"
         android:gravity="center"
         android:text="X"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +41,7 @@
                 android:layout_weight="1"
                 android:text="Address:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -49,7 +51,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
         <TableRow
@@ -63,6 +66,7 @@
                 android:layout_weight="1"
                 android:text="Date:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -72,7 +76,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
         <TableRow
@@ -86,6 +91,7 @@
                 android:layout_weight="1"
                 android:text="Time:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -95,7 +101,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
         <TableRow
@@ -109,6 +116,7 @@
                 android:layout_weight="1"
                 android:text="Covered:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -118,7 +126,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
         <TableRow
@@ -132,6 +141,7 @@
                 android:layout_weight="1"
                 android:text="Booking by:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -141,7 +151,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
         <TableRow
@@ -155,6 +166,7 @@
                 android:layout_weight="1"
                 android:text="Registered:"
                 android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -164,7 +176,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="TextView"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white" />
         </TableRow>
 
     </TableLayout>

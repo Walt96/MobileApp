@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/backCol">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TableRow
         android:layout_width="match_parent"
@@ -16,7 +21,7 @@
             android:layout_weight="1"
             android:text="Manager: "
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -26,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="manager"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             tools:layout_editor_absoluteX="24dp"
             tools:layout_editor_absoluteY="20dp" />
@@ -44,7 +49,7 @@
             android:layout_weight="1"
             android:text="Address:"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -54,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="address   "
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -71,7 +76,7 @@
             android:layout_weight="1"
             android:text="Date:"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -81,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="DD/MM/YYYY"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address_view" />
@@ -90,7 +95,7 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/textView13"
@@ -99,7 +104,7 @@
             android:layout_weight="1"
             android:text="Time:"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -109,11 +114,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="HH/MM"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address_view" />
     </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </TableLayout>

@@ -15,7 +15,9 @@
         android:ems="10"
         android:hint="Date"
         android:inputType="date"
-        app:layout_constraintEnd_toStartOf="@+id/search_button"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintEnd_toStartOf="@+id/selectButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,10 +31,10 @@
         app:layout_constraintTop_toBottomOf="@+id/match_date" />
 
     <ImageButton
-        android:id="@+id/search_button"
+        android:id="@+id/selectButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:backgroundTint="@color/place_autocomplete_separator"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="showMatch"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/dailyMatch"

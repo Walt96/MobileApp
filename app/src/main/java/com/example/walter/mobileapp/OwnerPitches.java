@@ -92,16 +92,6 @@ public class OwnerPitches extends AppCompatActivity {
             shareDialog = new ShareDialog(this);
             callbackManager = CallbackManager.Factory.create();
 
-
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
-
             final ListView listView = findViewById(R.id.pitches);
             pitches = new ArrayList<>();
             db.collection("pitch")

@@ -5,21 +5,24 @@
     android:id="@+id/tableSnack"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backCol"
     tools:context=".ShowMap">
 
     <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <Spinner
                 android:id="@+id/cityPicker"
-                android:layout_width="286dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:backgroundTint="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/selectButton"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -31,10 +34,11 @@
                 android:id="@+id/selectButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
                 android:onClick="loadMarkers"
                 android:text="Search"
+                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

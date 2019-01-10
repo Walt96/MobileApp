@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/backCol">
 
     <TextView
         android:id="@+id/textView5"
@@ -19,6 +20,7 @@
         android:layout_marginBottom="125dp"
         android:text="Your teams formation"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         android:textSize="18sp" />
 
     <RelativeLayout

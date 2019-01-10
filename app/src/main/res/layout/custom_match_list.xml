@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/backCol"
     android:layout_height="100dp"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp">
@@ -42,14 +43,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@android:color/white" />
             </TableRow>
 
             <TableRow
@@ -68,7 +71,8 @@
                     android:id="@+id/bookedby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@android:color/white" />
             </TableRow>
 
             <TableRow
@@ -90,6 +94,7 @@
                 android:layout_width="35dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/search" />
 
             <ImageButton
@@ -97,6 +102,7 @@
                 android:layout_width="35dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/confirm" />
 
             <ImageButton
@@ -105,8 +111,9 @@
                 android:layout_height="36dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
                 android:onClick="shareFacebook"
-                app:srcCompat="@drawable/ic_menu_share" />
+                app:srcCompat="@android:drawable/ic_menu_share" />
 
         </LinearLayout>
 

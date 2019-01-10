@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/backCol">
 
 
     <ImageView
@@ -31,7 +32,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pitchImage" />
@@ -48,7 +49,7 @@
         android:layout_toStartOf="@+id/pitchTime"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/modifyButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pitchAddress" />
@@ -65,7 +66,7 @@
         android:layout_toEndOf="@+id/pitchCover"
         android:layout_weight="1"
         android:textAlignment="viewEnd"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/modifyButton"
         app:layout_constraintTop_toBottomOf="@+id/pitchAddress" />
@@ -80,6 +81,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="8dp"
         android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Modifica"
         android:textColor="@color/common_google_signin_btn_text_dark_pressed"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,7 +95,9 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Share"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pitchCover"

@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backCol">
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <EditText
         android:id="@+id/playerSearched"
@@ -15,7 +19,9 @@
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="Username of the player"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <ImageButton
         android:id="@+id/search"
@@ -27,6 +33,7 @@
         android:layout_marginTop="-1dp"
         android:layout_marginEnd="6dp"
         android:layout_toStartOf="@+id/playerSearched"
+        android:backgroundTint="@color/colorPrimary"
         app:srcCompat="@drawable/places_ic_search" />
 
     <ImageView
@@ -62,7 +69,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Username"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
 
             <TextView
                 android:id="@+id/username"
@@ -83,7 +92,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Role"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
 
             <TextView
                 android:id="@+id/role"
@@ -104,7 +115,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Score"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
 
             <TextView
                 android:id="@+id/userScore"
@@ -124,7 +137,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Invite" />
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Invite"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
         </TableRow>
 
     </TableLayout>

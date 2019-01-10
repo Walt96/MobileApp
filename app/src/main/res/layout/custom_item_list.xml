@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="360dp"
-    android:background="@color/common_google_signin_btn_text_dark_default">
+    android:background="@color/backCol">
 
     <Spinner
         android:id="@+id/pitchTime"
@@ -14,6 +14,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="42dp"
         android:layout_marginBottom="5dp"
+        android:backgroundTint="@android:color/white"
         android:scrollbarSize="50dp" />
 
     <TextView
@@ -26,7 +27,8 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="0dp"
         android:gravity="center_vertical"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:textSize="18sp" />
 
     <TextView
@@ -39,7 +41,8 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="40dp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:textSize="18sp" />
 
     <ImageView
@@ -65,7 +68,8 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="5dp"
         android:textAlignment="textStart"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:textSize="18sp" />
 
     <Button
@@ -78,7 +82,7 @@
         android:layout_marginEnd="27dp"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@+id/pitchTime"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:onClick="bookPitch"
         android:text="Prenota"
         android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
