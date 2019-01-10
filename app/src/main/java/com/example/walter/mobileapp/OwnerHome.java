@@ -80,7 +80,7 @@ public class OwnerHome extends AppCompatActivity
         datePattern = Pattern.compile(DATEREGEX);
 
         setSupportActionBar(toolbar);
-        
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -188,6 +188,7 @@ public class OwnerHome extends AppCompatActivity
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     String id = document.getId();
                                     String manager = document.get("manager").toString();
+                                    Log.e("TAGGG", manager);
                                     String date = document.get("date").toString();
                                     String address= document.get("address").toString();
                                     String time = document.get("time").toString() + ":00";
@@ -312,14 +313,13 @@ public class OwnerHome extends AppCompatActivity
                                 infoDialog.dismiss();
                             }
                         });
-
                         TextView address_view = infoDialog.findViewById(R.id.address_view);
                         TextView date_view = infoDialog.findViewById(R.id.date);
                         TextView time_view = infoDialog.findViewById(R.id.time);
                         TextView covered_view = infoDialog.findViewById(R.id.covered);
                         TextView booking_view = infoDialog.findViewById(R.id.bookingby);
                         TextView registered_view = infoDialog.findViewById(R.id.registered);
-
+                        
                         address_view.setText(currentMatch.getAddress());
                         date_view.setText(currentMatch.getDate());
                         time_view.setText(currentMatch.getTime());
@@ -337,7 +337,7 @@ public class OwnerHome extends AppCompatActivity
                     }
             });
 
-            TextView managerView = convertView.findViewById(R.id.address_view);
+            TextView managerView = convertView.findViewById(R.id.manager_view);
             TextView addressView = convertView.findViewById(R.id.address_view);
             TextView dateView = convertView.findViewById(R.id.date_view);
             TextView timeView = convertView.findViewById(R.id.time_view);
