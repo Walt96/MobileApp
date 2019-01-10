@@ -21,6 +21,8 @@ import android.widget.RadioButton;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,8 +37,7 @@ import java.util.Map;
 public class ModifyPitch extends AppCompatActivity {
 
     private static final int WRITE_EXTERNAL_CODE = 2 ;
-    EditText addressEditText;
-    EditText cityEditText;
+
     EditText priceEditText;
     RadioButton coveredPitch;
     FirebaseFirestore db = StaticInstance.getInstance();
@@ -46,37 +47,34 @@ public class ModifyPitch extends AppCompatActivity {
     String path;
     StorageReference mStorageRef;
     Bitmap photo;
-    Pitch pitch;
+    String address;
+    String city;
+    String id;
+    double price;
+    boolean covered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("","onCreate");
 
-
         Intent intent = getIntent();
-        String id = intent.getStringExtra("id");
-        String address = intent.getStringExtra("address");
-        String price = intent.getStringExtra("price");
-        Boolean covered = Boolean.valueOf(intent.getStringExtra("covered"));
-        String city = intent.getStringExtra("city");
+        id = intent.getStringExtra("id");
+        address = intent.getStringExtra("address");
+        price = Double.parseDouble(intent.getStringExtra("price"));
+        covered = Boolean.valueOf(intent.getStringExtra("covered"));
+        city = intent.getStringExtra("city");
 
         setContentView(R.layout.activity_modify_pitch);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         username = StaticInstance.username;
-        addressEditText = findViewById(R.id.pitchAddress);
-        cityEditText = findViewById(R.id.cityIcon);
+
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
         path=null;
 
-
-
-        addressEditText.setText(address);
-        cityEditText.setText(city);
-        priceEditText.setText(price);
-        Log.e("",address + " " + city + " " + price);
+        priceEditText.setText(String.valueOf(price));
 
         if(covered) {
             coveredPitch.toggle();
@@ -85,78 +83,65 @@ public class ModifyPitch extends AppCompatActivity {
     }
     public void validateFields(View v) {
 
-        String address = addressEditText.getText().toString();
-        String city = cityEditText.getText().toString();
-        double price = 0;
+
+        double actualPrice = 0;
         boolean isCovered = coveredPitch.isChecked();
         boolean validField = true;
 
-        if (!address.matches("((via)|(piazza)|(contrada)|(corso)).*n(\\d)+")) {
-            addressEditText.setError("Please check your address: it's not valid");
-            validField = false;
-        }
-        if (city.isEmpty()) {
-            cityEditText.setError("Please insert a city");
-            validField = false;
-        }
         if (priceEditText.getText().length() == 0) {
             priceEditText.setError("Do you really want to make your pitch free? :)");
             validField = false;
         }
         else {
             String value_price = priceEditText.getText().toString();
-            price = Double.valueOf(value_price);
+            actualPrice = Double.valueOf(value_price);
         }
         if (validField) {
+            boolean makeUpdate = false;
             final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
             progressDialog.setMessage("Adding your pitch...");
             progressDialog.show();
-            Map<String, Object> pitch = new HashMap<>();
-            pitch.put("owner", username);
-            pitch.put("address", address);
-            pitch.put("city", city.toLowerCase());
-            pitch.put("price", price);
-            pitch.put("covered",isCovered);
-            pitch.put("code",code);
-            db.collection("pitch").document(code)
-                    .set(pitch)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void avoid) {
-                            StorageReference ref = mStorageRef.child("pitch/"+username+code);
-                            if(path!=null) {
-                                ref.putFile(Uri.parse(path))
-                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                            @Override
-                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                path=null;
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception exception) {
-                                                path=null;
-                                            }
-                                        });
-                            }
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Your pitch was created successfully");
-                            builder.create().show();
-                            progressDialog.dismiss();
-                        }
-                    })
+
+            Map<String, Object> updates = new HashMap<>();
+
+            if(isCovered != covered) {
+                makeUpdate = true;
+                updates.put("covered", isCovered);
+               Log.e("TAG", "Updating covered " + isCovered);
+            }
+
+            if(price != actualPrice) {
+                makeUpdate = true;
+                updates.put("price", actualPrice);
+              Log.e("TAG", "Updating price " + actualPrice);
+            }
+
+            if(makeUpdate) {
+                StaticInstance.db.collection("pitch").document(id).update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void avoid) {
+                        StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Your pitch was created successfully");
+                        builder.create().show();
+                        progressDialog.dismiss();
+                    }
+                })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            Log.e("TAG", e.toString());
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                             builder.setMessage("An error occured, please try again!");
                             builder.create().show();
                             progressDialog.dismiss();
                         }
                     });
-            HashMap<String,ArrayList> newValue = new HashMap<>();
-            newValue.put("prenotazioni",new ArrayList());
-            db.collection("booking").document(code).set(newValue);
+            }
+
+            //TODO Gestire la foto
+
         }
 
     }

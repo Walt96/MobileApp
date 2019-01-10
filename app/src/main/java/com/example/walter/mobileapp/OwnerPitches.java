@@ -2,6 +2,8 @@ package com.example.walter.mobileapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,12 +18,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +46,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,12 +59,19 @@ public class OwnerPitches extends AppCompatActivity {
     DatabaseReference myRef = StaticInstance.getDatabase().getReference("booking/");
     ArrayList<Pitch> pitches;
 
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_pitches);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        shareDialog = new ShareDialog(this);
+        callbackManager = CallbackManager.Factory.create();
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -200,9 +220,72 @@ public class OwnerPitches extends AppCompatActivity {
             if(!pitches.get(position).isCovered())
                 pitchCover.setText("Not Covered");
 
+
+            Button shareButton = convertView.findViewById(R.id.shareOwnerButton);
+            shareButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareOnFacebook();
+                }
+            });
+
+
             return convertView;
 
         }
+    }
+
+    Target target = new Target() {
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            Log.e("TAG", "Showing image");
+            SharePhoto sharePhoto = new SharePhoto.Builder().setBitmap(bitmap).setCaption("Ho appena creato una partita! Scarica anche tu l'applicazione").build();
+            if(ShareDialog.canShow(SharePhotoContent.class)) {
+                SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(sharePhoto).build();
+                shareDialog.show(content);
+            }
+        }
+
+        @Override
+        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+            Log.e("TAG", "Failed load bitmap");
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+    };
+
+    public void shareOnFacebook() {
+        Log.e("TAG", "Clicked");
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                Log.e("TAG", "Callback success");
+                Toast.makeText(OwnerPitches.this, "Share Successful!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Log.e("TAG", "Callback cancel");
+                Toast.makeText(OwnerPitches.this, "Share Cancel!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("TAG", error.getMessage());
+                Toast.makeText(OwnerPitches.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        Picasso.get().load("https://static.comicvine.com/uploads/scale_small/10/100647/6198653-batman+12.jpg").into(target);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private Context getActivity() {

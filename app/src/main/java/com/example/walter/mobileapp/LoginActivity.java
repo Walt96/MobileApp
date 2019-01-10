@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     name = object.getString("name");
                                                 }
                                                 Log.e("TAG", id + " - " + email + " - " + name);
-                                                checkFBAccount(id, email);
+                                                checkFBAccount(email);
 
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -134,18 +134,18 @@ public class LoginActivity extends AppCompatActivity {
 
                                     // Application code
                                     try {
-                                        String id = object.getString("id");
+                                        //String id = object.getString("id");
                                         String email = "";
-                                        String name = "";
+                                       // String name = "";
                                         if(object.has("email")) {
                                             email = object.getString("email");
                                         }
 
-                                        if(object.has("name")) {
+                                        /*if(object.has("name")) {
                                             name = object.getString("name");
-                                        }
-                                        Log.e("TAG", id + " - " + email + " - " + name);
-                                        checkFBAccount(id, email);
+                                        }*/
+                                        //Log.e("TAG", id + " - " + email + " - " + name);
+                                        checkFBAccount(email);
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                     Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name,email");
+                    parameters.putString("fields", "email");
                     request.setParameters(parameters);
                     request.executeAsync();
                 }
@@ -166,13 +166,15 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
+                Log.e("TAG", error.toString());
             }
         });
 
         sharedPref  = getSharedPreferences("logged user", Context.MODE_PRIVATE);
         editor = sharedPref.edit();
         String user = sharedPref.getString("user","");
+
+        checkFBLogged();
         if(!user.equals("")) {
             String role = sharedPref.getString("role", "");
             String email = sharedPref.getString("email", "");
@@ -193,7 +195,37 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void checkFBAccount(String id, String email) {
+
+    private void checkFBLogged() {
+        AccessToken token = AccessToken.getCurrentAccessToken();
+        if(AccessToken.getCurrentAccessToken()!= null) {
+           // final AccessToken token = A
+            GraphRequest request = GraphRequest.newMeRequest(
+                    token,
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            // Application code
+                            try {
+                                String email = "";
+                                if(object.has("email")) {
+                                    email = object.getString("email");
+                                }
+                                checkFBAccount(email);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "email");
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
+    }
+
+    private void checkFBAccount(String email) {
         Task<QuerySnapshot> querySnapshotTask = db.collection("users").whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

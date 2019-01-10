@@ -29,6 +29,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -338,6 +340,11 @@ public class OwnerHome extends AppCompatActivity
     }
 
     private void logout() {
+
+        if(AccessToken.getCurrentAccessToken()!= null)
+            LoginManager.getInstance().logOut();
+        StaticInstance.fblogged = false;
+
         SharedPreferences sharedPref = getSharedPreferences("logged user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove("user");

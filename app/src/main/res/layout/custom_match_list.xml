@@ -17,7 +17,7 @@
         android:orientation="horizontal">
 
         <TableLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -81,26 +81,37 @@
         </TableLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <ImageButton
                 android:id="@+id/search"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
-                android:layout_weight="1"
                 android:src="@drawable/search" />
 
             <ImageButton
                 android:id="@+id/confirm"
                 android:layout_width="35dp"
                 android:layout_height="36dp"
-                android:layout_weight="1"
                 android:src="@drawable/confirm" />
 
+            <ImageButton
+                android:id="@+id/delete"
+                android:layout_width="35dp"
+                android:layout_height="36dp"
+                android:src="@drawable/delete" />
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/shareButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:onClick="shareFacebook"
+            app:srcCompat="@drawable/ic_menu_share" />
 
     </LinearLayout>
 

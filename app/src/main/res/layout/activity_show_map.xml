@@ -57,6 +57,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             tools:context=".ShowMap" />
+
     </TableRow>
 
 </TableLayout>

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,7 +27,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -55,20 +58,15 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
     private ArrayList<String> cities;
     private Spinner cityPicker;
     private String selectedCity;
-    private boolean otherCity;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         selectedCity = "";
-        otherCity = false;
         setContentView(R.layout.activity_show_map);
 
         mGeoDataClient = Places.getGeoDataClient(this);
-
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this);
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         cities = getIntent().getStringArrayListExtra("cities");
@@ -76,7 +74,6 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         ArrayAdapter adapter = new ArrayAdapter<>(this, R.layout.spinneritem, cities);
         cityPicker.setAdapter(adapter);
         cityPicker.setSelection(0);
-
         cityPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -97,7 +94,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
     private void getNearFields(String city) {
         Log.e("TAG", "adding tags");
-       final String locality = city;
+        final String locality = city;
         db.collection("pitch")
                 .whereEqualTo("city", locality)
                 .get()
@@ -128,8 +125,10 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                                 fields.add(currentPitch);
 
                                 Log.e("TAG","Adding in " + lat + " - " + lon);
-                                LatLng marker = new LatLng(lat, lon);
-                                mMap.addMarker(new MarkerOptions().position(marker).title(address));
+                                LatLng markerLatLng = new LatLng(lat, lon);
+                                MarkerOptions marker = new MarkerOptions().position(markerLatLng).title(address);
+
+                                mMap.addMarker(marker);
                             }
 
                             if(locFound) {
@@ -157,12 +156,25 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String title = marker.getTitle();
+                Toast.makeText(getActivity(), "Marker + " + title + " Clicked", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
         /*
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         */
+    }
+
+    private Context getActivity() {
+        return this;
     }
 
     private void getDeviceLocation() {
@@ -185,6 +197,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                                     Log.e("", "not null!");
                                     Double longitude = mLastKnownLocation.getLongitude();
                                     Double latitude = mLastKnownLocation.getLatitude();
+                                    Log.e("ACTUAL", latitude + " " + longitude);
                                     Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
                                     List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
                                     if (addresses.size() > 0) {
@@ -192,12 +205,12 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                                         city = addresses.get(0).getLocality();
                                         getNearFields(city);
                                     }
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                            new LatLng(mLastKnownLocation.getLatitude(),
+                                                    mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                                 } else {
                                     Log.e("", "NULL");
                                 }
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLastKnownLocation.getLatitude(),
-                                                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -214,6 +227,8 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
+
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -253,7 +268,6 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
     //TODO Selezionare i campi tramite query su firebase oppure utilizzando quelli già caricati precedentemente?
     public void loadMarkers(View w) {
-        otherCity = false;
         if(selectedCity != "") {
             getNearFields(selectedCity);
         }
@@ -279,5 +293,4 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
     public Context getContext() {
         return this;
     }
-
 }
