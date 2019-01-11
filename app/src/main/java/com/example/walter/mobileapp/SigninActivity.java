@@ -185,7 +185,7 @@ public class SigninActivity extends AppCompatActivity {
                                                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                                                 String message = "Your profile is: \nUsername " + usernameEdit.getText().toString() + "\n" + "mail: " + email + "\n" + "phone: " + phoneNumber;
                                                                 if (isUser) {
-                                                                    message += "Role " + role;
+                                                                    message += "\n Role " + role;
                                                                 }
                                                                 builder.setMessage(message)
                                                                         .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {

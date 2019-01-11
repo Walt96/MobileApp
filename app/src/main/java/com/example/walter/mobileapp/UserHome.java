@@ -146,7 +146,7 @@ public class UserHome extends AppCompatActivity
 
                     TextView rateText = findViewById(R.id.rate);
                     if(rates.isEmpty()) {
-                        rateText.setText("No rate until now.");
+                        rateText.setText("No rate.");
                         return;
                     }
                     float sumRate = 0;
