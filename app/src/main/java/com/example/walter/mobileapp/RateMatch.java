@@ -25,6 +25,8 @@ public class RateMatch extends AppCompatActivity {
     String time;
     boolean infoRetrieved;
     String pitch;
+    float lat;
+    float lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +35,15 @@ public class RateMatch extends AppCompatActivity {
         setContentView(R.layout.activity_rate_match);
         infoRetrieved = false;
         matchcode = getIntent().getStringExtra("matchcode");
+
+        //cerco nel db le informazioni relative alla partita che l'utente sta votando
         StaticInstance.db.collection("matches").document(matchcode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
+                    lat = Float.valueOf(String.valueOf(task.getResult().get("lat")));
+                    lon = Float.valueOf(String.valueOf(task.getResult().get("lon")));
+
                     time = task.getResult().get("time").toString();
                     pitch = task.getResult().get("pitchcode").toString();
                     infoRetrieved = true;
@@ -61,6 +68,7 @@ public class RateMatch extends AppCompatActivity {
         });
     }
 
+    //aggiungo nel db il voto dell'utente
     public void confirmRate(View v) {
         if (rate == -1)
             ((Button) v).setError("Please, rate this match!");
@@ -70,6 +78,9 @@ public class RateMatch extends AppCompatActivity {
                 rate_.put("pitch",pitch);
                 rate_.put("time",time);
                 rate_.put("rate",rate);
+                rate_.put("lat",lat);
+                rate_.put("lon",lon);
+
                 StaticInstance.db.collection("users").document(StaticInstance.username).update("preferences", FieldValue.arrayUnion(rate_));
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Thanks!");

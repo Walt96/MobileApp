@@ -55,6 +55,15 @@ public class RatePlayer extends AppCompatActivity {
         matchcode = getIntent().getStringExtra("matchcode");
         confirm = findViewById(R.id.Confirm);
 
+        loadPlayer();
+
+        listView = findViewById(R.id.list);
+        listView.setAdapter(adapter = new PlayersAdapter());
+    }
+
+    //caricamento dei partecipanti che dovranno essere votati
+    private void loadPlayer() {
+
         StaticInstance.getInstance().collection("matches").document(matchcode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -83,13 +92,12 @@ public class RatePlayer extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                     }
-                }
+            }
         });
 
-        listView = findViewById(R.id.list);
-        listView.setAdapter(adapter = new PlayersAdapter());
     }
 
+    //aggiunta dei voti dell'utente nei voti dei rispettivi partecipanti
     public void confirmRates(View v) {
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getRate() == 0) {
@@ -119,6 +127,7 @@ public class RatePlayer extends AppCompatActivity {
 
     }
 
+    //adapter per creare un elemento della lista per ogni player da votare
     private class PlayersAdapter extends BaseAdapter {
         @Override
         public int getCount() {

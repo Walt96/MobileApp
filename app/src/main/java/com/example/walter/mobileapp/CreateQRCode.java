@@ -32,7 +32,11 @@ public class CreateQRCode extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_qrcode);
+
+        //controllo se la funzione è stata invocata da un utente che deve scannerizzare il codice o
+        //da un organizzatore che deve mostrare il qr code
         boolean haveToScan = getIntent().getBooleanExtra("scan", false);
+
         if (!haveToScan) {
             String code = getIntent().getStringExtra("code");
             QRGEncoder qrgEncoder = new QRGEncoder(code, null, QRGContents.Type.TEXT, 200);
@@ -99,6 +103,7 @@ public class CreateQRCode extends AppCompatActivity {
         }
     }
 
+    //aggiorno sul db la conferma in base al qr scannerizzato
     private void confirm(final String contents) {
         StaticInstance.db.collection("matches").document(contents).update("confirmed", FieldValue.arrayUnion(StaticInstance.username)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

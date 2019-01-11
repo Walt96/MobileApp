@@ -34,11 +34,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class YesNotify extends AppCompatActivity {
+//classe usata per gestire la risposta agli inviti
+public class HandleResponseToInvitation extends AppCompatActivity {
     private int CALENDAR_CODE = 10;
     Lock lock = new ReentrantLock();
-    Condition condition = lock.newCondition();
-    boolean finished = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +52,7 @@ public class YesNotify extends AppCompatActivity {
         final String document = getIntent().getStringExtra("document");
         final String username = getIntent().getStringExtra("username");
 
+        //controllo se l'invito è stato accettato o meno
         if (!accepted)
             StaticInstance.db.collection("invite").document(document).update("accept", "no");
         else {
@@ -91,13 +91,7 @@ public class YesNotify extends AppCompatActivity {
                     }
                 }
             });
-            /*while(!finished) {
-                try {
-                    condition.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }*/
+
         }
 
     }
@@ -122,6 +116,7 @@ public class YesNotify extends AppCompatActivity {
     }
 
 
+    //task per aggiungere in modo asincrono l'evento al calendario
      private class AddEventToCalendar extends AsyncTask<Void, Integer, Long> {
 
          Intent intent;

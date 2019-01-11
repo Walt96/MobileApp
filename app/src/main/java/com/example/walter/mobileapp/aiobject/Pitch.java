@@ -12,22 +12,18 @@ public class Pitch {
     private int distance;
 
     @Param(2)
-    private int price;
-
-    @Param(3)
     private int rate;
 
-    @Param(4)
+    @Param(3)
     private int numMatchInPitch;
 
     public Pitch(){
 
     }
 
-    public Pitch(String code, int distance, int price, int rate, int numMatchInPitch) {
+    public Pitch(String code, int distance, int rate, int numMatchInPitch) {
         this.code = code;
         this.distance = distance;
-        this.price = price;
         this.rate = rate;
         this.numMatchInPitch = numMatchInPitch;
     }
@@ -56,13 +52,7 @@ public class Pitch {
         this.distance = distance;
     }
 
-    public int getPrice() {
-        return price;
-    }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
 
     public int getRate() {
         return rate;

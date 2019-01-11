@@ -25,6 +25,8 @@ public class Pitch {
     String[] time;
     String city;
     String owner;
+    float lat;
+    float lon;
 
     public Pitch(String address, double price, boolean covered, String city) {
         this.address = address;
@@ -80,7 +82,21 @@ public class Pitch {
         this.ownermail = ownermail;
     }
 
+    public float getLat() {
+        return lat;
+    }
 
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public float getLon() {
+        return lon;
+    }
+
+    public void setLon(float lon) {
+        this.lon = lon;
+    }
 
     public ArrayAdapter getAvailableTime() {
         return availableTime;

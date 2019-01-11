@@ -29,15 +29,15 @@ public class ShowTeams extends Fragment {
         ArrayList<HashMap> partecipants = handledMatch.getRegistered();
         String[] players = new String[10];
         orderPlayer(partecipants,players);
+
         for (int i = 1; i < 11; i++) {
-            Log.e("ecco",players[i-1]);
 
             Button currentPlayer = fragmentView.findViewById(getResources().getIdentifier("a" + String.valueOf(i), "id", "com.example.walter.mobileapp"));
             currentPlayer.setOnClickListener(listener);
             currentPlayer.setText(players[i-1]);
-            Log.e("il player a"+i,"ha valore"+players[i-1]);
         }
 
+        //gestione del movimento dei marker relativi ai player
         fragmentView.findViewById(R.id.pitch).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -55,6 +55,8 @@ public class ShowTeams extends Fragment {
     }
 
 
+    //ordinamento dei player in base ai loro ruoli
+    //grazie a questa funzione gestiamo anche casi in cui una squadra è formaata da 5 portieri e altri casi limite
     private void orderPlayer(ArrayList<HashMap> players_query, String[] players) {
         //portieriA = 0, portieriB = 0, difensoriA = 0, difensoriB = 0, centrocampistiA=0,centrocampistiB=0,attaccantiA=0,attaccantiB=0;
         int[] num = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -83,12 +85,10 @@ public class ShowTeams extends Fragment {
                     break;
             }
             if (players_query.get(i).get("team").equals("A")) {
-                Log.e("team A, posizione"+(position * 5 + num[position * 2]),name);
                 eventually[position * 5 + num[position * 2]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2]++;
             } else {
 
-                Log.e("team B, posizione"+(20 + position * 5 + num[position * 2 + 1]),name);
                 eventually[20 + position * 5 + num[position * 2 + 1]] = name + "\n(" + role.charAt(0) + ")";
                 num[position * 2 + 1]++;
             }
@@ -118,11 +118,7 @@ public class ShowTeams extends Fragment {
             }
         }
 
-        for(int i = 0;i<normalize_a.size();i++)
-                Log.e("i"+i,normalize_a.get(i).toString());
 
-        for(int i = 0;i<normalize_b.size();i++)
-                Log.e("i"+i,normalize_b.get(i).toString());
 
 
         if(normalize_a.size()>5){

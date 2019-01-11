@@ -234,7 +234,7 @@ public class UserHome extends AppCompatActivity
     }
 
     private void sendNotify(String date, String time, String manager, String address, String match, String documentId, String team, String role, boolean covered) {
-        Intent yesIntent = new Intent(this,YesNotify.class);
+        Intent yesIntent = new Intent(this,HandleResponseToInvitation.class);
         yesIntent.putExtra("match",match);
         yesIntent.putExtra("accept",true);
         yesIntent.putExtra("document",documentId);
@@ -251,7 +251,7 @@ public class UserHome extends AppCompatActivity
         yesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent yesPendingIntent = PendingIntent.getActivity(this,0,yesIntent,PendingIntent.FLAG_ONE_SHOT);
 
-        Intent noIntent = new Intent(this,YesNotify.class);
+        Intent noIntent = new Intent(this,HandleResponseToInvitation.class);
         noIntent.putExtra("match",match);
         noIntent.putExtra("accept",false);
         noIntent.putExtra("document",documentId);
@@ -457,7 +457,7 @@ public class UserHome extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     notifications.remove(position);
-                    Intent intent = new Intent(getApplicationContext(), YesNotify.class);
+                    Intent intent = new Intent(getApplicationContext(), HandleResponseToInvitation.class);
                     intent.putExtra("match",notification.getMatch());
                     intent.putExtra("accept",true);
                     intent.putExtra("document",notification.getId());

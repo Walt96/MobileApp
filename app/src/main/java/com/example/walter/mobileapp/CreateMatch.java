@@ -105,7 +105,6 @@ public class CreateMatch extends AppCompatActivity {
     final HashMap<String, Object> saveMyMatch = new HashMap<>();
     private ArrayList<String> cities;
 
-    int index = 0;
     String selectedDate;
     ListenerRegistration listener;
     private int CALENDAR_CODE = 10;
@@ -115,7 +114,6 @@ public class CreateMatch extends AppCompatActivity {
         return this;
     }
 
-    // aggiunta tasto back nella barra
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.comeback, menu);
@@ -212,6 +210,8 @@ public class CreateMatch extends AppCompatActivity {
         pitches = new ArrayList<>();
         currentPitches = new ArrayList<>();
 
+        //otteniamo tutti i campi dove è possibile creare una partita e attacchiamo un listener
+        //per restare in ascolto di nuove prenotazioni in modo da gestirle in tempo reale
         db.collection("pitch")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -225,15 +225,19 @@ public class CreateMatch extends AppCompatActivity {
                                 String city = document.get("city").toString();
                                 if (!items.contains(city)) {
                                     items.add(city);
-                                    cities.add(city); //TODO Usare un solo array
+                                    cities.add(city);
                                 }
                                 String address = document.get("address").toString() + " , " + city;
                                 boolean covered = (boolean) document.get("covered");
                                 double price = (double) (document.get("price"));
                                 String owner = document.get("owner").toString();
                                 String ownermail = document.get("ownermail").toString();
+                                float lat = Float.valueOf(String.valueOf(document.get("latitude")));
+                                float lon = Float.valueOf(String.valueOf(document.get("longitude")));
 
                                 final Pitch currentPitch = new Pitch(document.get("code").toString(), address, price, covered, city, owner, ownermail);
+                                currentPitch.setLat(lat);
+                                currentPitch.setLon(lon);
 
                                 mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -252,6 +256,8 @@ public class CreateMatch extends AppCompatActivity {
 
                                 pitches.add(currentPitch);
                             }
+
+                            //aggiunta listener per gestire eventuali prenotazioni in tempo reale
                             addListenerForNewMatches();
                             initPitchAvailableTime();
 
@@ -260,22 +266,21 @@ public class CreateMatch extends AppCompatActivity {
                             chooseCity.setSelection(0);
 
 
-                        } else {
-                            Log.w("", "Error getting documents.", task.getException());
                         }
                     }
                 });
 
     }
 
+    //apertura mappa per la ricerca di un campo
     public void openMap(View w) {
         Intent mapIntent = new Intent(this, ShowMap.class);
         mapIntent.putExtra("cities", cities);
         mapIntent.putExtra("date", selectedDate);
         startActivity(mapIntent);
-        //mapIntent.putExtra("fields", pitches);
     }
 
+    //inizializza la disponibilità sugli orari per ogni campo in base alle prenotazioni esistenti
     private void initPitchAvailableTime() {
         for (final Pitch p : pitches) {
             db.collection("matches").whereEqualTo("pitchcode", p.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -283,7 +288,6 @@ public class CreateMatch extends AppCompatActivity {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     ArrayList notAvailable = new ArrayList();
                     for (DocumentSnapshot document : task.getResult()) {
-                        Log.e("trovati", document.toString());
                         if (document.get("date").toString().equals(selectedDate))
                             notAvailable.add(document.get("time").toString());
                     }
@@ -294,7 +298,7 @@ public class CreateMatch extends AppCompatActivity {
         updateWithConstraints();
     }
 
-
+    //funzione per l'aggiunta di un listener per restare in ascolto di eventuali prenotazioni
     private void addListenerForNewMatches() {
         if (listener != null)
             listener.remove();
@@ -303,14 +307,12 @@ public class CreateMatch extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
                 for (DocumentSnapshot document : snapshot) {
-                    Log.e("datacercata", selectedDate);
                     String bookedDate = document.get("date").toString();
                     String bookedTime = document.get("time").toString();
                     String idBookedPitch = document.get("pitchcode").toString();
                     if (selectedDate.equals(bookedDate))
                         for (Pitch p : currentPitches)
                             if (p.getId().equals(idBookedPitch)) {
-                                Log.e("rimuovo", "tolgo il " + bookedTime);
                                 p.removeTime(Integer.valueOf(bookedTime));
                             }
                 }
@@ -320,6 +322,7 @@ public class CreateMatch extends AppCompatActivity {
 
     }
 
+    //applicazione dei filtri scelti dall'utente
     public void updateWithConstraints() {
 
         ArrayList<Pitch> newPitches = new ArrayList<>();
@@ -338,6 +341,7 @@ public class CreateMatch extends AppCompatActivity {
         StaticInstance.currentActivity = this;
     }
 
+    //adapter per creare un elemento per ogni campo disponibile
     class CustomAdapter extends BaseAdapter {
 
         Context context;
@@ -374,9 +378,7 @@ public class CreateMatch extends AppCompatActivity {
             try {
                 Field popup = Spinner.class.getDeclaredField("mPopup");
                 popup.setAccessible(true);
-                // Get private mPopup member variable and try cast to ListPopupWindow
                 android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(availableTime);
-                // Set popupWindow height to 500px
                 popupWindow.setHeight(350);
             } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             }
@@ -404,7 +406,7 @@ public class CreateMatch extends AppCompatActivity {
             book.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bookPitch(currentPitches.get(position).getId(), time.getSelectedItem().toString().split(":")[0], currentPitches.get(position).getAddress(), currentPitches.get(position).getOwner(),currentPitches.get(position).getOwnermail());
+                    bookPitch(currentPitches.get(position).getId(), time.getSelectedItem().toString().split(":")[0], currentPitches.get(position).getAddress(), currentPitches.get(position).getOwner(),currentPitches.get(position).getOwnermail(),currentPitches.get(position).getLat(),currentPitches.get(position).getLon());
                 }
             });
             return convertView;
@@ -412,7 +414,8 @@ public class CreateMatch extends AppCompatActivity {
         }
     }
 
-    public void bookPitch(final String pitchId, final String time, final String address, final String owner, final String ownermail) {
+    //funzione per la prenotazione del campo scelto
+    public void bookPitch(final String pitchId, final String time, final String address, final String owner, final String ownermail, final float lat, final float lon) {
 
         if (!CheckConnection.isConnected(getActivity())) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -460,6 +463,8 @@ public class CreateMatch extends AppCompatActivity {
                         saveMyMatch.put("code", matchCode);
                         saveMyMatch.put("pitchmanager", owner);
                         saveMyMatch.put("managermail", ownermail);
+                        saveMyMatch.put("lat", lat);
+                        saveMyMatch.put("lon", lon);
 
 
                         addCalendarEvent(saveMyMatch);
@@ -479,6 +484,7 @@ public class CreateMatch extends AppCompatActivity {
 
     }
 
+    //aggiunta dell'evento al calendario
     private long addCalendarEvent(HashMap<String, Object> saveMyMatch) {
 
         boolean hasPermission = false;
@@ -508,6 +514,7 @@ public class CreateMatch extends AppCompatActivity {
             }
     }
 
+    //task per l'aggiunta asincrona dell'evento al calendario
     private class AddEventToCalendar extends AsyncTask<Void, Integer, Long> {
 
         HashMap saveMyMatch;
@@ -588,6 +595,7 @@ public class CreateMatch extends AppCompatActivity {
 
         }
 
+        //creazione della mail da mandare al proprietario del campo
         private void sendMailToOwnerPitch() {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("message/rfc822");

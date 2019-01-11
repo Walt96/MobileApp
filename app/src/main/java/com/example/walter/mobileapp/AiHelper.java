@@ -81,6 +81,8 @@ public class AiHelper extends AppCompatActivity {
         pitchesSelectedByAI = new HashMap<>();
         ListView listView = findViewById(R.id.matchList);
         listView.setAdapter(adapter = new CustomAdapter());
+
+        //se l'utente dispone della connessione, viene invocato il metodo per il calcolo del match ideale
         if(!CheckConnection.isConnected(this)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("You don't have internet connection, please check it!")
@@ -112,8 +114,16 @@ public class AiHelper extends AppCompatActivity {
         collectData();
     }
 
+    //funzione usata per ottenere i dati relativi alle preferenze dell'utente
     private void collectData() {
+
+        //programma logico
         final InputProgram inputProgram = new ASPInputProgram();
+
+        //walter deve prendere le posizioni attuali e settarle qui
+        final float myLat = 0.0f;
+        final float myLon = 0.0f;
+
         StaticInstance.db.collection("users").document(StaticInstance.username).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -127,15 +137,18 @@ public class AiHelper extends AppCompatActivity {
                         time.add(new Time(String.valueOf(i),0,0));
                     }
 
-                    //fare una query per prendere indirizzo e calcolare distanza e prendere il prezzo o portare tutti i dati in preferences
                     for(HashMap rate:preferences){
-                        int index = pitch.indexOf(new Pitch(rate.get("pitch").toString(),0,0,0,0));
+                        int index = pitch.indexOf(new Pitch(rate.get("pitch").toString(),0,0,0));
                         if(index != -1) {
                             Pitch current = pitch.get(index);
                             current.setNumMatchInPitch(current.getNumMatchInPitch()+1);
                             current.setRate(current.getRate()+Integer.valueOf(String.valueOf((Long)(rate.get("rate")))));
                         }else{
-                            Pitch toAdd = new Pitch(rate.get("pitch").toString(),0,0,Integer.valueOf(String.valueOf((Long)(rate.get("rate")))),1);
+                            float lat = Float.valueOf(String.valueOf(rate.get("lat")));
+                            float lon = Float.valueOf(String.valueOf(rate.get("lon")));
+                            int distance = (int) Math.sqrt(((lat-myLat)*(lat-myLat))+((lon-myLon)*(lon-myLon)));
+
+                            Pitch toAdd = new Pitch(rate.get("pitch").toString(),distance,Integer.valueOf(String.valueOf((Long)(rate.get("rate")))),1);
                             pitch.add(toAdd);
                         }
 
@@ -177,12 +190,13 @@ public class AiHelper extends AppCompatActivity {
                                     }
                                 }
 
-                                //dlv bug altrimenti non restituisce output
                                 try {
                                     inputProgram.addObjectInput(new ChoosedResult("-1","-1"));
                                 } catch (Exception e) {
 
                                 }
+
+                                //invocazione funzione di calcolo
                                 startReasoning(inputProgram);
                             }
                         }
@@ -192,8 +206,8 @@ public class AiHelper extends AppCompatActivity {
         });
     }
 
+    //caricamento dei campi per i quali esiste almeno un voto dell'utente
     private void loadPitchValueFromDB(final String code) {
-        Log.e("codicee_",code.substring(1,code.length()-1));
         StaticInstance.db.collection("pitch").document(code.substring(1,code.length()-1)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -227,11 +241,13 @@ public class AiHelper extends AppCompatActivity {
         });
     }
 
+    //esecuzione programma DLV
     private void startReasoning(InputProgram inputProgram) {
+        Log.e("programma", inputProgram.getPrograms());
         Handler handler = new AndroidHandler(getApplicationContext(), DLVAndroidService.class);
         handler.addProgram(inputProgram);
         handler.addProgram(new InputProgram("\n" +
-                "choosePitch(Code) | notChoosePitch(Code) :- pitch(Code,_,_,_,_).\n" +
+                "choosePitch(Code) | notChoosePitch(Code) :- pitch(Code,_,_,_).\n" +
                 ":- #count{Code:choosePitch(Code)}>1.\n" +
                 ":- #count{Code:choosePitch(Code)}<1.\n" +
                 "\n" +
@@ -239,8 +255,7 @@ public class AiHelper extends AppCompatActivity {
                 ":- #count{Time:chooseTime(Time)}>1.\n" +
                 ":- #count{Time:chooseTime(Time)}<1.\n" +
                 "\n" +
-                ":~ choosePitch(Pitch),pitch(Pitch,Distance,Price,Rate,_), ConsiderRate=20-Rate, ConsiderAll = ConsiderRate+Distance. [ConsiderAll : 3]\n" +
-                ":~ choosePitch(Pitch),pitch(Pitch,Distance,Price,Rate,_), ConsiderPrice = 10 - Price. [ConsiderPrice : 2]\n" +
+                ":~ choosePitch(Pitch),pitch(Pitch,Distance,Rate,_), ConsiderRate=20-Rate, ConsiderDistance = 100-Distance, ConsiderAll = ConsiderRate+ConsiderDistance. [ConsiderAll : 3]\n" +
                 "\n" +
                 ":~ chooseTime(Time),time(Time,Rate,_), ConsiderRate = 10 - Rate. [ConsiderRate : 4]\n" +
                 "\n" +
@@ -252,7 +267,6 @@ public class AiHelper extends AppCompatActivity {
         handler.startAsync(new Callback() {
             @Override
             public void callback(Output output) {
-                Log.e("outputDLV",output.toString());
                 if (!(output instanceof AnswerSets))
                     return;
                 AnswerSets answerSets = (AnswerSets) output;
@@ -266,17 +280,13 @@ public class AiHelper extends AppCompatActivity {
                                 ChoosedResult choosedResult = (ChoosedResult) obj;
 
                                 if (!choosedResult.getMatchtime().equals("\"-1\"")) {
-                                    Log.e("almeno uno","");
                                     matchSelectedByAI.add(choosedResult);
                                     if(!pitchesSelectedByAI.containsKey(choosedResult.getPitchcode()))
                                        loadPitchValueFromDB(choosedResult.getPitchcode());
-                                    //else
-                                      //  adapter.notifyDataSetChanged();
                                 }
                             }
                         }
                     } catch (Exception e) {
-                        // Handle Exception
                     }
                 }
             }
@@ -284,6 +294,8 @@ public class AiHelper extends AppCompatActivity {
         });
     }
 
+    //adapter usato per gestire i risultati forniti da DLV
+    //ci sarà un elemento della lista per ogni partita proposta dal programma logico
     class CustomAdapter extends BaseAdapter {
 
         final HashMap<String, Object> saveMyMatch = new HashMap<>();
@@ -357,15 +369,10 @@ public class AiHelper extends AppCompatActivity {
 
         }
 
+        //funzione per la prenotazione del campo
         private void bookPitch(String pitchcode, com.example.walter.mobileapp.Pitch current, String date, String time) {
-            ConnectivityManager cm =
-                    (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-
-            if (!isConnected) {
+            if (!CheckConnection.isConnected(getActivity())) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                 builder.setMessage("You don't have internet connection, please check it!")
                         .setTitle("An error occurred");
@@ -384,36 +391,31 @@ public class AiHelper extends AppCompatActivity {
 
 
             } else {
-                //inserire nel if il controllo per vedere se è stato prenotato
-                if (false) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                    builder.setMessage("The pitch you selected is already booked at this time, sorry!")
-                            .setTitle("An error occurred");
-                    builder.create().show();
-                } else {
-                    final String matchCode = String.valueOf(new Date().getTime()) + StaticInstance.username;
 
-                    //aggiungo la nuova partita alla collezione matches nel documento data corrente + manager in modo da renderlo univoco con la concorrenza
-                    saveMyMatch.put("date", date);
-                    saveMyMatch.put("time", time.substring(1,time.length()-1));
-                    saveMyMatch.put("manager", StaticInstance.username);
-                    saveMyMatch.put("pitchcode", pitchcode);
-                    saveMyMatch.put("address", current.getAddress());
-                    saveMyMatch.put("covered", current.isCovered());
-                    saveMyMatch.put("code", matchCode);
-                    saveMyMatch.put("pitchmanager", current.getOwner());
-                    saveMyMatch.put("managermail", current.getOwnermail());
+                //il codice della partita è dato dall'istante di tempo in cui la partita viene creata,
+                //aggiunta all'username di chi ha creato la partita. Risulta dunque univoco.
+                final String matchCode = String.valueOf(new Date().getTime()) + StaticInstance.username;
+
+                saveMyMatch.put("date", date);
+                saveMyMatch.put("time", time.substring(1,time.length()-1));
+                saveMyMatch.put("manager", StaticInstance.username);
+                saveMyMatch.put("pitchcode", pitchcode);
+                saveMyMatch.put("address", current.getAddress());
+                saveMyMatch.put("covered", current.isCovered());
+                saveMyMatch.put("code", matchCode);
+                saveMyMatch.put("pitchmanager", current.getOwner());
+                saveMyMatch.put("managermail", current.getOwnermail());
 
 
-                    addCalendarEvent(saveMyMatch);
+                addCalendarEvent(saveMyMatch);
 
                 }
             }
 
-        }
+
     }
 
-
+    //funzione che aggiunge l'evento al calendario
     private long addCalendarEvent(HashMap<String, Object> saveMyMatch) {
 
         boolean hasPermission = false;
@@ -448,6 +450,7 @@ public class AiHelper extends AppCompatActivity {
         return this;
     }
 
+    //task usato per aggiungere in modo asincrono l'evento al calendario
     private class AddEventToCalendar extends AsyncTask<Void, Integer, Long> {
 
             HashMap saveMyMatch;
@@ -529,6 +532,7 @@ public class AiHelper extends AppCompatActivity {
 
             }
 
+            //funzione per creare la mail da iniviare al proprietario del campo
             private void sendMailToOwnerPitch() {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");

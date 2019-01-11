@@ -61,6 +61,7 @@ public class StartMatch extends AppCompatActivity {
         matchcode = getIntent().getStringExtra("matchcode");
     }
 
+    //avvio del cronometro della partita
     public void start(View view) {
         change.setBase(SystemClock.elapsedRealtime()); // set base time for a chronometer
         change.start();
@@ -71,6 +72,7 @@ public class StartMatch extends AppCompatActivity {
         pause.setVisibility(View.VISIBLE);
     }
 
+    //pausa del cronometro della partita
     public void pause(View view) {
         stop_match = SystemClock.elapsedRealtime();
         stop_change = SystemClock.elapsedRealtime();
@@ -86,6 +88,7 @@ public class StartMatch extends AppCompatActivity {
 
     }
 
+    //ripresa della partita
     public void resume(View view){
         match.setBase(match.getBase()+SystemClock.elapsedRealtime()-stop_match);
         match.start();
@@ -99,6 +102,7 @@ public class StartMatch extends AppCompatActivity {
 
     }
 
+    //azzera il timer parziale (usato per tenere il tempo e gestire il cambio del portiere ogni 5 minuti)
     public void change(View view){
         change.setBase(SystemClock.elapsedRealtime());
         stop_change=SystemClock.elapsedRealtime();
@@ -109,6 +113,7 @@ public class StartMatch extends AppCompatActivity {
         }
     }
 
+    //conclusione della partita
     public void end(View view){
         StaticInstance.db.collection("matches").document(matchcode).update("finished", true);
         Intent intent = new Intent(this,RatePlayer.class);

@@ -83,7 +83,6 @@ public class MyMatchesList extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Log.e("resume","resume");
         super.onResume();
         if(!CheckConnection.isConnected(this)){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -107,6 +106,7 @@ public class MyMatchesList extends AppCompatActivity {
         listView.setAdapter(adapter=new CustomAdapter(getApplicationContext()));
     }
 
+    //caricamento di tutte le partite dell'utente
     private void loadMatch() {
         StaticInstance.getInstance().collection("matches").whereEqualTo("manager",username).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -146,7 +146,6 @@ public class MyMatchesList extends AppCompatActivity {
                 }
             }
         });
-        Log.e("numero",String.valueOf(matches.size()));
 
     }
 
@@ -155,6 +154,8 @@ public class MyMatchesList extends AppCompatActivity {
         startActivity(new Intent(this,UserHome.class));
     }
 
+
+    //adapter per creare un elemento della lista per ogni match relativo all'utente
     class CustomAdapter extends BaseAdapter {
 
         Context context;

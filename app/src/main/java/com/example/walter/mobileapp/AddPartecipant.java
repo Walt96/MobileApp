@@ -60,12 +60,16 @@ public class AddPartecipant extends Fragment {
         roleSearched = fragmentView.findViewById(R.id.role);
         scoreSearched = fragmentView.findViewById(R.id.userScore);
         imageSearched = fragmentView.findViewById(R.id.userImage);
+
+        //bottone ricerca utente
         ((ImageButton)(fragmentView.findViewById(R.id.search))).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchPlayer();
             }
         });
+
+        //bottone invita utente
         invitePlayer = ((Button)(fragmentView.findViewById(R.id.Invite)));
         invitePlayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,9 +100,11 @@ public class AddPartecipant extends Fragment {
         return fragmentView;
     }
 
+    //funzione di invito del partecipante
     private void addPartecipant() {
         final String username = userSearched.getText().toString();
         final String role = roleSearched.getText().toString();
+
         if(!userSearched.getText().equals("")){
             AlertDialog.Builder alertadd = new AlertDialog.Builder(getActivity());
             LayoutInflater factory = LayoutInflater.from(getActivity());
@@ -109,8 +115,7 @@ public class AddPartecipant extends Fragment {
             alertadd.setView(view);
 
 
-
-            // possofare un solo listener
+            //invito del player in base al team
             //team A
             alertadd.setNegativeButton("A", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dlg, int sumthin) {
@@ -207,8 +212,8 @@ public class AddPartecipant extends Fragment {
         }
     }
 
+    //funzione di ricerca del player e caricamento dei rispettivi dati
     void searchPlayer(){
-        Log.e("cerco",playerSearched.getText().toString());
         StaticInstance.db.collection("users").whereEqualTo("player",true).whereEqualTo("username",playerSearched.getText().toString())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -243,9 +248,12 @@ public class AddPartecipant extends Fragment {
                                                         .into(imageSearched);
                                             }
                                         });
+
                                 DocumentSnapshot player = task.getResult().getDocuments().get(0);
+
                                 userSearched.setText(player.get("username").toString());
                                 roleSearched.setText(player.get("role").toString());
+                                
                                 ArrayList rates = (ArrayList) player.get("rates");
                                 float sum = 0;
                                 for(int i = 0 ; i<rates.size();i++)

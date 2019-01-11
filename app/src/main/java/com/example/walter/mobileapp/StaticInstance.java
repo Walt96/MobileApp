@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+//usata per accedere staticamente alle connessioni e ai dati usati in tutta l'applicazione
 public class StaticInstance {
 
     static FirebaseFirestore db = FirebaseFirestore.getInstance();
