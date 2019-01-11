@@ -42,52 +42,73 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
+/*
+    Classe utilizzata per la creazione di un nuovo campetto da parte di un gestore.
+ */
 public class CreatePitch extends AppCompatActivity {
 
     private static final int WRITE_EXTERNAL_CODE = 2;
-    //EditText addressEditText;
+
+    // Elementi del Layout
     EditText cityEditText;
     EditText priceEditText;
     RadioButton coveredPitch;
+
+    // Riferimento a Firebase, utilizzato per effettuare le query
     FirebaseFirestore db = StaticInstance.getInstance();
+
+    // Progress Dialog, utilizzato per fornire un feedback riguardo lo stato delle operazioni
     ProgressDialog progressDialog;
-    String username;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_ADDRESS_INFO = 3;
-    String path;
-    Bitmap photo;
+
+    // Dati relativi al campo che si sta aggiungendo.
+    String username; // Username del gestore
+    String path; // Path dell'immagine associata al campetto
+    Bitmap photo; // Bitmap rappresentate la foto del campetto
+    // Coordinate del campetto, utilizzate per localizzarlo sulla mappa.
     private Double latitude;
     private Double longitude;
-    private String address;
+    private String address; // Indirizzo del campetto
+
+    // Valori utilizzati per identificare una richiesta effettuata ad un'altra activity
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_ADDRESS_INFO = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pitch);
+
         username = StaticInstance.username;
-        //addressEditText = findViewById(R.id.pitchAddress);
         cityEditText = findViewById(R.id.city);
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         progressDialog = new ProgressDialog(this);
         path = null;
 
-        // Creo la barra di ricerca dei luoghi.
-        // TODO Vale la pena prendere la città?
+        // Inizializzazione della barra di ricerca dei luoghi di google map.
         final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        // Dichiaro una funzione di Callback, utilizzata ogni qual volta un luogo viene selezionato
+        // dalla barra di ricerca.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 try {
+
+                    // Ricavo le coordinate ottenute dal luogo selezionato tramite barra.
                     latitude = place.getLatLng().latitude;
                     longitude = place.getLatLng().longitude;
-                    Log.i("", "Place: " + latitude + " " + longitude);
+
+                    // Inizializzo un geocoder, per ottenere ulteriori informazioni riguardanti
+                    // il luogo selezionato mediante le coordinate ottenute.
                     Geocoder mGeocoder = new Geocoder(getActivity(), Locale.getDefault());
                     List<Address> addresses = null;
                     addresses = mGeocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && addresses.size() > 0) {
+
+                        // Ottengo informazioni quali via, città o numero civico del luogo ricercato.
                         Address selectedAddress = addresses.get(0);
                         String streetName = selectedAddress.getThoroughfare();
                         String number = selectedAddress.getSubThoroughfare();
@@ -96,7 +117,6 @@ public class CreatePitch extends AppCompatActivity {
                             address += " " + number;
                         }
                         String city = selectedAddress.getLocality();
-                        Log.e("TAG", address + " " + city);
                         cityEditText.setText(city);
                     }
                 } catch (IOException e) {
@@ -107,7 +127,6 @@ public class CreatePitch extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
                 Log.i("", "An error occurred: " + status);
             }
         });
@@ -116,19 +135,15 @@ public class CreatePitch extends AppCompatActivity {
 
     }
 
+    // Funzione utilizzata per verificare che tutti i campi siano presenti e corretti.
     public void validateFields(View v) {
 
-        //String address = addressEditText.getText().toString();
         String city = cityEditText.getText().toString();
         double price = 0;
         boolean isCovered = coveredPitch.isChecked();
         boolean validField = true;
 
-        /*if (!address.matches("((via)|(piazza)|(contrada)|(corso)).*n(\\d)+")) {
-            addressEditText.setError("Please check your address: it's not valid");
-            validField = false;
-        }
-        */
+
         if (city.isEmpty()) {
             cityEditText.setError("Please insert a city");
             validField = false;
@@ -140,11 +155,19 @@ public class CreatePitch extends AppCompatActivity {
             String value_price = priceEditText.getText().toString();
             price = Double.valueOf(value_price);
         }
+
+        // Se tutti i campi sono presenti e corretti effettuo la query per memorizzare il nuovo
+        // campetto nel database, verificando prima che il dispositivo sia connesso o meno a internet.
         if (validField) {
+
             if (!CheckConnection.isConnected(this)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("You don't have internet connection, please check it!")
                         .setTitle("An error occurred");
+
+                // Se non il dispositivo non sia connesso ad internet, l'utente può
+                // richiedere di essere riportato alle impostazioni del dispositivo per
+                // poter effettuare la connessione.
                 builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -160,6 +183,8 @@ public class CreatePitch extends AppCompatActivity {
                 final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
                 progressDialog.setMessage("Adding your pitch...");
                 progressDialog.show();
+
+                // Creo un HashMap contenente tutti i valori relativi al campetto.
                 Map<String, Object> pitch = new HashMap<>();
                 pitch.put("owner", username);
                 pitch.put("address", address);
@@ -170,9 +195,14 @@ public class CreatePitch extends AppCompatActivity {
                 pitch.put("code", code);
                 pitch.put("latitude", latitude);
                 pitch.put("longitude", longitude);
+
+                // Effettuo la query al database, mediante l'oggetto db, passando come oggetto da
+                // memorizzare l'HashMap creato precedentemente.
                 db.collection("pitch").document(code)
                         .set(pitch)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            // Se l'operazione è andata a buon fine memorizzo nello storage l'immagine
+                            // relativa al campetto, nel caso in cui il gestore ne abbia scelto una.
                             @Override
                             public void onSuccess(Void avoid) {
                                 StorageReference ref = StaticInstance.mStorageRef.child("pitch/" + username + code);
@@ -197,6 +227,9 @@ public class CreatePitch extends AppCompatActivity {
                                 progressDialog.dismiss();
                             }
                         })
+
+                        // Se l'operazione di memorizzazione non è invece andata a buon fine,
+                        // comunico l'esito all'utente.
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
@@ -210,19 +243,24 @@ public class CreatePitch extends AppCompatActivity {
         }
     }
 
+    // Funzione utilizzata per scattare una foto dal dispositivo. Viene creato un intento
+    // con il quale si richiede l'avvio della fotocamera.
     public void takePhoto(View v) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
     }
 
+    // Funzione di callback, utilizzata per gestire eventuali risposte relative ad altre attività.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("Request Code", requestCode + "");
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.e("TAG", "REQUEST_IMAGE_CAPTURE");
+            // Se la risposta è relativa all'intento utilizzato per avviare la fotocamera, allora
+            // si richiede la foto scattata.
             Bundle extras = data.getExtras();
             photo = (Bitmap) extras.get("data");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Si verifica che l'utente abbia fornito i permessi necessari.
                 if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
                     setPathPhoto();
@@ -232,71 +270,8 @@ public class CreatePitch extends AppCompatActivity {
             } else {
                 setPathPhoto();
             }
-        } else if (requestCode == REQUEST_ADDRESS_INFO && resultCode == RESULT_OK) {
-            try {
-                Double longitude = data.getDoubleExtra("longitude", 0);
-                Double latitude = data.getDoubleExtra("latitude", 0);
-                Address add = getAddress(latitude, longitude);
-                String address = add.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = add.getLocality();
-                Log.e("TAG", "City " + city);
-                //addressEditText.setText(address);
-                cityEditText.clearFocus();
-                cityEditText.setText(city);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-    }
-
-    /*public void searchLocation(View v) {
-        String address = addressEditText.getText().toString();
-        String city = cityEditText.getText().toString();
-        String searchString = address + " " + city;
-
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try
-        {
-            List<Address> addresses = geocoder.getFromLocationName(searchString, 5);
-            Log.d("SIZE", String.valueOf(addresses.size()));
-            if (addresses.size() == 1)
-            {
-                Double lat = (double) (addresses.get(0).getLatitude());
-                Double lon = (double) (addresses.get(0).getLongitude());
-
-                Log.d("lat-long", "" + lat + "......." + lon);
-                //final LatLng user = new LatLng(lat, lon);
-                /*used marker for show the location */
-                /*Marker hamburg = map.addMarker(new MarkerOptions()
-                        .position(user)
-                        .title(adderess)
-                        .icon(BitmapDescriptorFactory
-                                .fromResource(R.drawable.marker)));
-                // Move the camera instantly to hamburg with a zoom of 15.
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(user, 15));
-
-                // Zoom in, animating the camera.
-                map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);*/
-            /*} else {
-                Log.d("More", "More elements");
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-    }*/
-
-
-    private Address getAddress(Double latitude, Double longitude) throws IOException {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(this, Locale.getDefault());
-
-        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        return addresses.get(0);
     }
 
     public void setPathPhoto() {
@@ -306,6 +281,7 @@ public class CreatePitch extends AppCompatActivity {
 
     }
 
+    // Funzione di callback, utilizzata per verificare il permessi forniti dall'utente.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == WRITE_EXTERNAL_CODE)

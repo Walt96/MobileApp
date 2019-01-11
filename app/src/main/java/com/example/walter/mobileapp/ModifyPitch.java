@@ -35,42 +35,39 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+// Activity utilizzata per poter effettuare la modifica di un campetto.
 public class ModifyPitch extends AppCompatActivity {
 
-    private static final int WRITE_EXTERNAL_CODE = 2 ;
+    // Riferimento a Firebase, utilizzato per poter effettuare query sul database.
+    FirebaseFirestore db = StaticInstance.getInstance();
+
+    // Campi relativi al campetto che si sta per modificare.
+    String username;
+    String path;
+    String id;
+    double price;
+    boolean covered;
 
     EditText priceEditText;
     RadioButton coveredPitch;
     RadioButton uncoveredPitch;
-    FirebaseFirestore db = StaticInstance.getInstance();
+
     ProgressDialog progressDialog;
-    String username;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    String path;
-    StorageReference mStorageRef;
-    Bitmap photo;
-    String address;
-    String city;
-    String id;
-    double price;
-    boolean covered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("","onCreate");
+        setContentView(R.layout.activity_modify_pitch);
 
+        // Si ottengono i parametri passati tramite intento.
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-        address = intent.getStringExtra("address");
         price = Double.parseDouble(intent.getStringExtra("price"));
         covered = Boolean.valueOf(intent.getStringExtra("covered"));
-        city = intent.getStringExtra("city");
 
-        setContentView(R.layout.activity_modify_pitch);
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+
         username = StaticInstance.username;
-
         priceEditText = findViewById(R.id.price);
         coveredPitch = findViewById(R.id.coveredPitch);
         uncoveredPitch = findViewById(R.id.uncoveredPitch);
@@ -86,8 +83,9 @@ public class ModifyPitch extends AppCompatActivity {
         }
 
     }
-    public void validateFields(View v) {
 
+    // Funzione utilizzata per verificare che i campi immessi siano corretti.
+    public void validateFields(View v) {
 
         double actualPrice = 0;
         boolean isCovered = coveredPitch.isChecked();
@@ -96,11 +94,11 @@ public class ModifyPitch extends AppCompatActivity {
         if (priceEditText.getText().length() == 0) {
             priceEditText.setError("Do you really want to make your pitch free? :)");
             validField = false;
-        }
-        else {
+        } else {
             String value_price = priceEditText.getText().toString();
             actualPrice = Double.valueOf(value_price);
         }
+
         if (validField) {
             if(!CheckConnection.isConnected(this)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -117,92 +115,52 @@ public class ModifyPitch extends AppCompatActivity {
                     }
                 });
                 builder.create().show();
-            }else {
-            boolean makeUpdate = false;
-            final String code = String.valueOf(Calendar.getInstance().getTimeInMillis());
-            progressDialog.setMessage("Modifying your pitch...");
-            progressDialog.show();
+            } else {
 
-            Map<String, Object> updates = new HashMap<>();
+                // Se il dispositivo è correttamente connessio, allora inoltro la query per effettuare
+                // l'aggiornamento del campetto.
+                boolean makeUpdate = false;
 
-            if(isCovered != covered) {
-                makeUpdate = true;
-                updates.put("covered", isCovered);
-               Log.e("TAG", "Updating covered " + isCovered);
-            }
+                progressDialog.setMessage("Modifying your pitch...");
+                progressDialog.show();
 
-            if(price != actualPrice) {
-                makeUpdate = true;
-                updates.put("price", actualPrice);
-              Log.e("TAG", "Updating price " + actualPrice);
-            }
+                Map<String, Object> updates = new HashMap<>();
 
-            if(makeUpdate) {
-                StaticInstance.db.collection("pitch").document(id).update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void avoid) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("Your pitch was updated successfully");
-                        builder.create().show();
-                        progressDialog.dismiss();
-                    }
-                })
-                    .addOnFailureListener(new OnFailureListener() {
+                if(isCovered != covered) {
+                    makeUpdate = true;
+                    updates.put("covered", isCovered);
+                }
+
+                if(price != actualPrice) {
+                    makeUpdate = true;
+                    updates.put("price", actualPrice);
+                }
+
+                if(makeUpdate) {
+                    StaticInstance.db.collection("pitch").document(id).update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("TAG", e.toString());
+                        public void onSuccess(Void avoid) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("An error occured, please try again!");
+                            builder.setMessage("Your pitch was updated successfully");
                             builder.create().show();
                             progressDialog.dismiss();
                         }
-                    });
-            }
-
-            //TODO Gestire la foto
-
-            }
-        }
-
-    }
-
-    public void takePhoto(View v){
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            photo = (Bitmap) extras.get("data");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    setPathPhoto();
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_CODE);
+                    })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("TAG", e.toString());
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("An error occured, please try again!");
+                                builder.create().show();
+                                progressDialog.dismiss();
+                            }
+                        });
                 }
-            }else{
-                setPathPhoto();
+
             }
         }
-    }
 
-    public void setPathPhoto(){
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        path = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, "Title", null);
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == WRITE_EXTERNAL_CODE)
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setPathPhoto();
-            }
     }
 
     private Context getActivity() {

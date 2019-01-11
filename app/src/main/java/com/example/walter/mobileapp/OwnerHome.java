@@ -49,13 +49,14 @@ import java.util.regex.Pattern;
 public class OwnerHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String username;
     FirebaseFirestore db = StaticInstance.getInstance();
+    String username;
     ArrayList<Match> match;
     Dialog infoDialog;
-    DateFormat formatter;
     EditText matchDatePicker;
     ListView listView;
+    DateFormat formatter;
+
     private final String DATEREGEX = "^(0[1-9]|[1-2][0-9]|3[0-1])\\/(0[1-9]|1[0-2])\\/(20[0-9][0-9])$";
     private Pattern datePattern;
     private Matcher dateMatcher;
@@ -93,7 +94,6 @@ public class OwnerHome extends AppCompatActivity
 
         username =  StaticInstance.username;
 
-        Log.e("TAG", username);
         listView = findViewById(R.id.dailyMatch);
 
         ImageButton searchButton = findViewById(R.id.selectButton);
@@ -129,10 +129,10 @@ public class OwnerHome extends AppCompatActivity
 
     }
 
+    // Funzione utilizzata per verificare che la data immessa sia corretta
     public boolean isValidDate(String date) {
         dateMatcher = datePattern.matcher(date);
         if(dateMatcher.matches()) {
-            Log.e("TAG", date + " - " + "matches");
             int day = Integer.parseInt(dateMatcher.group(1));
             int month = Integer.parseInt(dateMatcher.group(2));
             int year = Integer.parseInt(dateMatcher.group(3));
@@ -142,11 +142,6 @@ public class OwnerHome extends AppCompatActivity
             int actualYear = actualCalendar.get(Calendar.YEAR);
             int actualMonth = actualCalendar.get(Calendar.MONTH) + 1;
             int actualDay = actualCalendar.get(Calendar.DAY_OF_MONTH);
-
-            Log.e("TAG", day + " " + actualDay);
-            Log.e("TAG", month + " " + actualMonth);
-            Log.e("TAG", year + " " + actualYear);
-
 
             if(year < 2018 || year > actualYear) {
                 Log.e("TAG", "First test");
@@ -169,6 +164,7 @@ public class OwnerHome extends AppCompatActivity
         return true;
     }
 
+    // Funzione con la quale si richiedono le partite da visualizzare.
     public void showMatch(View w) {
         match = new ArrayList<>();
         String match_date = String.valueOf(matchDatePicker.getText());
@@ -181,21 +177,21 @@ public class OwnerHome extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                Log.e("TAG", "Query completed " + task.getResult().size());
+
                                 final OwnerHome.CustomAdapter customAdapter = new OwnerHome.CustomAdapter(getApplicationContext());
                                 listView.setAdapter(customAdapter);
 
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     String id = document.getId();
                                     String manager = document.get("manager").toString();
-                                    Log.e("TAGGG", manager);
+
                                     String date = document.get("date").toString();
                                     String address= document.get("address").toString();
                                     String time = document.get("time").toString() + ":00";
                                     ArrayList registered = (ArrayList) document.get("registered");
                                     boolean covered = document.getBoolean("covered");
                                     final Match currentMatch = new Match(id, date, time, manager, address, registered, covered);
-                                    Log.e("TAG", manager + " - " + date + " - " + address + " - " + time);
+
                                     match.add(currentMatch);
                                 }
 
@@ -237,7 +233,6 @@ public class OwnerHome extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.owner_home, menu);
         return true;
     }
@@ -246,7 +241,6 @@ public class OwnerHome extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.create_pitch) {

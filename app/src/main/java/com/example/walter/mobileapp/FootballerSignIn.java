@@ -45,13 +45,19 @@ import static com.example.walter.mobileapp.CreatePitch.REQUEST_ADDRESS_INFO;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+// Frammento avviato nel caso in cui l'utente richieda di essere registrato come giocatore.
 public class FootballerSignIn extends Fragment {
 
+    // Riferimento a firebase, utilizzato per effettuare le query.
     FirebaseFirestore db = StaticInstance.getInstance();
-    View fragmentView;
+
+    View fragmentView; // View relativi al frammento attuale, utilizzato per ottenere gli elementi
+    Bitmap photo; // Foto relativa al giocatore.
+    String path; // Path della foto.
+
+    // Campi utilizzati per individuare la risposta fornita da una activity.
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    Bitmap photo;
-    String path;
     private static final int WRITE_EXTERNAL_CODE = 2 ;
 
 
@@ -76,11 +82,14 @@ public class FootballerSignIn extends Fragment {
         return fragmentView;
     }
 
+    // Funzione utilizzata per scattare una foto dal dispositivo. Viene creato un intento
+    // con il quale si richiede l'avvio della fotocamera.
     private void takePhoto() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
     }
 
+    // Funzione di callback con la quale si gestisce il result delle activity.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e("Request Code", requestCode+"");
@@ -115,26 +124,4 @@ public class FootballerSignIn extends Fragment {
         path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), photo, "Title", null);
 
     }
-
-    /*
-    String getUsername(){
-        EditText usernameEdit = (EditText) fragmentView.findViewById(R.id.usernameSignin);
-        return usernameEdit.getText().toString();
-    }
-
-    String getPassword() {
-        EditText passwordEdit = (EditText) fragmentView.findViewById(R.id.passwordSignin);
-        return passwordEdit.getText().toString();
-    }
-
-    String getPasswordConfirm() {
-        EditText passwordConfirm = (EditText) fragmentView.findViewById(R.id.confirmSignin);
-        return passwordConfirm.getText().toString();
-    }
-
-    String getRole() {
-        String role = ((Spinner) fragmentView.findViewById(R.id.selectrole)).getSelectedItem().toString();
-        return role;
-    }
-    */
 }

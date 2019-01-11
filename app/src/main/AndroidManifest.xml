@@ -124,7 +124,7 @@
         </activity>
         <activity android:name=".FacebookLogin"></activity>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider349792485844073"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1192655554218244"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
     </application>

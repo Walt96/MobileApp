@@ -66,43 +66,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+// Activity utilizzata per visualizzare la mappa
 public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
 
+    // Riferimento a Firebase, utilizzato per effettuare query sul database
     FirebaseFirestore db = StaticInstance.getInstance();
-    //ArrayList<Pitch> fields;
-    private GoogleMap mMap;
-    private GeoDataClient mGeoDataClient;
-    private PlaceDetectionClient mPlaceDetectionClient;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private static final int DEFAULT_ZOOM = 15;
-    private boolean mLocationPermissionGranted;
+
+    // Variabili ottenute dall'API di Google
+    private GoogleMap mMap; // Rappresenta la mappa che verrà visualizzata.
+    private GeoDataClient mGeoDataClient; // Variabile utilizzata per accedere al database di google contenente i luoghi.
+    private PlaceDetectionClient mPlaceDetectionClient; // Utilizzato per poter accedere alla posizione locale del dispositivo.
+    private FusedLocationProviderClient mFusedLocationProviderClient; // Altro oggetto utilizzato per poter determinare informazioni relative alla posizione.
+
+    private static final int DEFAULT_ZOOM = 15; // Zoom di default della mappa.
+    private boolean mLocationPermissionGranted; // Booleana utilizzata per assicurarsi che l'utente abbia fornito i peressi per poter accedere alla propria posizione.
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private Location mLastKnownLocation;
-    private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private ArrayList<String> cities;
+
+
+    private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085); // Coordinate della posizione di default, da utilizzare nel caso in cui non sia
+                                                                                         // sia possibile accedere alla posizione corrente.
+    private Location mLastKnownLocation;    // Rappresenta l'ultima posizione nota.
+
+    private ArrayList<String> cities;  // Array contenente le città dove sono presenti dei campetti.
+    private HashMap<LatLng, Pitch> fieldsMap; //Mappa contenente per ogni coordinata il campo corrispondente.
+
+    // Oggetti del layout.
     private Spinner cityPicker;
     private String selectedCity;
     private String selectedDate;
     private Dialog markerDialog;
 
+
     private String manager = StaticInstance.username;
-    private HashMap<LatLng, Pitch> fieldsMap;
-    ListenerRegistration listener;
+    ListenerRegistration listener; // Listener in ascolti di eventuali modifiche effettuate al campetto corrente.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        selectedCity = "";
         setContentView(R.layout.activity_show_map);
 
+        selectedCity = "";
         fieldsMap = new HashMap<>();
         markerDialog = new Dialog(this);
+
+        // Listener in ascolto della chiusura della dialog contenente le informazioni del campetto.
         markerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 listener.remove();
-                Log.e("TAG", "REMOVED");
             }
         });
 
@@ -131,7 +143,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(this); // Si richiede l'avvio della mappa.
     }
 
     private void getNearFields(String city) {
@@ -202,17 +214,13 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
-
+    // Funzione di callback richiamata al caricamento della mappa.
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Do other setup activities here too, as described elsewhere in this tutorial.
-
-        // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
-        // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -274,13 +282,6 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                 return false;
             }
         });
-
-        /*
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        */
     }
 
     private Context getActivity() {
@@ -288,10 +289,6 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
     }
 
     private void getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             if (mLocationPermissionGranted) {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
@@ -300,18 +297,16 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             try {
-                                // Set the map's camera position to the current location of the device.
                                 mLastKnownLocation = (Location) task.getResult();
                                 String city = "";
                                 if(mLastKnownLocation != null) {
-                                    Log.e("", "not null!");
+
                                     Double longitude = mLastKnownLocation.getLongitude();
                                     Double latitude = mLastKnownLocation.getLatitude();
-                                    Log.e("ACTUAL", latitude + " " + longitude);
+
                                     Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
                                     List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
                                     if (addresses.size() > 0) {
-                                        Log.e("TAG", addresses.get(0).toString());
                                         city = addresses.get(0).getLocality();
                                         getNearFields(city);
                                     }
@@ -325,8 +320,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.d("TAG", "Current location is null. Using defaults.");
-                            Log.e("TAG", "Exception: %s", task.getException());
+
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
@@ -339,7 +333,8 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
     }
 
 
-
+    // Funzione utilizzata per verificare se l'utente ha concesso o meno i permessi. Nel caso in cui i permessi
+    // sono stati concessi, si procede alla visualizzazione della mappa, altrimenti si richiedono i permessi di localizzazione.
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -359,12 +354,10 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+    // Funzione utilizzata per richiedere i permessi di localizzazione, in modo da poter accedere
+    // alle coordinate della posizione corrente.
     private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
+
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -375,7 +368,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
-
+    // Funzione utilizzata per verificare se il campetto è stato prenotato per un certo orario.
     private void initPitchAvailableTime(final Pitch p) {
             db.collection("matches").whereEqualTo("pitchcode", p.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -391,13 +384,15 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
             });
     }
 
-    //TODO Selezionare i campi tramite query su firebase oppure utilizzando quelli già caricati precedentemente?
+    // Funzione utilizzata per visualizzare i markers relativi ai campetti sulla mappa.
     public void loadMarkers(View w) {
         if(selectedCity != "") {
             getNearFields(selectedCity);
         }
     }
 
+    // Funzione utilizzata per poter creare un listener, dato un campetto, che permette di catturare l'evento
+    // di modifica del campetto, in modo da segnalare che questo non è più disponibile dato un certo orario.
     private void addListenerForNewMatches(final Pitch p) {
         if (listener != null)
             listener.remove();
@@ -421,6 +416,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    // Funzione utilizzata per poter prenotare il campetto.
     public void bookPitch(final String pitchId, final String time, final String address, final String owner, final String ownermail, boolean isCovered) {
 
         final boolean selectedCovered = isCovered;
@@ -431,6 +427,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
+        // Verifico che il dispositivo sia connesso o meno a internet.
         if (!isConnected) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You don't have internet connection, please check it!")
@@ -450,6 +447,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
 
         } else {
+            // Se connesso procedo alla prenotazione del campetto.
             if (time.equals("OCCUPATO")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("The pitch you selected is already booked at this time, sorry!")
@@ -513,6 +511,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    // Funzione utilizzata per memorizzare, tramite query, la nuova partita all'interno del database.
     private void saveMatch(final HashMap saveMyMatch) {
         StaticInstance.db.collection("matches").document(saveMyMatch.get("code").toString())
                 .set(saveMyMatch)
@@ -534,6 +533,8 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
     }
 
 
+    // Funzione utilizzata per poter inviare una mail al proprietario del campetto.
+    // Si crea un intento volto ad avviare l'applicazione responsabile per le mail.
     private void sendMailToOwnerPitch(HashMap saveMyMatch) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
@@ -547,6 +548,7 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+    // Funzione utilizzata per richiedere la nuova posizione quando vengono concessi i permessi di localizzazione.
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
@@ -554,7 +556,6 @@ public class ShowMap extends FragmentActivity implements OnMapReadyCallback {
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;

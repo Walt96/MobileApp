@@ -27,21 +27,20 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+// Fragment utilizzato per effettuare la registrazione di un gestore.
 public class ManagerSignIn extends Fragment {
 
     FirebaseFirestore db = StaticInstance.getInstance();
     View fragmentView;
 
-    public ManagerSignIn() {
-        // Required empty public constructor
-    }
+    public ManagerSignIn() {}
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentView =  inflater.inflate(R.layout.fragment_manager_sign_in, container, false);
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_manager_sign_in, container, false);
     }
 }

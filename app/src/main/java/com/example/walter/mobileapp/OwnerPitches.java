@@ -55,6 +55,7 @@ import com.squareup.picasso.Target;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+// Activity utilizzata per visualizzare i campetti di un determinato gestore.
 public class OwnerPitches extends AppCompatActivity {
 
     FirebaseFirestore db = StaticInstance.getInstance();
@@ -94,6 +95,7 @@ public class OwnerPitches extends AppCompatActivity {
 
             final ListView listView = findViewById(R.id.pitches);
             pitches = new ArrayList<>();
+            // Si richiedono i campetti del gestore.
             db.collection("pitch")
                     .whereEqualTo("owner", StaticInstance.username)
                     .get()
@@ -111,7 +113,6 @@ public class OwnerPitches extends AppCompatActivity {
                                     boolean covered = (boolean) document.get("covered");
                                     double price = (double) (document.get("price"));
                                     final Pitch currentPitch = new Pitch(id, address, price, covered, city, document.get("owner").toString());
-                                    Log.e("cerco in ", "pitch/" + document.get("code"));
 
                                     mStorageRef.child("pitch/" + document.get("owner") + document.get("code")).getDownloadUrl()
                                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -125,7 +126,7 @@ public class OwnerPitches extends AppCompatActivity {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception exception) {
-                                                    // Handle any errors
+
                                                 }
                                             });
 
@@ -137,7 +138,6 @@ public class OwnerPitches extends AppCompatActivity {
 
                                         @Override
                                         public void onCancelled(DatabaseError error) {
-                                            // Failed to read value
                                             Log.e("Hey", "Failed to read app title value.", error.toException());
                                         }
                                     });
@@ -269,6 +269,7 @@ public class OwnerPitches extends AppCompatActivity {
         }
     };
 
+    // Funzione con la quale si condivide su Facebook l'evento di creazione del campetto.
     public void shareOnFacebook() {
         if(AccessToken.getCurrentAccessToken()!= null) {
             Log.e("TAG", "Clicked");

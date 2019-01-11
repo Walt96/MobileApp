@@ -23,6 +23,8 @@ public class StaticInstance {
     static boolean calendarEvent = true;
     static boolean wantToRateMatch = true;
     static boolean wantToSendMail = true;
+    static double longitude;
+    static double latitude;
     
 
 

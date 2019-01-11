@@ -9,6 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,6 +21,7 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +42,12 @@ import com.example.walter.mobileapp.aiobject.ChoosedResult;
 import com.example.walter.mobileapp.aiobject.NotAvailable;
 import com.example.walter.mobileapp.aiobject.Pitch;
 import com.example.walter.mobileapp.aiobject.Time;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.Places;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,14 +56,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
 import it.unical.mat.embasp.base.Callback;
 import it.unical.mat.embasp.base.Handler;
 import it.unical.mat.embasp.base.InputProgram;
@@ -73,6 +81,15 @@ public class AiHelper extends AppCompatActivity {
     final HashMap<String, Object> saveMyMatch = new HashMap<>();
 
 
+    private GeoDataClient mGeoDataClient; // Variabile utilizzata per accedere al database di google contenente i luoghi.
+    private PlaceDetectionClient mPlaceDetectionClient; // Utilizzato per poter accedere alla posizione locale del dispositivo.
+    private FusedLocationProviderClient mFusedLocationProviderClient; // Altro oggetto utilizzato per poter determinare informazioni relative alla posizione.
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    private boolean locationPermissionGranted;
+    private double longitude;
+    private double latitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +98,14 @@ public class AiHelper extends AppCompatActivity {
         pitchesSelectedByAI = new HashMap<>();
         ListView listView = findViewById(R.id.matchList);
         listView.setAdapter(adapter = new CustomAdapter());
+
+        latitude = 0.0f;
+        longitude = 0.0f;
+
+        mGeoDataClient = Places.getGeoDataClient(this);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this);
+        mFusedLocationProviderClient =  LocationServices.getFusedLocationProviderClient(this);
+        locationPermissionGranted = false;
 
         //se l'utente dispone della connessione, viene invocato il metodo per il calcolo del match ideale
         if(!CheckConnection.isConnected(this)){
@@ -100,6 +125,7 @@ public class AiHelper extends AppCompatActivity {
                 });
                 builder.create().show();
         }else {
+            getDeviceLocation();
             computeBestMatch();
         }
 
@@ -435,16 +461,59 @@ public class AiHelper extends AppCompatActivity {
         return -1;
     }
 
+    private void getDeviceLocation() {
+        try {
+            if (locationPermissionGranted) {
+                Task locationResult = mFusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(AiHelper.this, new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            Location actualLocation = (Location) task.getResult();
+                            if (actualLocation != null) {
+                                longitude = actualLocation.getLongitude();
+                                latitude = actualLocation.getLatitude();
+                            }
+                        }
+                    }
+                });
+            } else {
+                getLocationPermission();
+            }
+        } catch(SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    private void getLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(AiHelper.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(AiHelper.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == CALENDAR_CODE)
+        if (requestCode == CALENDAR_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 addCalendarEvent(saveMyMatch);
             }
+        } else if(requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                locationPermissionGranted = true;
+            }
+            getDeviceLocation();
+        }
     }
-
 
     private Activity getActivity() {
         return this;
@@ -545,6 +614,8 @@ public class AiHelper extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                 }
             }
+
+
         }
     }
 
