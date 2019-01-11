@@ -125,6 +125,10 @@ public class AiHelper extends AppCompatActivity {
                 });
                 builder.create().show();
         }else {
+            if(!locationPermissionGranted) {
+                getLocationPermission();
+                Log.e("TAG", "Getting permissions");
+            }
             getDeviceLocation();
             computeBestMatch();
         }
@@ -462,6 +466,7 @@ public class AiHelper extends AppCompatActivity {
     }
 
     private void getDeviceLocation() {
+        Log.e("TAG","Getting Location");
         try {
             if (locationPermissionGranted) {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
@@ -473,6 +478,7 @@ public class AiHelper extends AppCompatActivity {
                             if (actualLocation != null) {
                                 longitude = actualLocation.getLongitude();
                                 latitude = actualLocation.getLatitude();
+                                Log.e("TAG", latitude + " - " + longitude);
                             }
                         }
                     }
