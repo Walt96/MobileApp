@@ -29,7 +29,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="169dp"
-        android:text="Who Are You?"
+        android:text="@string/WAY"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Footballer"
+            android:text="@string/Player"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -57,7 +57,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:text="Football Pitch Manager"
+            android:text="@string/PitchM"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </RadioGroup>

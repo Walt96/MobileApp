@@ -33,7 +33,7 @@
         android:layout_marginTop="128dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:hint="Price"
+        android:hint="@string/Price"
         android:inputType="numberDecimal"
         android:textColor="@android:color/background_light"
         android:textColorHint="@android:color/background_light"
@@ -52,11 +52,11 @@
         android:layout_marginStart="250dp"
         android:layout_marginTop="55dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginBottom="55dp"
+        android:layout_marginBottom="54dp"
         android:background="@color/colorPrimary"
         android:onClick="validateFields"
         android:shadowColor="@android:color/background_light"
-        android:text="Confirm"
+        android:text="@string/Confirm"
         android:textColor="@android:color/background_light"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/covered"
             android:checked="true"
-            android:text="Covered pitch"
+            android:text="@string/CoveredP"
             android:textColor="@android:color/background_light"
             android:textSize="18sp" />
 
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/covered"
             android:layout_weight="1"
-            android:text="Uncovered pitch"
+            android:text="@string/UncoveredP"
             android:textColor="@android:color/background_light"
             android:textSize="18sp" />
     </RadioGroup>

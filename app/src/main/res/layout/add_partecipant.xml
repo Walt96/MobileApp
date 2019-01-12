@@ -18,7 +18,7 @@
         android:layout_marginTop="11dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Username of the player"
+        android:hint="@string/UserPlay"
         android:inputType="textPersonName"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white" />
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Role"
+                android:text="@string/Role"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Score"
+                android:text="@string/Score"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
@@ -138,7 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/colorPrimary"
-                android:text="Invite"
+                android:text="@string/Invite"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </TableRow>

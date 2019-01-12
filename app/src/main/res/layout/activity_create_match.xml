@@ -17,7 +17,7 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="openMap"
-        android:text="Map"
+        android:text="@string/Map"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingTop="8dp"
-            android:text="Date"
+            android:text="@string/Date"
             android:textAlignment="center"
             android:textColor="@android:color/white" />
 
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Not Covered"
+            android:text="@string/nCovered"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

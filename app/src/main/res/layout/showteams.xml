@@ -18,7 +18,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="125dp"
-        android:text="Your teams formation"
+        android:text="@string/ShowTeam"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="18sp" />

@@ -8,15 +8,15 @@
         <item
             android:id="@+id/nav_createMatch"
             android:icon="@drawable/ic_add_circle_outline_black_24dp"
-            android:title="Create Match" />
+            android:title="@string/SideMenuCreate" />
         <item
             android:id="@+id/nav_joinMatch"
             android:icon="@drawable/ic_group_black_24dp"
-            android:title="Compute Best Match" />
+            android:title="@string/SideMenuCompute" />
         <item
             android:id="@+id/my_matches"
             android:icon="@drawable/list"
-            android:title="My matches" />
+            android:title="@string/SideMyMatches" />
 
     </group>
 

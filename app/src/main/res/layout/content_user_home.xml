@@ -13,7 +13,7 @@
         android:id="@+id/textView38"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your profile:"
+        android:text="@string/MyProfile"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
@@ -46,14 +46,13 @@
                     android:id="@+id/textView31"
                     android:layout_width="100dp"
                     android:layout_height="25dp"
-                    android:text="Name"
+                    android:text="@string/Name"
                     android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
                     android:textColor="@android:color/white" />
             </TableRow>
 
@@ -65,14 +64,13 @@
                     android:id="@+id/textView35"
                     android:layout_width="100dp"
                     android:layout_height="25dp"
-                    android:text="Role"
+                    android:text="@string/Role"
                     android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/role"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
                     android:textColor="@android:color/white" />
             </TableRow>
 
@@ -84,14 +82,13 @@
                     android:id="@+id/textView37"
                     android:layout_width="100dp"
                     android:layout_height="25dp"
-                    android:text="Rate"
+                    android:text="@string/Rate"
                     android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/rate"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
                     android:textColor="@android:color/white" />
             </TableRow>
         </TableLayout>
@@ -103,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
-        android:text="Your notification:"
+        android:text="@string/Notifications"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold|italic" />

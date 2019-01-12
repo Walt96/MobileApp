@@ -1,4 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="SideMenuCreate">Create Match</string>
+    <string name="SideMenuCompute">Compute Best Match</string>
+    <string name="SideMyMatches">My Matches</string>
+    <string name="MyProfile">My Profile:</string>
+    <string name="Name">Name</string>
+    <string name="Role">Role</string>
+    <string name="Rate">Rate</string>
+    <string name="Notifications">Your Notifications</string>
+    <string name="ConfirmPWD">Confirm Password</string>
+    <string name="Phone">Phone Number</string>
+    <string name="Mail">Email Address</string>
+    <string name="Confirm">Confirm</string>
+    <string name="PhotoIcon">Touch the icon to add a photo</string>
+    <string name="ChooseRole">Choose your Role</string>
+    <string name="Address">Address:</string>
+    <string name="Booked">Booked by:</string>
+    <string name="Date">Date:</string>
+    <string name="Time">Time:</string>
+    <string name="Covered">Covered:</string>
+    <string name="nCovered">Not Covered</string>
+    <string name="Registered">Registered:</string>
+    <string name="Bookit">Book It</string>
+    <string name="InfoAbout">Info about your Match</string>
+    <string name="CoveredP">Covered Pitch</string>
+    <string name="UncoveredP">Uncovered Pitch</string>
+    <string name="Price">Price</string>
+    <string name="CreatePitch">Create Pitch</string>
+    <string name="ShowPitch">Show Pitch</string>
+    <string name="Modify">Modify</string>
+    <string name="Share">Share</string>
+    <string name="RateMatch">Rate this Match</string>
+    <string name="Search">Search</string>
+    <string name="ShowTeam">Your Teams Formation</string>
+    <string name="WAY">Who Are You?</string>
+    <string name="Player">Footballer</string>
+    <string name="PitchM">Pitch Manager</string>
+    <string name="Change">Change</string>
+    <string name="Score">Score</string>
+    <string name="Invite">Invite</string>
+    <string name="UserPlay">Username of the Player</string>
+    <string name="Map">Map</string>
+    <string name="City">City</string>
+    <string name="ScanQR">Scan the QR code or insert manually the code.</string>
+
+
     <string name="app_name">FootBooking</string>
     <string name="facebook_app_id">349792485844073</string>
     <string name="fb_login_protocol_scheme">fb349792485844073</string>
@@ -38,55 +84,4 @@
     <string name="title_activity_display_map">displayMap</string>
     <string name="title_activity_show_map">Map</string>
     <string name="title_activity_marker_popup">MarkerPopup</string>
-    <color name="backCol">#d4366b33</color>
-
-
-    <string name="SideMenuCreate">Crea Partita</string>
-    <string name="SideMenuCompute">Determina Miglior Partita</string>
-    <string name="SideMyMatches">Le Mie Partite</string>
-    <string name="MyProfile">Profilo:</string>
-    <string name="Name">Nome</string>
-    <string name="Role">Ruolo</string>
-    <string name="Rate">Voto</string>
-    <string name="Notifications">Notifiche:</string>
-    <string name="ConfirmPWD">Conferma Password</string>
-    <string name="Phone">Numero di Telefono</string>
-    <string name="Mail">Indirizzo Email</string>
-    <string name="Confirm">Conferma</string>
-    <string name="PhotoIcon">Tocca per aggiungere una foto</string>
-    <string name="ChooseRole">Scegli il tuo Ruolo</string>
-    <string name="Address">Indirizzo:</string>
-    <string name="Booked">Prenotato da:</string>
-    <string name="Date">Data:</string>
-    <string name="Time">Ora:</string>
-    <string name="Covered">Coperto:</string>
-    <string name="nCovered">Non Coperto</string>
-    <string name="Registered">Registrati:</string>
-    <string name="Bookit">Prenota</string>
-    <string name="InfoAbout">Informazioni sulla Partita</string>
-    <string name="CoveredP">Campo coperto</string>
-    <string name="UncoveredP">Campo non coperto</string>
-    <string name="Price">Prezzo</string>
-    <string name="CreatePitch">Registra Campetto</string>
-    <string name="ShowPitch">Mostra Campetto</string>
-    <string name="Modify">Modifica</string>
-    <string name="Share">Condividi</string>
-    <string name="RateMatch">Vota la Partita</string>
-    <string name="Search">Cerca</string>
-    <string name="ShowTeam">Formazioni delle Squadre</string>
-    <string name="WAY">Chi sei?</string>
-    <string name="Player">Giocatore</string>
-    <string name="PitchM">Gestore Campetti</string>
-    <string name="Change">Cambio</string>
-    <string name="Score">Voto</string>
-    <string name="Invite">Invita</string>
-    <string name="UserPlay">Username del Giocatore</string>
-    <string name="Map">Mappa</string>
-    <string name="City">Città</string>
-    <string name="ScanQR">Scannerizza il QR code o inserisci il codice.</string>
-
-
-
-
-
 </resources>

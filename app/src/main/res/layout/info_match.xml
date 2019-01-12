@@ -28,19 +28,17 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Address:"
+                android:text="@string/Address"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Address: " />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/address_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
 
@@ -56,12 +54,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="Date:"
+                android:text="@string/Date"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Date: " />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/date"
@@ -69,7 +66,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:paddingTop="10dp"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </TableRow>
@@ -84,12 +80,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="Time:"
+                android:text="@string/Time"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Time:" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/time"
@@ -97,7 +92,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:paddingTop="10dp"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </TableRow>
@@ -112,19 +106,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="Covered:"
+                android:text="@string/Covered"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Covered" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/covered"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:paddingTop="10dp"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </TableRow>
@@ -139,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="Booking by:"
+                android:text="@string/Booked"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
@@ -150,7 +142,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:paddingTop="10dp"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
         </TableRow>
@@ -165,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="Registered:"
+                android:text="@string/Registered"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="16sp"
@@ -176,7 +167,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:paddingTop="10dp"
-                android:text="TextView"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white" />
 
@@ -186,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorPrimary"
-                android:text="Book it" />
+                android:text="@string/Bookit" />
         </TableRow>
     </TableLayout>
 
@@ -212,7 +202,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
-        android:text="Info about your match"
+        android:text="@string/InfoAbout"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold|italic"

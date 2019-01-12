@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Date"
+        android:hint="@string/Date"
         android:inputType="date"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
