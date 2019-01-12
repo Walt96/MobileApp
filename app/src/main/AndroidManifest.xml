@@ -43,57 +43,50 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AiHelper"></activity>
-        <activity android:name=".SigninActivity" />
-        <activity android:name=".CreatePitch" />
+        <activity android:name=".activity.AiHelper" android:label="@string/title_activity_ai_helper"></activity>
+        <activity android:name=".activity.SigninActivity" android:label="@string/title_activity_signin"/>
+        <activity android:name=".activity.CreatePitch" android:label="@string/title_activity_create_pitch"/>
         <activity
-            android:name=".UserHome"
+            android:name=".activity.UserHome"
             android:label="@string/title_activity_user_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CreateMatch" />
+        <activity android:name=".activity.CreateMatch" android:label="@string/title_activity_create_match" />
         <activity
-            android:name=".OwnerHome"
+            android:name=".activity.OwnerHome"
             android:label="@string/title_activity_owner_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".OwnerPitches"
+            android:name=".activity.OwnerPitches"
             android:label="@string/title_activity_owner_pitchs"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ModifyPitch"
+            android:name=".activity.ModifyPitch"
             android:label="@string/title_activity_modify_pitch"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".HandleMatches"
+            android:name=".activity.HandleMatches"
             android:label="@string/title_activity_handle_matches" />
-        <activity android:name=".MyMatchesList" />
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+        <activity android:name=".activity.MyMatchesList" android:label="@string/title_activity_my_matches_list" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".YesNotify" />
-        <activity android:name=".CreateQRCode" />
-        <activity android:name=".StartMatch" />
-        <activity android:name=".RatePlayer" />
+        <activity android:name=".activity.HandleResponseToInvitation" />
+        <activity android:name=".activity.CreateQRCode" />
+        <activity android:name=".activity.StartMatch" android:label="@string/title_activity_start_match"/>
+        <activity android:name=".activity.RatePlayer" android:label="@string/title_activity_rate_player"/>
         <activity
-            android:name=".ShowMap"
-            android:label="@string/title_activity_show_map" />
-        <activity android:name=".RateMatch" />
+            android:name=".activity.ShowMap"
+            android:label="map" />
+        <activity android:name=".activity.RateMatch" android:label="@string/title_activity_rate_match" />
 
         <service
             android:name="it.unical.mat.embasp.specializations.dlv.android.DLVAndroidReasoner"
@@ -122,7 +115,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".FacebookLogin"></activity>
 
         <provider android:authorities="com.facebook.app.FacebookContentProvider1192655554218244"
             android:name="com.facebook.FacebookContentProvider"

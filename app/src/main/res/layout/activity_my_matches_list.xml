@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backCol"
     android:orientation="horizontal"
-    tools:context=".MyMatchesList">
+    tools:context=".activity.MyMatchesList">
 
     <ListView
         android:id="@+id/matchlist"

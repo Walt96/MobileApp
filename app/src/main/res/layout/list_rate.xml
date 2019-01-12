@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backCol"
-    tools:context=".RatePlayer">
+    tools:context=".activity.RatePlayer">
 
     <ImageView
         android:id="@+id/imageRate"

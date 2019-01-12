@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FootBooking</string>
+    <string name="app_name">Bit Soccer</string>
     <string name="facebook_app_id">349792485844073</string>
     <string name="fb_login_protocol_scheme">fb349792485844073</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -21,11 +21,20 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_user_home">UserHome</string>
-    <string name="title_activity_owner_home">OwnerHome</string>
-    <string name="title_activity_owner_pitchs">OwnerPitchs</string>
-    <string name="title_activity_modify_pitch">ModifyPitch</string>
-    <string name="title_activity_handle_matches">HandleMatches</string>
+    <string name="title_activity_user_home">Home</string>
+    <string name="title_activity_create_match">Crea partita</string>
+    <string name="title_activity_ai_helper">Migliore partita</string>
+    <string name="title_activity_my_matches_list">Lista delle mie partite</string>
+    <string name="title_activity_create_pitch">Crea campo</string>
+    <string name="title_activity_owner_home">Le partite prenotate</string>
+    <string name="title_activity_owner_pitchs">I miei campi</string>
+    <string name="title_activity_modify_pitch">Modifica i tuoi campi</string>
+    <string name="title_activity_signin">Registrati</string>
+
+    <string name="title_activity_rate_match">Vota la partita</string>
+    <string name="title_activity_rate_player">Vota i giocatori</string>
+    <string name="title_activity_start_match">Tieni il tempo</string>
+    <string name="title_activity_handle_matches">Gestisci la partita</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -59,7 +68,7 @@
     <string name="Booked">Prenotato da:</string>
     <string name="Date">Data:</string>
     <string name="Time">Ora:</string>
-    <string name="Covered">Coperto:</string>
+    <string name="Covered">Coperto</string>
     <string name="nCovered">Non Coperto</string>
     <string name="Registered">Registrati:</string>
     <string name="Bookit">Prenota</string>

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backCol"
     android:orientation="vertical"
-    tools:context=".CreatePitch">
+    tools:context=".activity.CreatePitch">
 
     <!-- <EditText
         android:id="@+id/pitchAddress"

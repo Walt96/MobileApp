@@ -67,11 +67,20 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_user_home">UserHome</string>
-    <string name="title_activity_owner_home">OwnerHome</string>
-    <string name="title_activity_owner_pitchs">OwnerPitchs</string>
-    <string name="title_activity_modify_pitch">ModifyPitch</string>
-    <string name="title_activity_handle_matches">HandleMatches</string>
+    <string name="title_activity_user_home">Home</string>
+    <string name="title_activity_create_match">Create match</string>
+    <string name="title_activity_create_pitch">Create pitch</string>
+    <string name="title_activity_ai_helper">Best match</string>
+    <string name="title_activity_owner_home">Booked matches</string>
+    <string name="title_activity_start_match">Take the time</string>
+
+    <string name="title_activity_my_matches_list">My matches list</string>
+    <string name="title_activity_owner_pitchs">My pitches</string>
+    <string name="title_activity_modify_pitch">Modify your pitches</string>
+    <string name="title_activity_rate_match">Rate the match</string>
+    <string name="title_activity_rate_player">Rate the players</string>
+    <string name="title_activity_handle_matches">Handle the match</string>
+    <string name="title_activity_signin">Sign in</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>

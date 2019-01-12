@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backCol"
     android:orientation="vertical"
-    tools:context=".ManagerSignIn">
+    tools:context=".activity.ManagerSignIn">
 
     <EditText
         android:id="@+id/usernameSignin"
